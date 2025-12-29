@@ -1,17 +1,15 @@
-﻿using System;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Timers;
-using System.Collections.Generic;
-using MouseKeyboardActivityMonitor;
+﻿using MouseKeyboardActivityMonitor;
 using MouseKeyboardActivityMonitor.WinApi;
-using System.Collections;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Timers;
+using System.Windows.Forms;
 
-namespace WindowsFormsApplication1
+namespace Bot
 {
     public partial class Form1 : Form
     {
@@ -29,12 +27,13 @@ namespace WindowsFormsApplication1
         private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
         private const int MOUSEEVENTF_RIGHTUP = 0x10;
         private int iteration = 1;
+        private int repeatCounter = 0;
 
         public Form1()
         {
             InitializeComponent();
             listBox1.Items.Clear();
-            listBox1.DataSource = settings.moves;
+            listBox1.DataSource = settings.Moves;
             listBox1.HorizontalScrollbar = true;
             this.tabPage1.Text = "Bot";
             this.tabPage2.Text = "Ustawienia";
@@ -47,8 +46,9 @@ namespace WindowsFormsApplication1
             btnStop.Enabled = false;
             btnClear.Enabled = false;
             numPeriod1.Enabled = true;
-            numPeriodA.Enabled = true;
-            numPeriodB.Enabled = true;
+            numPeriodA.Enabled = false;
+            numPeriodB.Enabled = false;
+            numOfRepeats.Enabled = false;
             cbRepeat.Enabled = true;
             cbRepeat.Checked = true;
             numPeriod1.Minimum = 100;
@@ -56,18 +56,21 @@ namespace WindowsFormsApplication1
             numPeriod1.Value = 2000;
             numPeriodA.Minimum = 100;
             numPeriodA.Maximum = 10000000;
-            numPeriodA.Value = 40000;
+            numPeriodA.Value = 2000;
             numPeriodB.Minimum = 100;
             numPeriodB.Maximum = 10000000;
-            numPeriodB.Value = 90000;
+            numPeriodB.Value = 3000;
             numNewPeriod1.Minimum = 100;
             numNewPeriod1.Maximum = 10000000;
             numNewPeriod1.Value = 100;
+            numOfRepeats.Minimum = 2;
+            numOfRepeats.Maximum = 100000;
+            numOfRepeats.Value = 1000;
             btnEdit.Enabled = false;
 
             string path = System.IO.Directory.GetCurrentDirectory();
             DirectoryInfo di = new DirectoryInfo(path);
-            foreach (var fi in di.GetFiles("*.dat"))
+            foreach (var fi in di.GetFiles("*.json"))
             {
                 files.Add(fi.Name);
             }
@@ -93,16 +96,17 @@ namespace WindowsFormsApplication1
 
         public void DoMouseClick(object sender, ElapsedEventArgs e)
         {
-            Cursor.Position = settings.moves[iteration].Point;
-            if(settings.moves[iteration].Button.Equals(MouseButtons.Left))
+            Cursor.Position = settings.Moves[iteration].Point;
+            if(settings.Moves[iteration].Button.Equals(MouseButtons.Left))
                 mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, (uint)Cursor.Position.X, (uint)Cursor.Position.Y, 0, 0);
-            if (settings.moves[iteration].Button.Equals(MouseButtons.Right))
+            if (settings.Moves[iteration].Button.Equals(MouseButtons.Right))
                 mouse_event(MOUSEEVENTF_RIGHTDOWN | MOUSEEVENTF_RIGHTUP, (uint)Cursor.Position.X, (uint)Cursor.Position.Y, 0, 0);
-            timer.Interval = settings.moves[iteration].Period;
+            timer.Interval = settings.Moves[iteration].Period;
             iteration++;
-            if (iteration == settings.moves.Count-2)
+            if (iteration == settings.Moves.Count-2)
             {
-                if (cbRepeat.Checked == true)
+                repeatCounter++;
+                if (cbRepeat.Checked == true && repeatCounter < numOfRepeats.Value)
                 {
                     var time = x.Next((int)numPeriodA.Value, (int)numPeriodB.Value);
                     timer.Interval = time;
@@ -143,6 +147,7 @@ namespace WindowsFormsApplication1
                 numPeriod1.Enabled = false;
                 numPeriodA.Enabled = false;
                 numPeriodB.Enabled = false;
+                numOfRepeats.Enabled = false;
                 cbRepeat.Enabled = false;
                 btnLoad.Enabled = false;
                 btnDelete.Enabled = false;
@@ -171,11 +176,13 @@ namespace WindowsFormsApplication1
             {
                 numPeriodA.Enabled = true;
                 numPeriodB.Enabled = true;
+                numOfRepeats.Enabled = true;
             }
             else
             {
                 numPeriodA.Enabled = false;
                 numPeriodB.Enabled = false;
+                numOfRepeats.Enabled = false;
             }
         }
 
@@ -191,6 +198,7 @@ namespace WindowsFormsApplication1
             cbRepeat.Enabled = false;
             numPeriodA.Enabled = false;
             numPeriodB.Enabled = false;
+            numOfRepeats.Enabled = false;
             btnLoad.Enabled = false;
             btnDelete.Enabled = false;
             btnSave.Enabled = false;
@@ -212,33 +220,33 @@ namespace WindowsFormsApplication1
             btnDelete.Enabled = true;
             btnSave.Enabled = true;
             tbName.Enabled = true;
-            listBox1.DataSource = settings.moves;
+            listBox1.DataSource = settings.Moves;
             if (cbRepeat.Checked == true)
             {
                 numPeriodA.Enabled = true;
                 numPeriodB.Enabled = true;
+                numOfRepeats.Enabled = true;
             }
             else
             {
                 numPeriodA.Enabled = false;
                 numPeriodB.Enabled = false;
+                numOfRepeats.Enabled = false;
             }
-            if (settings.moves.Count == 0)
+            if (settings.Moves.Count == 0)
             {
                 numNewPeriod1.Value = 0;
                 btnEdit.Enabled = false;
             }
             else
             {
-             //   listBox1.SelectedIndex = 1;
-               // numNewPeriod1.Value = settings.moves[listBox1.SelectedIndex].Period;
                 btnEdit.Enabled = true;
             }
         }
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            settings.moves.Clear();
+            settings.Moves.Clear();
             btnRecord.Enabled = true;
             btnStopRecord.Enabled = false;
             btnStart.Enabled = false;
@@ -256,11 +264,13 @@ namespace WindowsFormsApplication1
             {
                 numPeriodA.Enabled = true;
                 numPeriodB.Enabled = true;
+                numOfRepeats.Enabled = true;
             }
             else
             {
                 numPeriodA.Enabled = false;
                 numPeriodB.Enabled = false;
+                numOfRepeats.Enabled = false;
             }
         }
 
@@ -278,7 +288,7 @@ namespace WindowsFormsApplication1
 
         private void MouseListener_MouseDownExt(object sender, MouseEventExtArgs e)
         {
-            settings.moves.Add(new ClickParameters {ID=settings.moves.Count+1,
+            settings.Moves.Add(new ClickParameters {ID=settings.Moves.Count+1,
                 Point = new System.Drawing.Point(Cursor.Position.X, Cursor.Position.Y),
                 Period =(int)numPeriod1.Value, Button=e.Button});
         }
@@ -289,48 +299,39 @@ namespace WindowsFormsApplication1
             {
                 numPeriodA.Enabled = true;
                 numPeriodB.Enabled = true;
+                numOfRepeats.Enabled = true;
             }
             else
             {
                 numPeriodA.Enabled = false;
                 numPeriodB.Enabled = false;
+                numOfRepeats.Enabled = false;
             }
         }
 
         private void btnLoad_Click(object sender, EventArgs e)
         {
-            Hashtable dane = null;
 
             var str=listBox2.SelectedItem.ToString();
-            FileStream fs = null;
             try
             {
-                fs = new FileStream(str, FileMode.Open);
-                BinaryFormatter formatter = new BinaryFormatter();
-                dane = (Hashtable)formatter.Deserialize(fs);
+                var json = File.ReadAllText(str);
+                settings = JsonConvert.DeserializeObject<Settings>(json);
             }
             catch (SerializationException ex)
             {
                 MessageBox.Show(this, "Nastąpił następujący błąd: \n" + ex.ToString(), "BLAD", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 throw;
             }
-            finally
-            {
-                fs.Close();
-            }
-
-            foreach (DictionaryEntry de in dane)
-            {
-                settings = ((Settings)de.Key);
-            }
 
             numPeriod1.Value = settings.Period1;
             numPeriodA.Value = settings.PeriodA;
             numPeriodB.Value = settings.PeriodB;
+            numOfRepeats.Value = settings.NumberOfRepeats;
             cbRepeat.Checked = settings.Repeat;
             cbRepeat.CheckedChanged += new System.EventHandler(this.cbCookies_CheckedChanged);
 
-            listBox1.DataSource = settings.moves;
+            listBox1.DataSource = settings.Moves;
 
             btnRecord.Enabled = false;
             btnStopRecord.Enabled = false;
@@ -348,13 +349,15 @@ namespace WindowsFormsApplication1
             {
                 numPeriodA.Enabled = true;
                 numPeriodB.Enabled = true;
+                numOfRepeats.Enabled = true;
             }
             else
             {
                 numPeriodA.Enabled = false;
                 numPeriodB.Enabled = false;
+                numOfRepeats.Enabled = false;
             }
-            if (settings.moves.Count == 0)
+            if (settings.Moves.Count == 0)
             {
                 numNewPeriod1.Value = 100;
                 btnEdit.Enabled = false;
@@ -368,33 +371,26 @@ namespace WindowsFormsApplication1
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            Hashtable dane = new Hashtable();
             settings.Period1 = (int)numPeriod1.Value;
             settings.PeriodA = (int)numPeriodA.Value;
             settings.PeriodB = (int)numPeriodB.Value;
+            settings.NumberOfRepeats = (int)numOfRepeats.Value;
             settings.Repeat = cbRepeat.Checked;
-            dane.Add(settings, null);
 
-            FileStream fs = null;
-
-            BinaryFormatter formatter = new BinaryFormatter();
             try
             {
-                fs=new FileStream(tbName.Text + ".dat", FileMode.Create);
-                formatter.Serialize(fs, dane);
+                var json = JsonConvert.SerializeObject(settings, Formatting.Indented);
+                File.WriteAllText(tbName.Text + ".json", json);
             }
             catch (SerializationException ex)
             {
                 MessageBox.Show(this, "Nastąpił następujący błąd: \n" + ex.ToString(), "BLAD", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally
-            {
-                fs.Close();
-            }
+
             files.Clear();
             string path = System.IO.Directory.GetCurrentDirectory();
             DirectoryInfo di = new DirectoryInfo(path);
-            foreach (var fi in di.GetFiles("*.dat"))
+            foreach (var fi in di.GetFiles("*.json"))
             {
                 files.Add(fi.Name);
             }
@@ -414,21 +410,21 @@ namespace WindowsFormsApplication1
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            settings.moves[listBox1.SelectedIndex].Period = (int)numNewPeriod1.Value;
-            settings.moves[listBox1.SelectedIndex].Button = comboBox1.SelectedIndex==0?MouseButtons.Left:MouseButtons.Right;
+            settings.Moves[listBox1.SelectedIndex].Period = (int)numNewPeriod1.Value;
+            settings.Moves[listBox1.SelectedIndex].Button = comboBox1.SelectedIndex==0?MouseButtons.Left:MouseButtons.Right;
             this.listBox1.SelectedIndexChanged -= new System.EventHandler(this.listBox1_SelectedIndexChanged);
             listBox1.DataSource = null;
-            listBox1.DataSource = settings.moves;
+            listBox1.DataSource = settings.Moves;
             this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {        
-            if (listBox1!=null)
+            if (listBox1 != null && listBox1.SelectedIndex > -1)
             {
                 lblNr.Text = "Nr:" + (listBox1.SelectedIndex + 1);
-                numNewPeriod1.Value = settings.moves[listBox1.SelectedIndex].Period;
-                comboBox1.SelectedIndex = settings.moves[listBox1.SelectedIndex].Button == MouseButtons.Left ? 0 : 1;
+                numNewPeriod1.Value = settings.Moves[listBox1.SelectedIndex].Period;
+                comboBox1.SelectedIndex = settings.Moves[listBox1.SelectedIndex].Button == MouseButtons.Left ? 0 : 1;
             }
             else
             {
@@ -454,7 +450,7 @@ namespace WindowsFormsApplication1
                 files.Clear();
                 string path = System.IO.Directory.GetCurrentDirectory();
                 DirectoryInfo di = new DirectoryInfo(path);
-                foreach (var fi in di.GetFiles("*.dat"))
+                foreach (var fi in di.GetFiles("*.json"))
                 {
                     files.Add(fi.Name);
                 }
