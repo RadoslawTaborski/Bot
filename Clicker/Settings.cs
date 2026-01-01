@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace Bot
+namespace Clicker
 {
     [Serializable]
     public class Settings

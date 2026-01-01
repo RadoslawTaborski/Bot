@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Windows.Forms;
 
-namespace Bot
+namespace Clicker
 {
     [Serializable]
     public class ClickParameters

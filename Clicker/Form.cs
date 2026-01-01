@@ -3,43 +3,54 @@ using MouseKeyboardActivityMonitor.WinApi;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using Buttons = Clicker.MouseButtons;
 
-namespace Bot
+namespace Clicker
 {
-    public partial class Form1 : Form
+    public partial class Form : System.Windows.Forms.Form
     {
-        public BindingList<string> files = new BindingList<string>();
-        Settings settings = new Settings();
-        public System.Timers.Timer timer = new System.Timers.Timer();
-        public System.Random x = new Random(System.DateTime.Now.Millisecond);
-        private MouseHookListener m_mouseListener;
+        private const int LEFT_DOWN = 0x0002;
+        private const int LEFT_UP = 0x0004;
+        private const int RIGHT_DOWN = 0x0008;
+        private const int RIGHT_UP = 0x0010;
+        private const int MIDDLE_DOWN = 0x0020;
+        private const int MIDDLE_UP = 0x0040;
+        private const int MOVE = 0x0001;
+        private const int ABSOLUTE = 0x8000;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+        private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
 
-        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
-        private const int MOUSEEVENTF_LEFTUP = 0x04;
-        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
-        private const int MOUSEEVENTF_RIGHTUP = 0x10;
+        [DllImport("user32.dll")]
+        private static extern bool SetCursorPos(int x, int y);
+
+        private readonly BindingList<string> files = new BindingList<string>();
+        private readonly System.Timers.Timer timer = new System.Timers.Timer();
+        private readonly Random random = new Random(DateTime.Now.Millisecond);
+        private MouseHookListener m_mouseListener;
+        private Settings settings = new Settings();
         private int iteration = 1;
         private int repeatCounter = 0;
 
-        public Form1()
+        public Form()
         {
             InitializeComponent();
+            this.Icon = new Icon("icon.ico");
             listBox1.Items.Clear();
             listBox1.DataSource = settings.Moves;
             listBox1.HorizontalScrollbar = true;
-            this.tabPage1.Text = "Bot";
+            this.tabPage1.Text = "Clicker";
             this.tabPage2.Text = "Ustawienia";
             this.tabPage3.Text = "Sekwencja";
             this.tabPage4.Text = "Profile";
-            this.Text = "BOT";
+            this.Text = "Clicker";
             btnRecord.Enabled = true;
             btnStopRecord.Enabled = false;
             btnStart.Enabled = false;
@@ -68,7 +79,7 @@ namespace Bot
             numOfRepeats.Value = 1000;
             btnEdit.Enabled = false;
 
-            string path = System.IO.Directory.GetCurrentDirectory();
+            string path = Directory.GetCurrentDirectory();
             DirectoryInfo di = new DirectoryInfo(path);
             foreach (var fi in di.GetFiles("*.json"))
             {
@@ -89,18 +100,38 @@ namespace Bot
             }
 
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.Items.Add(MouseButtons.Left);
-            comboBox1.Items.Add(MouseButtons.Right);
+            comboBox1.Items.Add(Buttons.Left);
+            comboBox1.Items.Add(Buttons.Right);
+            comboBox1.Items.Add(Buttons.Middle);
+            comboBox1.Items.Add(Buttons.LeftDown);
+            comboBox1.Items.Add(Buttons.LeftUp);
             comboBox1.SelectedIndex = 0;
         }
 
-        public void DoMouseClick(object sender, ElapsedEventArgs e)
+        public void DoAction(object sender, ElapsedEventArgs e)
         {
-            Cursor.Position = settings.Moves[iteration].Point;
-            if(settings.Moves[iteration].Button.Equals(MouseButtons.Left))
-                mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, (uint)Cursor.Position.X, (uint)Cursor.Position.Y, 0, 0);
-            if (settings.Moves[iteration].Button.Equals(MouseButtons.Right))
-                mouse_event(MOUSEEVENTF_RIGHTDOWN | MOUSEEVENTF_RIGHTUP, (uint)Cursor.Position.X, (uint)Cursor.Position.Y, 0, 0);
+            SetCursorPos(settings.Moves[iteration].Point.X, settings.Moves[iteration].Point.Y);
+
+            if(settings.Moves[iteration].Button.Equals(Buttons.Left))
+                mouse_event(LEFT_DOWN | LEFT_UP, 0, 0, 0, 0);
+            if (settings.Moves[iteration].Button.Equals(Buttons.Right))
+                mouse_event(RIGHT_DOWN | RIGHT_UP, 0, 0, 0, 0);
+            if (settings.Moves[iteration].Button.Equals(Buttons.Middle))
+                mouse_event(MIDDLE_DOWN | MIDDLE_UP, 0, 0, 0, 0);
+            if (settings.Moves[iteration].Button.Equals(Buttons.LeftDown))
+            {
+                mouse_event(LEFT_DOWN, 0, 0, 0, 0);
+                if (settings.Moves[iteration + 1].Button.Equals(Buttons.LeftUp))
+                {
+                    int absX = settings.Moves[iteration + 1].Point.X * 65535 / Screen.PrimaryScreen.Bounds.Width;
+                    int absY = settings.Moves[iteration + 1].Point.Y * 65535 / Screen.PrimaryScreen.Bounds.Height;
+                    Thread.Sleep(settings.Moves[iteration].Period);
+                    mouse_event(MOVE | ABSOLUTE, (uint)absX, (uint)absY, 0, 0);
+                    Thread.Sleep(settings.Moves[iteration].Period);
+                    mouse_event(LEFT_UP, 0, 0, 0, 0);
+                }
+                iteration++;
+            }                
             timer.Interval = settings.Moves[iteration].Period;
             iteration++;
             if (iteration == settings.Moves.Count-2)
@@ -108,7 +139,7 @@ namespace Bot
                 repeatCounter++;
                 if (cbRepeat.Checked == true && repeatCounter < numOfRepeats.Value)
                 {
-                    var time = x.Next((int)numPeriodA.Value, (int)numPeriodB.Value);
+                    var time = random.Next((int)numPeriodA.Value, (int)numPeriodB.Value);
                     timer.Interval = time;
                     iteration = 1;
                 }
@@ -122,9 +153,9 @@ namespace Bot
             }
         }
 
-        private void runTimer(int a)
+        private void RunTimer(int a)
         {
-            timer.Elapsed += new ElapsedEventHandler(DoMouseClick);
+            timer.Elapsed += new ElapsedEventHandler(DoAction);
             timer.Interval = a;
             timer.Enabled = true;
             timer.Start();
@@ -138,7 +169,7 @@ namespace Bot
             }
             else
             {
-                runTimer(2000);
+                RunTimer(2000);
                 btnRecord.Enabled = false;
                 btnStopRecord.Enabled = false;
                 btnStart.Enabled = false;
@@ -159,8 +190,9 @@ namespace Bot
         private void btnStop_Click(object sender, EventArgs e)
         {
             timer.Stop();
-            timer.Elapsed -= new ElapsedEventHandler(DoMouseClick);
+            timer.Elapsed -= new ElapsedEventHandler(DoAction);
             iteration = 1;
+            repeatCounter = 0;
             btnRecord.Enabled = false;
             btnStopRecord.Enabled = false;
             btnStart.Enabled = true;
@@ -260,6 +292,8 @@ namespace Bot
             tbName.Enabled = true;
             btnEdit.Enabled = false;
             numNewPeriod1.Value = 100;
+            iteration = 1;
+            repeatCounter = 0;
             if (cbRepeat.Checked == true)
             {
                 numPeriodA.Enabled = true;
@@ -276,8 +310,10 @@ namespace Bot
 
         public void Activation()
         {
-            m_mouseListener = new MouseHookListener(new GlobalHooker());
-            m_mouseListener.Enabled = true;
+            m_mouseListener = new MouseHookListener(new GlobalHooker())
+            {
+                Enabled = true
+            };
             m_mouseListener.MouseDownExt += MouseListener_MouseDownExt;
         }
 
@@ -289,8 +325,8 @@ namespace Bot
         private void MouseListener_MouseDownExt(object sender, MouseEventExtArgs e)
         {
             settings.Moves.Add(new ClickParameters {ID=settings.Moves.Count+1,
-                Point = new System.Drawing.Point(Cursor.Position.X, Cursor.Position.Y),
-                Period =(int)numPeriod1.Value, Button=e.Button});
+                Point = new Point(Cursor.Position.X, Cursor.Position.Y),
+                Period =(int)numPeriod1.Value, Button=(Buttons)e.Button});
         }
 
         private void cbCookies_CheckedChanged(object sender, EventArgs e)
@@ -388,7 +424,7 @@ namespace Bot
             }
 
             files.Clear();
-            string path = System.IO.Directory.GetCurrentDirectory();
+            string path = Directory.GetCurrentDirectory();
             DirectoryInfo di = new DirectoryInfo(path);
             foreach (var fi in di.GetFiles("*.json"))
             {
@@ -411,11 +447,11 @@ namespace Bot
         private void btnEdit_Click(object sender, EventArgs e)
         {
             settings.Moves[listBox1.SelectedIndex].Period = (int)numNewPeriod1.Value;
-            settings.Moves[listBox1.SelectedIndex].Button = comboBox1.SelectedIndex==0?MouseButtons.Left:MouseButtons.Right;
-            this.listBox1.SelectedIndexChanged -= new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            settings.Moves[listBox1.SelectedIndex].Button = (Buttons)comboBox1.SelectedItem;
+            this.listBox1.SelectedIndexChanged -= new EventHandler(this.listBox1_SelectedIndexChanged);
             listBox1.DataSource = null;
             listBox1.DataSource = settings.Moves;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.listBox1.SelectedIndexChanged += new EventHandler(this.listBox1_SelectedIndexChanged);
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -424,7 +460,7 @@ namespace Bot
             {
                 lblNr.Text = "Nr:" + (listBox1.SelectedIndex + 1);
                 numNewPeriod1.Value = settings.Moves[listBox1.SelectedIndex].Period;
-                comboBox1.SelectedIndex = settings.Moves[listBox1.SelectedIndex].Button == MouseButtons.Left ? 0 : 1;
+                comboBox1.SelectedItem = settings.Moves[listBox1.SelectedIndex].Button;
             }
             else
             {
@@ -437,18 +473,18 @@ namespace Bot
         private void btnDelete_Click(object sender, EventArgs e)
         {
             var str = listBox2.SelectedItem.ToString();
-            if (System.IO.File.Exists(str))
+            if (File.Exists(str))
             {
                 try
                 {
-                    System.IO.File.Delete(str);
+                    File.Delete(str);
                 }
-                catch (System.IO.IOException ex)
+                catch (IOException ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
                 files.Clear();
-                string path = System.IO.Directory.GetCurrentDirectory();
+                string path = Directory.GetCurrentDirectory();
                 DirectoryInfo di = new DirectoryInfo(path);
                 foreach (var fi in di.GetFiles("*.json"))
                 {

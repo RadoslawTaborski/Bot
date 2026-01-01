@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Bot
+namespace Clicker
 {
     static class Program
     {
@@ -13,7 +13,7 @@ namespace Bot
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new Form());
         }
     }
 }
