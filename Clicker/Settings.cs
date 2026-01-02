@@ -6,7 +6,7 @@ namespace Clicker
     [Serializable]
     public class Settings
     {
-        public BindingList<ClickParameters> Moves { get; set; } = new BindingList<ClickParameters>();
+        public BindingList<Parameters> Moves { get; set; } = new BindingList<Parameters>();
         public int Period1 { get; set; }
         public int PeriodA { get; set; }
         public int PeriodB { get; set; }
