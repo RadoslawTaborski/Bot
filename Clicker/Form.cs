@@ -4,10 +4,10 @@ using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Runtime.Serialization;
-using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 
@@ -15,32 +15,15 @@ namespace Clicker
 {
     public partial class Form : System.Windows.Forms.Form
     {
-        private const int LEFT_DOWN = 0x0002;
-        private const int LEFT_UP = 0x0004;
-        private const int RIGHT_DOWN = 0x0008;
-        private const int RIGHT_UP = 0x0010;
-        private const int MIDDLE_DOWN = 0x0020;
-        private const int MIDDLE_UP = 0x0040;
-        private const int MOVE = 0x0001;
-        private const int ABSOLUTE = 0x8000;
-        private const int KEYUP = 0x0002;
-        private const int VK_SHIFT = 0x10;
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-
-        [DllImport("user32.dll")]
-        private static extern bool SetCursorPos(int x, int y);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void keybd_event(uint bVk, uint bScan, uint dwFlags, uint dwExtraInfo);
-
-        [DllImport("user32.dll")]
-        static extern short VkKeyScan(char ch);
+        private readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        };
 
         private readonly BindingList<string> files = new BindingList<string>();
         private readonly System.Timers.Timer timer = new System.Timers.Timer();
         private readonly Random random = new Random(DateTime.Now.Millisecond);
+        private readonly ActionExecutor actionExecutor = new ActionExecutor();
         private MouseHookListener m_mouseListener;
         private Settings settings = new Settings();
         private int iteration = 1;
@@ -85,11 +68,11 @@ namespace Clicker
             numNewPeriod1.Maximum = 10000000;
             numNewPeriod1.Value = 100;
             numNewPeriod1.Increment = 1000;
-            numNewX.Minimum = 0;
-            numNewX.Maximum = Screen.PrimaryScreen.Bounds.Width;
+            numNewX.Minimum = -10000000;
+            numNewX.Maximum = 10000000;
             numNewX.Value = 0;
-            numNewY.Minimum = 0;
-            numNewY.Maximum = Screen.PrimaryScreen.Bounds.Height;
+            numNewY.Minimum = -10000000;
+            numNewY.Maximum = 10000000;
             numNewY.Value = 0;
             textNew.Text = "";
             textNew.Visible = false;
@@ -119,12 +102,15 @@ namespace Clicker
                 btnDelete.Enabled = false;
             }
 
+            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox2.Items.Add(MouseActions.Left);
+            comboBox2.Items.Add(MouseActions.Right);
+            comboBox2.Items.Add(MouseActions.Middle);
+            comboBox2.Items.Add(MouseActions.Left_Down);
+            comboBox2.Items.Add(MouseActions.Left_Up);
+            comboBox2.SelectedIndex = 0;
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.Items.Add(Actions.MouseLeft);
-            comboBox1.Items.Add(Actions.MouseRight);
-            comboBox1.Items.Add(Actions.MouseMiddle);
-            comboBox1.Items.Add(Actions.MouseLeftDown);
-            comboBox1.Items.Add(Actions.MouseLeftUp);
+            comboBox1.Items.Add(Actions.Mouse);
             comboBox1.Items.Add(Actions.Keyboard);
             comboBox1.SelectedIndex = 0;
         }
@@ -135,50 +121,10 @@ namespace Clicker
             {
                 label13.Text = $"Iteracja: {repeatCounter + 1} z {(cbRepeat.Checked ? numOfRepeats.Value : 1)}";
             }));
-            if (settings.Moves[iteration].Action.Equals(Actions.Keyboard))
-            {
-                foreach (char c in settings.Moves[iteration].Text)
-                {
-                    var vk = VkKeyScan(c);
-                    bool shift = (vk & 0x0100) != 0;
-
-                    if (shift)
-                        keybd_event(VK_SHIFT, 0, 0, 0);
-
-                    keybd_event((byte)(vk & 0xFF), 0, 0, 0);
-                    keybd_event((byte)(vk & 0xFF), 0, KEYUP, 0);
-
-                    if (shift)
-                        keybd_event(VK_SHIFT, 0, KEYUP, 0);
-                }
-            }
-            else
-            {
-                SetCursorPos(settings.Moves[iteration].Point.X, settings.Moves[iteration].Point.Y);
-
-                if (settings.Moves[iteration].Action.Equals(Actions.MouseLeft))
-                    mouse_event(LEFT_DOWN | LEFT_UP, 0, 0, 0, 0);
-                if (settings.Moves[iteration].Action.Equals(Actions.MouseRight))
-                    mouse_event(RIGHT_DOWN | RIGHT_UP, 0, 0, 0, 0);
-                if (settings.Moves[iteration].Action.Equals(Actions.MouseMiddle))
-                    mouse_event(MIDDLE_DOWN | MIDDLE_UP, 0, 0, 0, 0);
-                if (settings.Moves[iteration].Action.Equals(Actions.MouseLeftDown))
-                {
-                    mouse_event(LEFT_DOWN, 0, 0, 0, 0);
-                    if (settings.Moves[iteration + 1].Action.Equals(Actions.MouseLeftUp))
-                    {
-                        int absX = settings.Moves[iteration + 1].Point.X * 65535 / Screen.PrimaryScreen.Bounds.Width;
-                        int absY = settings.Moves[iteration + 1].Point.Y * 65535 / Screen.PrimaryScreen.Bounds.Height;
-                        Thread.Sleep(settings.Moves[iteration].Period);
-                        mouse_event(MOVE | ABSOLUTE, (uint)absX, (uint)absY, 0, 0);
-                        Thread.Sleep(settings.Moves[iteration].Period);
-                        mouse_event(LEFT_UP, 0, 0, 0, 0);
-                    }
-                    iteration++;
-                }
-            }
+            var numberOfActions = actionExecutor.Execute(settings.Moves[iteration], settings.Moves.Cast<Action>().ElementAtOrDefault(iteration + 1));
+            iteration += numberOfActions;
             timer.Interval = settings.Moves[iteration].Period;
-            iteration++;
+            
             if (iteration == settings.Moves.Count-2)
             {
                 repeatCounter++;
@@ -190,7 +136,7 @@ namespace Clicker
                 }
                 else
                 {
-                    Invoke(new Action(delegate () 
+                    Invoke(new System.Action(delegate () 
                     {
                         btnStop_Click(null, null);
                     }));
@@ -323,9 +269,11 @@ namespace Clicker
             numNewX.Value = 0;
             numNewY.Value = 0;
             textNew.Text = "";
+            comboBox2.SelectedIndex = 0;
             numNewX.Visible = true;
             numNewY.Visible = true;
             textNew.Visible = false;
+            comboBox2.Visible = true;
             btnEdit.Enabled = settings.Moves.Count != 0;
         }
 
@@ -345,6 +293,7 @@ namespace Clicker
             tbName.Enabled = true;
             btnEdit.Enabled = false;
             comboBox1.SelectedIndex = 0;
+            comboBox2.SelectedIndex = 0;
             numNewPeriod1.Value = 100;
             numNewX.Value = 0;
             numNewY.Value = 0;
@@ -353,6 +302,7 @@ namespace Clicker
             numNewX.Visible = true;
             numNewY.Visible = true;
             textNew.Visible = false;
+            comboBox2.Visible = true;
             iteration = 1;
             repeatCounter = 0;
             if (cbRepeat.Checked == true)
@@ -388,13 +338,15 @@ namespace Clicker
 
         private void MouseListener_MouseDownExt(object sender, MouseEventExtArgs e)
         {
-            settings.Moves.Add(new Parameters {Id=settings.Moves.Count+1,
+            settings.Moves.Add(new MouseAction {
+                Id=settings.Moves.Count+1,
                 Point = new Point(Cursor.Position.X, Cursor.Position.Y),
-                Period = (int)numPeriod1.Value, Action=e.Button == MouseButtons.Middle 
-                ? Actions.MouseMiddle 
+                Period = (int)numPeriod1.Value, 
+                Button=e.Button == MouseButtons.Middle 
+                ? MouseActions.Middle 
                 : e.Button == MouseButtons.Right 
-                    ? Actions.MouseRight 
-                    : Actions.MouseLeft});
+                    ? MouseActions.Right 
+                    : MouseActions.Left});
         }
 
         private void cbRepeat_CheckedChanged(object sender, EventArgs e)
@@ -419,11 +371,11 @@ namespace Clicker
         private void btnLoad_Click(object sender, EventArgs e)
         {
 
-            var str=listBox2.SelectedItem.ToString();
+            var str = listBox2.SelectedItem.ToString();
             try
             {
                 var json = File.ReadAllText(str);
-                settings = JsonConvert.DeserializeObject<Settings>(json);
+                settings = JsonConvert.DeserializeObject<Settings>(json, jsonSettings);
             }
             catch (SerializationException ex)
             {
@@ -476,6 +428,7 @@ namespace Clicker
                 numOfRepeats.Enabled = false;
             }
             comboBox1.SelectedIndex = 0;
+            comboBox2.SelectedIndex = 0;
             numNewPeriod1.Value = 100;
             numNewX.Value = 0;
             numNewY.Value = 0;
@@ -483,6 +436,7 @@ namespace Clicker
             numNewX.Visible = true;
             numNewY.Visible = true;
             textNew.Visible = false;
+            comboBox2.Visible = true;
             btnEdit.Enabled = settings.Moves.Count != 0;
         }
 
@@ -497,7 +451,7 @@ namespace Clicker
 
             try
             {
-                var json = JsonConvert.SerializeObject(settings, Formatting.Indented);
+                var json = JsonConvert.SerializeObject(settings, Formatting.Indented, jsonSettings);
                 File.WriteAllText(tbName.Text + ".json", json);
             }
             catch (SerializationException ex)
@@ -528,41 +482,82 @@ namespace Clicker
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            settings.Moves[listBox1.SelectedIndex].Period = (int)numNewPeriod1.Value;
-            settings.Moves[listBox1.SelectedIndex].Point = new Point((int)numNewX.Value, (int)numNewY.Value);
-            settings.Moves[listBox1.SelectedIndex].Text = textNew.Text;
-            settings.Moves[listBox1.SelectedIndex].Action = (Actions)comboBox1.SelectedItem;
+            if (settings.Moves[listBox1.SelectedIndex].Type != (Actions)comboBox1.SelectedItem)
+            {
+                settings.Moves[listBox1.SelectedIndex] = MigrateMove(settings.Moves[listBox1.SelectedIndex], (Actions)comboBox1.SelectedItem);
+            }
+            else
+            {
+                switch (settings.Moves[listBox1.SelectedIndex])
+                {
+                    case MouseAction mouse:
+                        mouse.Point = new Point((int)numNewX.Value, (int)numNewY.Value);
+                        mouse.Button = (MouseActions)comboBox2.SelectedItem;
+                        break;
+                    case KeyboardAction keyboard:
+                        keyboard.Text = textNew.Text;
+                        break;
+                }
+                settings.Moves[listBox1.SelectedIndex].Period = (int)numNewPeriod1.Value;
+            }
+
             this.listBox1.SelectedIndexChanged -= new EventHandler(this.listBox1_SelectedIndexChanged);
             listBox1.DataSource = null;
             listBox1.DataSource = settings.Moves;
             this.listBox1.SelectedIndexChanged += new EventHandler(this.listBox1_SelectedIndexChanged);
         }
 
+        private Action MigrateMove(Action action, Actions newType)
+        {
+            switch (newType)
+            {
+                case Actions.Mouse:
+                    return new MouseAction
+                    {
+                        Id = action.Id,
+                        Type = Actions.Mouse,
+                        Period = (int)numNewPeriod1.Value,
+                        Point = new Point((int)numNewX.Value, (int)numNewY.Value),
+                        Button = (MouseActions)comboBox2.SelectedItem
+                    };
+                case Actions.Keyboard:
+                    return new KeyboardAction
+                    {
+                        Id = action.Id,
+                        Type = Actions.Keyboard,
+                        Period = (int)numNewPeriod1.Value,
+                        Text = textNew.Text
+                    };
+            }
+            throw new NotImplementedException();
+        }
+
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {        
             if (listBox1 != null && listBox1.SelectedIndex > -1)
             {
-                numNewX.Value = settings.Moves[listBox1.SelectedIndex].Point.X;
-                numNewY.Value = settings.Moves[listBox1.SelectedIndex].Point.Y;
                 numNewPeriod1.Value = settings.Moves[listBox1.SelectedIndex].Period;
-                comboBox1.SelectedItem = settings.Moves[listBox1.SelectedIndex].Action;
-                if (settings.Moves[listBox1.SelectedIndex].Action.Equals(Actions.Keyboard))
+                comboBox1.SelectedItem = settings.Moves[listBox1.SelectedIndex].Type;
+                switch (settings.Moves[listBox1.SelectedIndex])
                 {
-                    textNew.Visible = true;
-                    numNewX.Visible = false;
-                    numNewY.Visible = false;
-                    textNew.Text = settings.Moves[listBox1.SelectedIndex].Text;
-                    numNewX.Value = 0;
-                    numNewY.Value = 0;
-                } 
-                else
-                {
-                    textNew.Visible = false;
-                    numNewX.Visible = true;
-                    numNewY.Visible = true;
-                    textNew.Text = "";
-                    numNewX.Value = settings.Moves[listBox1.SelectedIndex].Point.X;
-                    numNewY.Value = settings.Moves[listBox1.SelectedIndex].Point.Y;
+                    case MouseAction mouse:
+                        textNew.Visible = false;
+                        numNewX.Visible = true;
+                        numNewY.Visible = true;
+                        comboBox2.Visible = true;
+                        textNew.Text = "";
+                        numNewX.Value = mouse.Point.X;
+                        numNewY.Value = mouse.Point.Y;
+                        break;
+                    case KeyboardAction keyboard:
+                        textNew.Visible = true;
+                        numNewX.Visible = false;
+                        numNewY.Visible = false;
+                        comboBox2.Visible = false;
+                        textNew.Text = keyboard.Text;
+                        numNewX.Value = 0;
+                        numNewY.Value = 0;
+                        break;
                 }
             }
             else
@@ -571,9 +566,11 @@ namespace Clicker
                 numNewX.Value = 0;
                 numNewY.Value = 0;
                 textNew.Text = "";
+                comboBox2.SelectedIndex = 0;
                 numNewX.Visible = true;
                 numNewY.Visible = true;
                 textNew.Visible = false;
+                comboBox2.Visible = true;
             }
             btnEdit.Enabled = true;
         }
@@ -616,23 +613,45 @@ namespace Clicker
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             var move = listBox1.SelectedIndex > -1 && settings.Moves.Count > 0 ? settings.Moves[listBox1.SelectedIndex] : null;
-            if (comboBox1.SelectedItem.Equals(Actions.Keyboard))
+
+            switch ((Actions)comboBox1.SelectedItem)
             {
-                textNew.Visible = true;
-                numNewX.Visible = false;
-                numNewY.Visible = false;
-                textNew.Text = move?.Text ?? "";
-                numNewX.Value = 0;
-                numNewY.Value = 0;
-            }
-            else
-            {
-                textNew.Visible = false;
-                numNewX.Visible = true;
-                numNewY.Visible = true;
-                textNew.Text = "";
-                numNewX.Value = move?.Point.X ?? 0;
-                numNewY.Value = move?.Point.Y ?? 0;
+                case Actions.Mouse:
+                    if (move != null && move is MouseAction mouseMove)
+                    {
+                        numNewX.Value = mouseMove.Point.X;
+                        numNewY.Value = mouseMove.Point.Y;
+                        comboBox2.SelectedIndex = (int)mouseMove.Button;
+                    }
+                    else
+                    {
+                        numNewX.Value = 0;
+                        numNewY.Value = 0;
+                        comboBox2.SelectedIndex = 0;
+                    }
+                    textNew.Visible = false;
+                    numNewX.Visible = true;
+                    numNewY.Visible = true;
+                    comboBox2.Visible = true;
+                    textNew.Text = "";
+                    break;
+                case Actions.Keyboard:
+                    if (move != null && move is KeyboardAction keyboardMove)
+                    {
+                        textNew.Text = keyboardMove.Text;
+                    }
+                    else
+                    {
+                        textNew.Text = "";
+                    }
+                    textNew.Visible = true;
+                    numNewX.Visible = false;
+                    numNewY.Visible = false;
+                    comboBox2.Visible = false;
+                    numNewX.Value = 0;
+                    numNewY.Value = 0;
+                    comboBox2.SelectedIndex = 0;
+                    break;
             }
         }
 

@@ -68,6 +68,7 @@
             this.btnDelete = new System.Windows.Forms.Button();
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.btnLoad = new System.Windows.Forms.Button();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numPeriod1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numPeriodA)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numPeriodB)).BeginInit();
@@ -354,7 +355,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(12, 138);
+            this.btnSave.Location = new System.Drawing.Point(11, 138);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(100, 28);
@@ -378,6 +379,7 @@
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.textNew);
+            this.tabPage3.Controls.Add(this.comboBox2);
             this.tabPage3.Controls.Add(this.numNewY);
             this.tabPage3.Controls.Add(this.label12);
             this.tabPage3.Controls.Add(this.numNewX);
@@ -406,7 +408,7 @@
             // 
             // numNewY
             // 
-            this.numNewY.Location = new System.Drawing.Point(131, 151);
+            this.numNewY.Location = new System.Drawing.Point(268, 151);
             this.numNewY.Margin = new System.Windows.Forms.Padding(4);
             this.numNewY.Name = "numNewY";
             this.numNewY.Size = new System.Drawing.Size(84, 22);
@@ -415,7 +417,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(111, 154);
+            this.label12.Location = new System.Drawing.Point(248, 154);
             this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(19, 16);
@@ -424,7 +426,7 @@
             // 
             // numNewX
             // 
-            this.numNewX.Location = new System.Drawing.Point(21, 151);
+            this.numNewX.Location = new System.Drawing.Point(159, 151);
             this.numNewX.Margin = new System.Windows.Forms.Padding(4);
             this.numNewX.Name = "numNewX";
             this.numNewX.Size = new System.Drawing.Size(84, 22);
@@ -433,7 +435,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(3, 154);
+            this.label10.Location = new System.Drawing.Point(140, 154);
             this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 16);
@@ -446,13 +448,13 @@
             this.comboBox1.Location = new System.Drawing.Point(3, 123);
             this.comboBox1.Margin = new System.Windows.Forms.Padding(4);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(152, 24);
+            this.comboBox1.Size = new System.Drawing.Size(133, 24);
             this.comboBox1.TabIndex = 5;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // numNewPeriod1
             // 
-            this.numNewPeriod1.Location = new System.Drawing.Point(176, 124);
+            this.numNewPeriod1.Location = new System.Drawing.Point(159, 124);
             this.numNewPeriod1.Margin = new System.Windows.Forms.Padding(4);
             this.numNewPeriod1.Name = "numNewPeriod1";
             this.numNewPeriod1.Size = new System.Drawing.Size(84, 22);
@@ -461,7 +463,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(157, 127);
+            this.label8.Location = new System.Drawing.Point(140, 127);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(19, 16);
@@ -470,10 +472,10 @@
             // 
             // btnEdit
             // 
-            this.btnEdit.Location = new System.Drawing.Point(263, 121);
+            this.btnEdit.Location = new System.Drawing.Point(247, 121);
             this.btnEdit.Margin = new System.Windows.Forms.Padding(4);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(92, 28);
+            this.btnEdit.Size = new System.Drawing.Size(108, 28);
             this.btnEdit.TabIndex = 1;
             this.btnEdit.Text = "Edytuj";
             this.btnEdit.UseVisualStyleBackColor = true;
@@ -535,6 +537,15 @@
             this.btnLoad.Text = "Wczytaj";
             this.btnLoad.UseVisualStyleBackColor = true;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(3, 149);
+            this.comboBox2.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(133, 24);
+            this.comboBox2.TabIndex = 24;
             // 
             // Form
             // 
@@ -606,6 +617,7 @@
         private System.Windows.Forms.TextBox textNew;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.CheckBox cbRandomInterval;
+        private System.Windows.Forms.ComboBox comboBox2;
     }
 }
 
