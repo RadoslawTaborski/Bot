@@ -28,82 +28,82 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnStart = new System.Windows.Forms.Button();
-            this.btnStop = new System.Windows.Forms.Button();
+            this.startButton = new System.Windows.Forms.Button();
+            this.stopButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnRecord = new System.Windows.Forms.Button();
-            this.btnStopRecord = new System.Windows.Forms.Button();
-            this.btnClear = new System.Windows.Forms.Button();
+            this.recordButton = new System.Windows.Forms.Button();
+            this.stopRecordButton = new System.Windows.Forms.Button();
+            this.clearButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.numPeriod1 = new System.Windows.Forms.NumericUpDown();
-            this.numPeriodA = new System.Windows.Forms.NumericUpDown();
-            this.numPeriodB = new System.Windows.Forms.NumericUpDown();
+            this.afterActionPeriodNum = new System.Windows.Forms.NumericUpDown();
+            this.afterSequencePeriodStartNum = new System.Windows.Forms.NumericUpDown();
+            this.afterSequencePeriodStopNum = new System.Windows.Forms.NumericUpDown();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.label13 = new System.Windows.Forms.Label();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.cbRandomInterval = new System.Windows.Forms.CheckBox();
-            this.numOfRepeats = new System.Windows.Forms.NumericUpDown();
+            this.mainPage = new System.Windows.Forms.TabPage();
+            this.sequenceCounterLabel = new System.Windows.Forms.Label();
+            this.settingsPage = new System.Windows.Forms.TabPage();
+            this.randomIntervalCheckbox = new System.Windows.Forms.CheckBox();
+            this.numberOfRepeatNum = new System.Windows.Forms.NumericUpDown();
             this.label11 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.tbName = new System.Windows.Forms.TextBox();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.cbRepeat = new System.Windows.Forms.CheckBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.textNew = new System.Windows.Forms.TextBox();
-            this.numNewY = new System.Windows.Forms.NumericUpDown();
+            this.fileNameText = new System.Windows.Forms.TextBox();
+            this.saveButton = new System.Windows.Forms.Button();
+            this.repeatSequenceCheckbox = new System.Windows.Forms.CheckBox();
+            this.sequencePage = new System.Windows.Forms.TabPage();
+            this.newKeyboardText = new System.Windows.Forms.TextBox();
+            this.newPointYNum = new System.Windows.Forms.NumericUpDown();
             this.label12 = new System.Windows.Forms.Label();
-            this.numNewX = new System.Windows.Forms.NumericUpDown();
+            this.newPointXNum = new System.Windows.Forms.NumericUpDown();
             this.label10 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.numNewPeriod1 = new System.Windows.Forms.NumericUpDown();
+            this.newActionsComboBox = new System.Windows.Forms.ComboBox();
+            this.newAfterActionPeriodNum = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
-            this.btnEdit = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.listBox2 = new System.Windows.Forms.ListBox();
-            this.btnLoad = new System.Windows.Forms.Button();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.numPeriod1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numPeriodA)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numPeriodB)).BeginInit();
+            this.editButton = new System.Windows.Forms.Button();
+            this.sequenceListBox = new System.Windows.Forms.ListBox();
+            this.profilesPage = new System.Windows.Forms.TabPage();
+            this.deleteButton = new System.Windows.Forms.Button();
+            this.profilesListBox = new System.Windows.Forms.ListBox();
+            this.loadButton = new System.Windows.Forms.Button();
+            this.newMouseButtonsComboBox = new System.Windows.Forms.ComboBox();
+            ((System.ComponentModel.ISupportInitialize)(this.afterActionPeriodNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.afterSequencePeriodStartNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.afterSequencePeriodStopNum)).BeginInit();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numOfRepeats)).BeginInit();
-            this.tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numNewY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numNewX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numNewPeriod1)).BeginInit();
-            this.tabPage4.SuspendLayout();
+            this.mainPage.SuspendLayout();
+            this.settingsPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numberOfRepeatNum)).BeginInit();
+            this.sequencePage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.newPointYNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.newPointXNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.newAfterActionPeriodNum)).BeginInit();
+            this.profilesPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(8, 63);
-            this.btnStart.Margin = new System.Windows.Forms.Padding(4);
-            this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(172, 79);
-            this.btnStart.TabIndex = 0;
-            this.btnStart.Text = "Start";
-            this.btnStart.UseVisualStyleBackColor = true;
-            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
+            this.startButton.Location = new System.Drawing.Point(8, 63);
+            this.startButton.Margin = new System.Windows.Forms.Padding(4);
+            this.startButton.Name = "btnStart";
+            this.startButton.Size = new System.Drawing.Size(172, 79);
+            this.startButton.TabIndex = 0;
+            this.startButton.Text = "Start";
+            this.startButton.UseVisualStyleBackColor = true;
+            this.startButton.Click += new System.EventHandler(this.StartButton_Click);
             // 
             // btnStop
             // 
-            this.btnStop.Location = new System.Drawing.Point(188, 63);
-            this.btnStop.Margin = new System.Windows.Forms.Padding(4);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(172, 79);
-            this.btnStop.TabIndex = 1;
-            this.btnStop.Text = "Stop";
-            this.btnStop.UseVisualStyleBackColor = true;
-            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            this.stopButton.Location = new System.Drawing.Point(188, 63);
+            this.stopButton.Margin = new System.Windows.Forms.Padding(4);
+            this.stopButton.Name = "btnStop";
+            this.stopButton.Size = new System.Drawing.Size(172, 79);
+            this.stopButton.TabIndex = 1;
+            this.stopButton.Text = "Stop";
+            this.stopButton.UseVisualStyleBackColor = true;
+            this.stopButton.Click += new System.EventHandler(this.StopButton_Click);
             // 
             // label1
             // 
@@ -116,36 +116,36 @@
             // 
             // btnRecord
             // 
-            this.btnRecord.Location = new System.Drawing.Point(8, 24);
-            this.btnRecord.Margin = new System.Windows.Forms.Padding(4);
-            this.btnRecord.Name = "btnRecord";
-            this.btnRecord.Size = new System.Drawing.Size(172, 36);
-            this.btnRecord.TabIndex = 3;
-            this.btnRecord.Text = "Nagraj";
-            this.btnRecord.UseVisualStyleBackColor = true;
-            this.btnRecord.Click += new System.EventHandler(this.btnRecord_Click);
+            this.recordButton.Location = new System.Drawing.Point(8, 24);
+            this.recordButton.Margin = new System.Windows.Forms.Padding(4);
+            this.recordButton.Name = "btnRecord";
+            this.recordButton.Size = new System.Drawing.Size(172, 36);
+            this.recordButton.TabIndex = 3;
+            this.recordButton.Text = "Nagraj";
+            this.recordButton.UseVisualStyleBackColor = true;
+            this.recordButton.Click += new System.EventHandler(this.RecordButton_Click);
             // 
             // btnStopRecord
             // 
-            this.btnStopRecord.Location = new System.Drawing.Point(187, 24);
-            this.btnStopRecord.Margin = new System.Windows.Forms.Padding(4);
-            this.btnStopRecord.Name = "btnStopRecord";
-            this.btnStopRecord.Size = new System.Drawing.Size(172, 36);
-            this.btnStopRecord.TabIndex = 5;
-            this.btnStopRecord.Text = "Zatrzymaj nagrywanie";
-            this.btnStopRecord.UseVisualStyleBackColor = true;
-            this.btnStopRecord.Click += new System.EventHandler(this.btnStopRecord_Click);
+            this.stopRecordButton.Location = new System.Drawing.Point(187, 24);
+            this.stopRecordButton.Margin = new System.Windows.Forms.Padding(4);
+            this.stopRecordButton.Name = "btnStopRecord";
+            this.stopRecordButton.Size = new System.Drawing.Size(172, 36);
+            this.stopRecordButton.TabIndex = 5;
+            this.stopRecordButton.Text = "Zatrzymaj nagrywanie";
+            this.stopRecordButton.UseVisualStyleBackColor = true;
+            this.stopRecordButton.Click += new System.EventHandler(this.StopRecordButton_Click);
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(9, 147);
-            this.btnClear.Margin = new System.Windows.Forms.Padding(4);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(351, 30);
-            this.btnClear.TabIndex = 6;
-            this.btnClear.Text = "Wyczyść pamięć";
-            this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            this.clearButton.Location = new System.Drawing.Point(9, 147);
+            this.clearButton.Margin = new System.Windows.Forms.Padding(4);
+            this.clearButton.Name = "btnClear";
+            this.clearButton.Size = new System.Drawing.Size(351, 30);
+            this.clearButton.TabIndex = 6;
+            this.clearButton.Text = "Wyczyść pamięć";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // label2
             // 
@@ -199,50 +199,50 @@
             // 
             // numPeriod1
             // 
-            this.numPeriod1.Increment = new decimal(new int[] {
+            this.afterActionPeriodNum.Increment = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.numPeriod1.Location = new System.Drawing.Point(237, 6);
-            this.numPeriod1.Margin = new System.Windows.Forms.Padding(4);
-            this.numPeriod1.Name = "numPeriod1";
-            this.numPeriod1.Size = new System.Drawing.Size(92, 22);
-            this.numPeriod1.TabIndex = 16;
+            this.afterActionPeriodNum.Location = new System.Drawing.Point(237, 6);
+            this.afterActionPeriodNum.Margin = new System.Windows.Forms.Padding(4);
+            this.afterActionPeriodNum.Name = "numPeriod1";
+            this.afterActionPeriodNum.Size = new System.Drawing.Size(92, 22);
+            this.afterActionPeriodNum.TabIndex = 16;
             // 
             // numPeriodA
             // 
-            this.numPeriodA.Increment = new decimal(new int[] {
+            this.afterSequencePeriodStartNum.Increment = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.numPeriodA.Location = new System.Drawing.Point(101, 102);
-            this.numPeriodA.Margin = new System.Windows.Forms.Padding(4);
-            this.numPeriodA.Name = "numPeriodA";
-            this.numPeriodA.Size = new System.Drawing.Size(92, 22);
-            this.numPeriodA.TabIndex = 17;
-            this.numPeriodA.ValueChanged += new System.EventHandler(this.numPeriodA_ValueChanged);
+            this.afterSequencePeriodStartNum.Location = new System.Drawing.Point(101, 102);
+            this.afterSequencePeriodStartNum.Margin = new System.Windows.Forms.Padding(4);
+            this.afterSequencePeriodStartNum.Name = "numPeriodA";
+            this.afterSequencePeriodStartNum.Size = new System.Drawing.Size(92, 22);
+            this.afterSequencePeriodStartNum.TabIndex = 17;
+            this.afterSequencePeriodStartNum.ValueChanged += new System.EventHandler(this.AfterSequencePeriodStartNum_ValueChanged);
             // 
             // numPeriodB
             // 
-            this.numPeriodB.Increment = new decimal(new int[] {
+            this.afterSequencePeriodStopNum.Increment = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.numPeriodB.Location = new System.Drawing.Point(237, 102);
-            this.numPeriodB.Margin = new System.Windows.Forms.Padding(4);
-            this.numPeriodB.Name = "numPeriodB";
-            this.numPeriodB.Size = new System.Drawing.Size(92, 22);
-            this.numPeriodB.TabIndex = 18;
+            this.afterSequencePeriodStopNum.Location = new System.Drawing.Point(237, 102);
+            this.afterSequencePeriodStopNum.Margin = new System.Windows.Forms.Padding(4);
+            this.afterSequencePeriodStopNum.Name = "numPeriodB";
+            this.afterSequencePeriodStopNum.Size = new System.Drawing.Size(92, 22);
+            this.afterSequencePeriodStopNum.TabIndex = 18;
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.mainPage);
+            this.tabControl1.Controls.Add(this.settingsPage);
+            this.tabControl1.Controls.Add(this.sequencePage);
+            this.tabControl1.Controls.Add(this.profilesPage);
             this.tabControl1.Location = new System.Drawing.Point(11, 9);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
@@ -252,77 +252,77 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.label13);
-            this.tabPage1.Controls.Add(this.btnStop);
-            this.tabPage1.Controls.Add(this.btnStart);
-            this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Controls.Add(this.btnRecord);
-            this.tabPage1.Controls.Add(this.btnStopRecord);
-            this.tabPage1.Controls.Add(this.btnClear);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(363, 180);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.mainPage.Controls.Add(this.sequenceCounterLabel);
+            this.mainPage.Controls.Add(this.stopButton);
+            this.mainPage.Controls.Add(this.startButton);
+            this.mainPage.Controls.Add(this.label1);
+            this.mainPage.Controls.Add(this.recordButton);
+            this.mainPage.Controls.Add(this.stopRecordButton);
+            this.mainPage.Controls.Add(this.clearButton);
+            this.mainPage.Location = new System.Drawing.Point(4, 25);
+            this.mainPage.Margin = new System.Windows.Forms.Padding(4);
+            this.mainPage.Name = "tabPage1";
+            this.mainPage.Padding = new System.Windows.Forms.Padding(4);
+            this.mainPage.Size = new System.Drawing.Size(363, 180);
+            this.mainPage.TabIndex = 0;
+            this.mainPage.Text = "tabPage1";
+            this.mainPage.UseVisualStyleBackColor = true;
             // 
             // label13
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(10, 4);
-            this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(85, 16);
-            this.label13.TabIndex = 10;
-            this.label13.Text = "Iteracja: a z b";
+            this.sequenceCounterLabel.AutoSize = true;
+            this.sequenceCounterLabel.Location = new System.Drawing.Point(10, 4);
+            this.sequenceCounterLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.sequenceCounterLabel.Name = "label13";
+            this.sequenceCounterLabel.Size = new System.Drawing.Size(85, 16);
+            this.sequenceCounterLabel.TabIndex = 10;
+            this.sequenceCounterLabel.Text = "Iteracja: a z b";
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.cbRandomInterval);
-            this.tabPage2.Controls.Add(this.numOfRepeats);
-            this.tabPage2.Controls.Add(this.label11);
-            this.tabPage2.Controls.Add(this.label9);
-            this.tabPage2.Controls.Add(this.tbName);
-            this.tabPage2.Controls.Add(this.btnSave);
-            this.tabPage2.Controls.Add(this.cbRepeat);
-            this.tabPage2.Controls.Add(this.numPeriodB);
-            this.tabPage2.Controls.Add(this.label2);
-            this.tabPage2.Controls.Add(this.numPeriodA);
-            this.tabPage2.Controls.Add(this.numPeriod1);
-            this.tabPage2.Controls.Add(this.label4);
-            this.tabPage2.Controls.Add(this.label7);
-            this.tabPage2.Controls.Add(this.label5);
-            this.tabPage2.Controls.Add(this.label6);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(363, 180);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.settingsPage.Controls.Add(this.randomIntervalCheckbox);
+            this.settingsPage.Controls.Add(this.numberOfRepeatNum);
+            this.settingsPage.Controls.Add(this.label11);
+            this.settingsPage.Controls.Add(this.label9);
+            this.settingsPage.Controls.Add(this.fileNameText);
+            this.settingsPage.Controls.Add(this.saveButton);
+            this.settingsPage.Controls.Add(this.repeatSequenceCheckbox);
+            this.settingsPage.Controls.Add(this.afterSequencePeriodStopNum);
+            this.settingsPage.Controls.Add(this.label2);
+            this.settingsPage.Controls.Add(this.afterSequencePeriodStartNum);
+            this.settingsPage.Controls.Add(this.afterActionPeriodNum);
+            this.settingsPage.Controls.Add(this.label4);
+            this.settingsPage.Controls.Add(this.label7);
+            this.settingsPage.Controls.Add(this.label5);
+            this.settingsPage.Controls.Add(this.label6);
+            this.settingsPage.Location = new System.Drawing.Point(4, 25);
+            this.settingsPage.Margin = new System.Windows.Forms.Padding(4);
+            this.settingsPage.Name = "tabPage2";
+            this.settingsPage.Padding = new System.Windows.Forms.Padding(4);
+            this.settingsPage.Size = new System.Drawing.Size(363, 180);
+            this.settingsPage.TabIndex = 1;
+            this.settingsPage.Text = "tabPage2";
+            this.settingsPage.UseVisualStyleBackColor = true;
             // 
             // cbRandomInterval
             // 
-            this.cbRandomInterval.AutoSize = true;
-            this.cbRandomInterval.Location = new System.Drawing.Point(12, 65);
-            this.cbRandomInterval.Margin = new System.Windows.Forms.Padding(4);
-            this.cbRandomInterval.Name = "cbRandomInterval";
-            this.cbRandomInterval.Size = new System.Drawing.Size(296, 20);
-            this.cbRandomInterval.TabIndex = 26;
-            this.cbRandomInterval.Text = "Ruchomy odstęp czasu między sekwencjami";
-            this.cbRandomInterval.UseVisualStyleBackColor = true;
-            this.cbRandomInterval.CheckedChanged += new System.EventHandler(this.cbRandomInterval_CheckedChanged);
+            this.randomIntervalCheckbox.AutoSize = true;
+            this.randomIntervalCheckbox.Location = new System.Drawing.Point(12, 65);
+            this.randomIntervalCheckbox.Margin = new System.Windows.Forms.Padding(4);
+            this.randomIntervalCheckbox.Name = "cbRandomInterval";
+            this.randomIntervalCheckbox.Size = new System.Drawing.Size(296, 20);
+            this.randomIntervalCheckbox.TabIndex = 26;
+            this.randomIntervalCheckbox.Text = "Ruchomy odstęp czasu między sekwencjami";
+            this.randomIntervalCheckbox.UseVisualStyleBackColor = true;
+            this.randomIntervalCheckbox.CheckedChanged += new System.EventHandler(this.RandomIntervalCheckbox_CheckedChanged);
             // 
             // numOfRepeats
             // 
-            this.numOfRepeats.Location = new System.Drawing.Point(13, 102);
-            this.numOfRepeats.Margin = new System.Windows.Forms.Padding(4);
-            this.numOfRepeats.Name = "numOfRepeats";
-            this.numOfRepeats.Size = new System.Drawing.Size(67, 22);
-            this.numOfRepeats.TabIndex = 25;
+            this.numberOfRepeatNum.Location = new System.Drawing.Point(13, 102);
+            this.numberOfRepeatNum.Margin = new System.Windows.Forms.Padding(4);
+            this.numberOfRepeatNum.Name = "numOfRepeats";
+            this.numberOfRepeatNum.Size = new System.Drawing.Size(67, 22);
+            this.numberOfRepeatNum.TabIndex = 25;
             // 
             // label11
             // 
@@ -346,73 +346,73 @@
             // 
             // tbName
             // 
-            this.tbName.Location = new System.Drawing.Point(120, 139);
-            this.tbName.Margin = new System.Windows.Forms.Padding(4);
-            this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(199, 22);
-            this.tbName.TabIndex = 22;
-            this.tbName.Text = "nazwa pliku";
+            this.fileNameText.Location = new System.Drawing.Point(120, 139);
+            this.fileNameText.Margin = new System.Windows.Forms.Padding(4);
+            this.fileNameText.Name = "tbName";
+            this.fileNameText.Size = new System.Drawing.Size(199, 22);
+            this.fileNameText.TabIndex = 22;
+            this.fileNameText.Text = "nazwa pliku";
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(11, 138);
-            this.btnSave.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(100, 28);
-            this.btnSave.TabIndex = 20;
-            this.btnSave.Text = "Zapisz";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.saveButton.Location = new System.Drawing.Point(11, 138);
+            this.saveButton.Margin = new System.Windows.Forms.Padding(4);
+            this.saveButton.Name = "btnSave";
+            this.saveButton.Size = new System.Drawing.Size(100, 28);
+            this.saveButton.TabIndex = 20;
+            this.saveButton.Text = "Zapisz";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
             // cbRepeat
             // 
-            this.cbRepeat.AutoSize = true;
-            this.cbRepeat.Location = new System.Drawing.Point(12, 37);
-            this.cbRepeat.Margin = new System.Windows.Forms.Padding(4);
-            this.cbRepeat.Name = "cbRepeat";
-            this.cbRepeat.Size = new System.Drawing.Size(154, 20);
-            this.cbRepeat.TabIndex = 19;
-            this.cbRepeat.Text = "Powtarzaj sekwencję";
-            this.cbRepeat.UseVisualStyleBackColor = true;
-            this.cbRepeat.CheckedChanged += new System.EventHandler(this.cbRepeat_CheckedChanged);
+            this.repeatSequenceCheckbox.AutoSize = true;
+            this.repeatSequenceCheckbox.Location = new System.Drawing.Point(12, 37);
+            this.repeatSequenceCheckbox.Margin = new System.Windows.Forms.Padding(4);
+            this.repeatSequenceCheckbox.Name = "cbRepeat";
+            this.repeatSequenceCheckbox.Size = new System.Drawing.Size(154, 20);
+            this.repeatSequenceCheckbox.TabIndex = 19;
+            this.repeatSequenceCheckbox.Text = "Powtarzaj sekwencję";
+            this.repeatSequenceCheckbox.UseVisualStyleBackColor = true;
+            this.repeatSequenceCheckbox.CheckedChanged += new System.EventHandler(this.RepeatSequenceCheckbox_CheckedChanged);
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.textNew);
-            this.tabPage3.Controls.Add(this.comboBox2);
-            this.tabPage3.Controls.Add(this.numNewY);
-            this.tabPage3.Controls.Add(this.label12);
-            this.tabPage3.Controls.Add(this.numNewX);
-            this.tabPage3.Controls.Add(this.label10);
-            this.tabPage3.Controls.Add(this.comboBox1);
-            this.tabPage3.Controls.Add(this.numNewPeriod1);
-            this.tabPage3.Controls.Add(this.label8);
-            this.tabPage3.Controls.Add(this.btnEdit);
-            this.tabPage3.Controls.Add(this.listBox1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage3.Size = new System.Drawing.Size(363, 180);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "tabPage3";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.sequencePage.Controls.Add(this.newKeyboardText);
+            this.sequencePage.Controls.Add(this.newMouseButtonsComboBox);
+            this.sequencePage.Controls.Add(this.newPointYNum);
+            this.sequencePage.Controls.Add(this.label12);
+            this.sequencePage.Controls.Add(this.newPointXNum);
+            this.sequencePage.Controls.Add(this.label10);
+            this.sequencePage.Controls.Add(this.newActionsComboBox);
+            this.sequencePage.Controls.Add(this.newAfterActionPeriodNum);
+            this.sequencePage.Controls.Add(this.label8);
+            this.sequencePage.Controls.Add(this.editButton);
+            this.sequencePage.Controls.Add(this.sequenceListBox);
+            this.sequencePage.Location = new System.Drawing.Point(4, 25);
+            this.sequencePage.Margin = new System.Windows.Forms.Padding(4);
+            this.sequencePage.Name = "tabPage3";
+            this.sequencePage.Padding = new System.Windows.Forms.Padding(4);
+            this.sequencePage.Size = new System.Drawing.Size(363, 180);
+            this.sequencePage.TabIndex = 2;
+            this.sequencePage.Text = "tabPage3";
+            this.sequencePage.UseVisualStyleBackColor = true;
             // 
             // textNew
             // 
-            this.textNew.Location = new System.Drawing.Point(3, 151);
-            this.textNew.Margin = new System.Windows.Forms.Padding(4);
-            this.textNew.Name = "textNew";
-            this.textNew.Size = new System.Drawing.Size(351, 22);
-            this.textNew.TabIndex = 23;
+            this.newKeyboardText.Location = new System.Drawing.Point(3, 151);
+            this.newKeyboardText.Margin = new System.Windows.Forms.Padding(4);
+            this.newKeyboardText.Name = "textNew";
+            this.newKeyboardText.Size = new System.Drawing.Size(351, 22);
+            this.newKeyboardText.TabIndex = 23;
             // 
             // numNewY
             // 
-            this.numNewY.Location = new System.Drawing.Point(268, 151);
-            this.numNewY.Margin = new System.Windows.Forms.Padding(4);
-            this.numNewY.Name = "numNewY";
-            this.numNewY.Size = new System.Drawing.Size(84, 22);
-            this.numNewY.TabIndex = 9;
+            this.newPointYNum.Location = new System.Drawing.Point(268, 151);
+            this.newPointYNum.Margin = new System.Windows.Forms.Padding(4);
+            this.newPointYNum.Name = "numNewY";
+            this.newPointYNum.Size = new System.Drawing.Size(84, 22);
+            this.newPointYNum.TabIndex = 9;
             // 
             // label12
             // 
@@ -426,11 +426,11 @@
             // 
             // numNewX
             // 
-            this.numNewX.Location = new System.Drawing.Point(159, 151);
-            this.numNewX.Margin = new System.Windows.Forms.Padding(4);
-            this.numNewX.Name = "numNewX";
-            this.numNewX.Size = new System.Drawing.Size(84, 22);
-            this.numNewX.TabIndex = 7;
+            this.newPointXNum.Location = new System.Drawing.Point(159, 151);
+            this.newPointXNum.Margin = new System.Windows.Forms.Padding(4);
+            this.newPointXNum.Name = "numNewX";
+            this.newPointXNum.Size = new System.Drawing.Size(84, 22);
+            this.newPointXNum.TabIndex = 7;
             // 
             // label10
             // 
@@ -444,21 +444,21 @@
             // 
             // comboBox1
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(3, 123);
-            this.comboBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(133, 24);
-            this.comboBox1.TabIndex = 5;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.newActionsComboBox.FormattingEnabled = true;
+            this.newActionsComboBox.Location = new System.Drawing.Point(3, 123);
+            this.newActionsComboBox.Margin = new System.Windows.Forms.Padding(4);
+            this.newActionsComboBox.Name = "comboBox1";
+            this.newActionsComboBox.Size = new System.Drawing.Size(133, 24);
+            this.newActionsComboBox.TabIndex = 5;
+            this.newActionsComboBox.SelectedIndexChanged += new System.EventHandler(this.ActionsComboBox_SelectedIndexChanged);
             // 
             // numNewPeriod1
             // 
-            this.numNewPeriod1.Location = new System.Drawing.Point(159, 124);
-            this.numNewPeriod1.Margin = new System.Windows.Forms.Padding(4);
-            this.numNewPeriod1.Name = "numNewPeriod1";
-            this.numNewPeriod1.Size = new System.Drawing.Size(84, 22);
-            this.numNewPeriod1.TabIndex = 3;
+            this.newAfterActionPeriodNum.Location = new System.Drawing.Point(159, 124);
+            this.newAfterActionPeriodNum.Margin = new System.Windows.Forms.Padding(4);
+            this.newAfterActionPeriodNum.Name = "numNewPeriod1";
+            this.newAfterActionPeriodNum.Size = new System.Drawing.Size(84, 22);
+            this.newAfterActionPeriodNum.TabIndex = 3;
             // 
             // label8
             // 
@@ -472,80 +472,80 @@
             // 
             // btnEdit
             // 
-            this.btnEdit.Location = new System.Drawing.Point(247, 121);
-            this.btnEdit.Margin = new System.Windows.Forms.Padding(4);
-            this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(108, 28);
-            this.btnEdit.TabIndex = 1;
-            this.btnEdit.Text = "Edytuj";
-            this.btnEdit.UseVisualStyleBackColor = true;
-            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            this.editButton.Location = new System.Drawing.Point(247, 121);
+            this.editButton.Margin = new System.Windows.Forms.Padding(4);
+            this.editButton.Name = "btnEdit";
+            this.editButton.Size = new System.Drawing.Size(108, 28);
+            this.editButton.TabIndex = 1;
+            this.editButton.Text = "Edytuj";
+            this.editButton.UseVisualStyleBackColor = true;
+            this.editButton.Click += new System.EventHandler(this.EditButton_Click);
             // 
             // listBox1
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 16;
-            this.listBox1.Location = new System.Drawing.Point(3, 4);
-            this.listBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(351, 116);
-            this.listBox1.TabIndex = 0;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.sequenceListBox.FormattingEnabled = true;
+            this.sequenceListBox.ItemHeight = 16;
+            this.sequenceListBox.Location = new System.Drawing.Point(3, 4);
+            this.sequenceListBox.Margin = new System.Windows.Forms.Padding(4);
+            this.sequenceListBox.Name = "listBox1";
+            this.sequenceListBox.Size = new System.Drawing.Size(351, 116);
+            this.sequenceListBox.TabIndex = 0;
+            this.sequenceListBox.SelectedIndexChanged += new System.EventHandler(this.SequenceListBox_SelectedIndexChanged);
             // 
             // tabPage4
             // 
-            this.tabPage4.Controls.Add(this.btnDelete);
-            this.tabPage4.Controls.Add(this.listBox2);
-            this.tabPage4.Controls.Add(this.btnLoad);
-            this.tabPage4.Location = new System.Drawing.Point(4, 25);
-            this.tabPage4.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage4.Size = new System.Drawing.Size(363, 180);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "tabPage4";
-            this.tabPage4.UseVisualStyleBackColor = true;
+            this.profilesPage.Controls.Add(this.deleteButton);
+            this.profilesPage.Controls.Add(this.profilesListBox);
+            this.profilesPage.Controls.Add(this.loadButton);
+            this.profilesPage.Location = new System.Drawing.Point(4, 25);
+            this.profilesPage.Margin = new System.Windows.Forms.Padding(4);
+            this.profilesPage.Name = "tabPage4";
+            this.profilesPage.Padding = new System.Windows.Forms.Padding(4);
+            this.profilesPage.Size = new System.Drawing.Size(363, 180);
+            this.profilesPage.TabIndex = 3;
+            this.profilesPage.Text = "tabPage4";
+            this.profilesPage.UseVisualStyleBackColor = true;
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(255, 140);
-            this.btnDelete.Margin = new System.Windows.Forms.Padding(4);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(100, 28);
-            this.btnDelete.TabIndex = 22;
-            this.btnDelete.Text = "Usuń";
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.deleteButton.Location = new System.Drawing.Point(255, 140);
+            this.deleteButton.Margin = new System.Windows.Forms.Padding(4);
+            this.deleteButton.Name = "btnDelete";
+            this.deleteButton.Size = new System.Drawing.Size(100, 28);
+            this.deleteButton.TabIndex = 22;
+            this.deleteButton.Text = "Usuń";
+            this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
             // 
             // listBox2
             // 
-            this.listBox2.FormattingEnabled = true;
-            this.listBox2.ItemHeight = 16;
-            this.listBox2.Location = new System.Drawing.Point(3, 2);
-            this.listBox2.Margin = new System.Windows.Forms.Padding(4);
-            this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(353, 132);
-            this.listBox2.TabIndex = 0;
+            this.profilesListBox.FormattingEnabled = true;
+            this.profilesListBox.ItemHeight = 16;
+            this.profilesListBox.Location = new System.Drawing.Point(3, 2);
+            this.profilesListBox.Margin = new System.Windows.Forms.Padding(4);
+            this.profilesListBox.Name = "listBox2";
+            this.profilesListBox.Size = new System.Drawing.Size(353, 132);
+            this.profilesListBox.TabIndex = 0;
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(3, 140);
-            this.btnLoad.Margin = new System.Windows.Forms.Padding(4);
-            this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(100, 28);
-            this.btnLoad.TabIndex = 21;
-            this.btnLoad.Text = "Wczytaj";
-            this.btnLoad.UseVisualStyleBackColor = true;
-            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            this.loadButton.Location = new System.Drawing.Point(3, 140);
+            this.loadButton.Margin = new System.Windows.Forms.Padding(4);
+            this.loadButton.Name = "btnLoad";
+            this.loadButton.Size = new System.Drawing.Size(100, 28);
+            this.loadButton.TabIndex = 21;
+            this.loadButton.Text = "Wczytaj";
+            this.loadButton.UseVisualStyleBackColor = true;
+            this.loadButton.Click += new System.EventHandler(this.LoadButton_Click);
             // 
             // comboBox2
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(3, 149);
-            this.comboBox2.Margin = new System.Windows.Forms.Padding(4);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(133, 24);
-            this.comboBox2.TabIndex = 24;
+            this.newMouseButtonsComboBox.FormattingEnabled = true;
+            this.newMouseButtonsComboBox.Location = new System.Drawing.Point(3, 149);
+            this.newMouseButtonsComboBox.Margin = new System.Windows.Forms.Padding(4);
+            this.newMouseButtonsComboBox.Name = "comboBox2";
+            this.newMouseButtonsComboBox.Size = new System.Drawing.Size(133, 24);
+            this.newMouseButtonsComboBox.TabIndex = 24;
             // 
             // Form
             // 
@@ -556,68 +556,68 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form";
             this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this.numPeriod1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numPeriodA)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numPeriodB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.afterActionPeriodNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.afterSequencePeriodStartNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.afterSequencePeriodStopNum)).EndInit();
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numOfRepeats)).EndInit();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numNewY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numNewX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numNewPeriod1)).EndInit();
-            this.tabPage4.ResumeLayout(false);
+            this.mainPage.ResumeLayout(false);
+            this.mainPage.PerformLayout();
+            this.settingsPage.ResumeLayout(false);
+            this.settingsPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numberOfRepeatNum)).EndInit();
+            this.sequencePage.ResumeLayout(false);
+            this.sequencePage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.newPointYNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.newPointXNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.newAfterActionPeriodNum)).EndInit();
+            this.profilesPage.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.Button btnStop;
+        private System.Windows.Forms.Button startButton;
+        private System.Windows.Forms.Button stopButton;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnRecord;
-        private System.Windows.Forms.Button btnStopRecord;
-        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button recordButton;
+        private System.Windows.Forms.Button stopRecordButton;
+        private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.NumericUpDown numPeriod1;
-        private System.Windows.Forms.NumericUpDown numPeriodA;
-        private System.Windows.Forms.NumericUpDown numPeriodB;
+        private System.Windows.Forms.NumericUpDown afterActionPeriodNum;
+        private System.Windows.Forms.NumericUpDown afterSequencePeriodStartNum;
+        private System.Windows.Forms.NumericUpDown afterSequencePeriodStopNum;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.CheckBox cbRepeat;
-        private System.Windows.Forms.Button btnLoad;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.NumericUpDown numNewPeriod1;
+        private System.Windows.Forms.TabPage mainPage;
+        private System.Windows.Forms.TabPage settingsPage;
+        private System.Windows.Forms.CheckBox repeatSequenceCheckbox;
+        private System.Windows.Forms.Button loadButton;
+        private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.TabPage sequencePage;
+        private System.Windows.Forms.ListBox sequenceListBox;
+        private System.Windows.Forms.NumericUpDown newAfterActionPeriodNum;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Button btnEdit;
-        private System.Windows.Forms.TextBox tbName;
-        private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.ListBox listBox2;
+        private System.Windows.Forms.Button editButton;
+        private System.Windows.Forms.TextBox fileNameText;
+        private System.Windows.Forms.TabPage profilesPage;
+        private System.Windows.Forms.ListBox profilesListBox;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.NumericUpDown numOfRepeats;
+        private System.Windows.Forms.Button deleteButton;
+        private System.Windows.Forms.ComboBox newActionsComboBox;
+        private System.Windows.Forms.NumericUpDown numberOfRepeatNum;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.NumericUpDown numNewY;
+        private System.Windows.Forms.NumericUpDown newPointYNum;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.NumericUpDown numNewX;
+        private System.Windows.Forms.NumericUpDown newPointXNum;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.TextBox textNew;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.CheckBox cbRandomInterval;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.TextBox newKeyboardText;
+        private System.Windows.Forms.Label sequenceCounterLabel;
+        private System.Windows.Forms.CheckBox randomIntervalCheckbox;
+        private System.Windows.Forms.ComboBox newMouseButtonsComboBox;
     }
 }
 

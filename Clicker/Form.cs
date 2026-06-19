@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -24,6 +23,7 @@ namespace Clicker
         private readonly System.Timers.Timer timer = new System.Timers.Timer();
         private readonly Random random = new Random(DateTime.Now.Millisecond);
         private readonly ActionExecutor actionExecutor = new ActionExecutor();
+
         private MouseHookListener m_mouseListener;
         private Settings settings = new Settings();
         private int iteration = 1;
@@ -33,292 +33,292 @@ namespace Clicker
         {
             InitializeComponent();
             this.Icon = new Icon("icon.ico");
-            listBox1.Items.Clear();
-            listBox1.DataSource = settings.Moves;
-            listBox1.HorizontalScrollbar = true;
-            this.tabPage1.Text = "Sterowanie";
-            this.tabPage2.Text = "Ustawienia";
-            this.tabPage3.Text = "Sekwencja";
-            this.tabPage4.Text = "Profile";
+            sequenceListBox.Items.Clear();
+            sequenceListBox.DataSource = settings.Moves;
+            sequenceListBox.HorizontalScrollbar = true;
+            this.mainPage.Text = "Sterowanie";
+            this.settingsPage.Text = "Ustawienia";
+            this.sequencePage.Text = "Sekwencja";
+            this.profilesPage.Text = "Profile";
             this.Text = "Clicker";
-            btnRecord.Enabled = true;
-            btnStopRecord.Enabled = false;
-            btnStart.Enabled = false;
-            btnStop.Enabled = false;
-            btnClear.Enabled = false;
-            numPeriod1.Enabled = true;
-            numPeriodA.Enabled = false;
-            numPeriodB.Enabled = false;
-            numOfRepeats.Enabled = false;
-            cbRepeat.Enabled = true;
-            cbRepeat.Checked = true;
-            numPeriod1.Minimum = 100;
-            numPeriod1.Maximum = 10000000;
-            numPeriod1.Value = 2000;
-            numPeriod1.Increment = 1000;
-            numPeriodA.Minimum = 100;
-            numPeriodA.Maximum = 10000000;
-            numPeriodA.Increment = 1000;
-            numPeriodB.Minimum = 100;
-            numPeriodB.Maximum = 10000000;
-            numPeriodB.Increment = 1000;
-            numPeriodB.Value = 2000;
-            numPeriodA.Value = 2000;
-            numNewPeriod1.Minimum = 100;
-            numNewPeriod1.Maximum = 10000000;
-            numNewPeriod1.Value = 100;
-            numNewPeriod1.Increment = 1000;
-            numNewX.Minimum = -10000000;
-            numNewX.Maximum = 10000000;
-            numNewX.Value = 0;
-            numNewY.Minimum = -10000000;
-            numNewY.Maximum = 10000000;
-            numNewY.Value = 0;
-            textNew.Text = "";
-            textNew.Visible = false;
-            numOfRepeats.Minimum = 2;
-            numOfRepeats.Maximum = 100000;
-            numOfRepeats.Value = 1000;
-            btnEdit.Enabled = false;
-            label13.Text = "";
+            recordButton.Enabled = true;
+            stopRecordButton.Enabled = false;
+            startButton.Enabled = false;
+            stopButton.Enabled = false;
+            clearButton.Enabled = false;
+            afterActionPeriodNum.Enabled = true;
+            afterSequencePeriodStartNum.Enabled = false;
+            afterSequencePeriodStopNum.Enabled = false;
+            numberOfRepeatNum.Enabled = false;
+            repeatSequenceCheckbox.Enabled = true;
+            repeatSequenceCheckbox.Checked = true;
+            afterActionPeriodNum.Minimum = 100;
+            afterActionPeriodNum.Maximum = 10000000;
+            afterActionPeriodNum.Value = 2000;
+            afterActionPeriodNum.Increment = 1000;
+            afterSequencePeriodStartNum.Minimum = 100;
+            afterSequencePeriodStartNum.Maximum = 10000000;
+            afterSequencePeriodStartNum.Increment = 1000;
+            afterSequencePeriodStopNum.Minimum = 100;
+            afterSequencePeriodStopNum.Maximum = 10000000;
+            afterSequencePeriodStopNum.Increment = 1000;
+            afterSequencePeriodStopNum.Value = 2000;
+            afterSequencePeriodStartNum.Value = 2000;
+            newAfterActionPeriodNum.Minimum = 100;
+            newAfterActionPeriodNum.Maximum = 10000000;
+            newAfterActionPeriodNum.Value = 100;
+            newAfterActionPeriodNum.Increment = 1000;
+            newPointXNum.Minimum = -10000000;
+            newPointXNum.Maximum = 10000000;
+            newPointXNum.Value = 0;
+            newPointYNum.Minimum = -10000000;
+            newPointYNum.Maximum = 10000000;
+            newPointYNum.Value = 0;
+            newKeyboardText.Text = "";
+            newKeyboardText.Visible = false;
+            numberOfRepeatNum.Minimum = 2;
+            numberOfRepeatNum.Maximum = 100000;
+            numberOfRepeatNum.Value = 1000;
+            editButton.Enabled = false;
+            sequenceCounterLabel.Text = "";
 
             string path = Directory.GetCurrentDirectory();
-            DirectoryInfo di = new DirectoryInfo(path);
-            foreach (var fi in di.GetFiles("*.json"))
+            DirectoryInfo dictionaryInfo = new DirectoryInfo(path);
+            foreach (var fileInfo in dictionaryInfo.GetFiles("*.json"))
             {
-                files.Add(fi.Name);
+                files.Add(fileInfo.Name);
             }
-            listBox2.DataSource = files;
-            listBox2.HorizontalScrollbar = true;
+            profilesListBox.DataSource = files;
+            profilesListBox.HorizontalScrollbar = true;
 
-            if (listBox2.Items.Count!=0)
+            if (profilesListBox.Items.Count != 0)
             {
-                btnLoad.Enabled = true;
-                btnDelete.Enabled = true;
+                loadButton.Enabled = true;
+                deleteButton.Enabled = true;
             }
             else
             {
-                btnLoad.Enabled = false;
-                btnDelete.Enabled = false;
+                loadButton.Enabled = false;
+                deleteButton.Enabled = false;
             }
 
-            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox2.Items.Add(MouseActions.Left);
-            comboBox2.Items.Add(MouseActions.Right);
-            comboBox2.Items.Add(MouseActions.Middle);
-            comboBox2.Items.Add(MouseActions.Left_Down);
-            comboBox2.Items.Add(MouseActions.Left_Up);
-            comboBox2.SelectedIndex = 0;
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.Items.Add(Actions.Mouse);
-            comboBox1.Items.Add(Actions.Keyboard);
-            comboBox1.SelectedIndex = 0;
+            newMouseButtonsComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            newMouseButtonsComboBox.Items.Add(MouseActions.Left);
+            newMouseButtonsComboBox.Items.Add(MouseActions.Right);
+            newMouseButtonsComboBox.Items.Add(MouseActions.Middle);
+            newMouseButtonsComboBox.Items.Add(MouseActions.Left_Down);
+            newMouseButtonsComboBox.Items.Add(MouseActions.Left_Up);
+            newMouseButtonsComboBox.SelectedIndex = 0;
+            newActionsComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            newActionsComboBox.Items.Add(Actions.Mouse);
+            newActionsComboBox.Items.Add(Actions.Keyboard);
+            newActionsComboBox.SelectedIndex = 0;
         }
 
         public void DoAction(object sender, ElapsedEventArgs e)
         {
-            label13.Invoke((MethodInvoker)(() =>
+            sequenceCounterLabel.Invoke((MethodInvoker)(() =>
             {
-                label13.Text = $"Iteracja: {repeatCounter + 1} z {(cbRepeat.Checked ? numOfRepeats.Value : 1)}";
+                sequenceCounterLabel.Text = $"Iteracja: {repeatCounter + 1} z {(repeatSequenceCheckbox.Checked ? numberOfRepeatNum.Value : 1)}";
             }));
             var numberOfActions = actionExecutor.Execute(settings.Moves[iteration], settings.Moves.Cast<Action>().ElementAtOrDefault(iteration + 1));
             iteration += numberOfActions;
             timer.Interval = settings.Moves[iteration].Period;
-            
-            if (iteration == settings.Moves.Count-2)
+
+            if (iteration == settings.Moves.Count - 2)
             {
                 repeatCounter++;
-                if (cbRepeat.Checked == true && repeatCounter < numOfRepeats.Value)
+                if (repeatSequenceCheckbox.Checked == true && repeatCounter < numberOfRepeatNum.Value)
                 {
-                    var time = random.Next((int)numPeriodA.Value, (int)numPeriodB.Value);
+                    var time = random.Next((int)afterSequencePeriodStartNum.Value, (int)afterSequencePeriodStopNum.Value);
                     timer.Interval = time;
                     iteration = 1;
                 }
                 else
                 {
-                    Invoke(new System.Action(delegate () 
+                    Invoke(new System.Action(delegate ()
                     {
-                        btnStop_Click(null, null);
+                        StopButton_Click(null, null);
                     }));
                 }
             }
         }
 
-        private void RunTimer(int a)
+        private void RunTimer(int newInterval)
         {
             timer.Elapsed += new ElapsedEventHandler(DoAction);
-            timer.Interval = a;
+            timer.Interval = newInterval;
             timer.Enabled = true;
             timer.Start();
         }
 
-        private void btnStart_Click(object sender, EventArgs e)
+        private void StartButton_Click(object sender, EventArgs e)
         {
-            if (numPeriodA.Value > numPeriodB.Value)
+            if (afterSequencePeriodStartNum.Value > afterSequencePeriodStopNum.Value)
             {
                 MessageBox.Show("Złe wartości dla odstępu między sekwencjami");
             }
             else
             {
                 RunTimer(2000);
-                btnRecord.Enabled = false;
-                btnStopRecord.Enabled = false;
-                btnStart.Enabled = false;
-                btnStop.Enabled = true;
-                btnClear.Enabled = false;
-                numPeriod1.Enabled = false;
-                numPeriodA.Enabled = false;
-                numPeriodB.Enabled = false;
-                numOfRepeats.Enabled = false;
-                cbRepeat.Enabled = false;
-                btnLoad.Enabled = false;
-                btnDelete.Enabled = false;
-                btnSave.Enabled = false;
-                tbName.Enabled = false;
+                recordButton.Enabled = false;
+                stopRecordButton.Enabled = false;
+                startButton.Enabled = false;
+                stopButton.Enabled = true;
+                clearButton.Enabled = false;
+                afterActionPeriodNum.Enabled = false;
+                afterSequencePeriodStartNum.Enabled = false;
+                afterSequencePeriodStopNum.Enabled = false;
+                numberOfRepeatNum.Enabled = false;
+                repeatSequenceCheckbox.Enabled = false;
+                loadButton.Enabled = false;
+                deleteButton.Enabled = false;
+                saveButton.Enabled = false;
+                fileNameText.Enabled = false;
             }
         }
 
-        private void btnStop_Click(object sender, EventArgs e)
+        private void StopButton_Click(object sender, EventArgs e)
         {
             timer.Stop();
             timer.Elapsed -= new ElapsedEventHandler(DoAction);
             iteration = 1;
             repeatCounter = 0;
-            label13.Text = "";
-            btnRecord.Enabled = false;
-            btnStopRecord.Enabled = false;
-            btnStart.Enabled = true;
-            btnStop.Enabled = false;
-            btnClear.Enabled = true;
-            numPeriod1.Enabled = true;
-            btnLoad.Enabled = true;
-            btnDelete.Enabled = true;
-            btnSave.Enabled = true;
-            tbName.Enabled = true;
-            cbRepeat.Enabled = true;
-            if (cbRepeat.Checked == true)
+            sequenceCounterLabel.Text = "";
+            recordButton.Enabled = false;
+            stopRecordButton.Enabled = false;
+            startButton.Enabled = true;
+            stopButton.Enabled = false;
+            clearButton.Enabled = true;
+            afterActionPeriodNum.Enabled = true;
+            loadButton.Enabled = true;
+            deleteButton.Enabled = true;
+            saveButton.Enabled = true;
+            fileNameText.Enabled = true;
+            repeatSequenceCheckbox.Enabled = true;
+            if (repeatSequenceCheckbox.Checked == true)
             {
-                numPeriodA.Enabled = true;
-                if (cbRandomInterval.Checked)
+                afterSequencePeriodStartNum.Enabled = true;
+                if (randomIntervalCheckbox.Checked)
                 {
-                    numPeriodB.Enabled = true;
+                    afterSequencePeriodStopNum.Enabled = true;
                 }
-                numOfRepeats.Enabled = true;
+                numberOfRepeatNum.Enabled = true;
             }
             else
             {
-                numPeriodA.Enabled = false;
-                numPeriodB.Enabled = false;
-                numOfRepeats.Enabled = false;
+                afterSequencePeriodStartNum.Enabled = false;
+                afterSequencePeriodStopNum.Enabled = false;
+                numberOfRepeatNum.Enabled = false;
             }
         }
 
-        private void btnRecord_Click(object sender, EventArgs e)
+        private void RecordButton_Click(object sender, EventArgs e)
         {
             Activation();
-            btnRecord.Enabled = false;
-            btnStopRecord.Enabled = true;
-            btnStart.Enabled = false;
-            btnStop.Enabled = false;
-            btnClear.Enabled = false;
-            numPeriod1.Enabled = false;
-            cbRepeat.Enabled = false;
-            numPeriodA.Enabled = false;
-            numPeriodB.Enabled = false;
-            numOfRepeats.Enabled = false;
-            btnLoad.Enabled = false;
-            btnDelete.Enabled = false;
-            btnSave.Enabled = false;
-            tbName.Enabled = false;
-            label13.Text = "";
+            recordButton.Enabled = false;
+            stopRecordButton.Enabled = true;
+            startButton.Enabled = false;
+            stopButton.Enabled = false;
+            clearButton.Enabled = false;
+            afterActionPeriodNum.Enabled = false;
+            repeatSequenceCheckbox.Enabled = false;
+            afterSequencePeriodStartNum.Enabled = false;
+            afterSequencePeriodStopNum.Enabled = false;
+            numberOfRepeatNum.Enabled = false;
+            loadButton.Enabled = false;
+            deleteButton.Enabled = false;
+            saveButton.Enabled = false;
+            fileNameText.Enabled = false;
+            sequenceCounterLabel.Text = "";
         }
 
-        private void btnStopRecord_Click(object sender, EventArgs e)
+        private void StopRecordButton_Click(object sender, EventArgs e)
         {
             Deactivation();
 
-            btnRecord.Enabled = false;
-            btnStopRecord.Enabled = false;
-            btnStart.Enabled = true;
-            btnStop.Enabled = false;
-            btnClear.Enabled = true;
-            numPeriod1.Enabled = true;
-            cbRepeat.Enabled = true;
-            btnLoad.Enabled = true;
-            btnDelete.Enabled = true;
-            btnSave.Enabled = true;
-            tbName.Enabled = true;
-            listBox1.DataSource = settings.Moves;
-            if (cbRepeat.Checked == true)
+            recordButton.Enabled = false;
+            stopRecordButton.Enabled = false;
+            startButton.Enabled = true;
+            stopButton.Enabled = false;
+            clearButton.Enabled = true;
+            afterActionPeriodNum.Enabled = true;
+            repeatSequenceCheckbox.Enabled = true;
+            loadButton.Enabled = true;
+            deleteButton.Enabled = true;
+            saveButton.Enabled = true;
+            fileNameText.Enabled = true;
+            sequenceListBox.DataSource = settings.Moves;
+            if (repeatSequenceCheckbox.Checked == true)
             {
-                numPeriodA.Enabled = true;
-                if (cbRandomInterval.Checked)
+                afterSequencePeriodStartNum.Enabled = true;
+                if (randomIntervalCheckbox.Checked)
                 {
-                    numPeriodB.Enabled = true;
+                    afterSequencePeriodStopNum.Enabled = true;
                 }
-                numOfRepeats.Enabled = true;
+                numberOfRepeatNum.Enabled = true;
             }
             else
             {
-                numPeriodA.Enabled = false;
-                numPeriodB.Enabled = false;
-                numOfRepeats.Enabled = false;
+                afterSequencePeriodStartNum.Enabled = false;
+                afterSequencePeriodStopNum.Enabled = false;
+                numberOfRepeatNum.Enabled = false;
             }
-            comboBox1.SelectedIndex = 0;
-            numNewPeriod1.Value = 100;
-            numNewX.Value = 0;
-            numNewY.Value = 0;
-            textNew.Text = "";
-            comboBox2.SelectedIndex = 0;
-            numNewX.Visible = true;
-            numNewY.Visible = true;
-            textNew.Visible = false;
-            comboBox2.Visible = true;
-            btnEdit.Enabled = settings.Moves.Count != 0;
+            newActionsComboBox.SelectedIndex = 0;
+            newAfterActionPeriodNum.Value = 100;
+            newPointXNum.Value = 0;
+            newPointYNum.Value = 0;
+            newKeyboardText.Text = "";
+            newMouseButtonsComboBox.SelectedIndex = 0;
+            newPointXNum.Visible = true;
+            newPointYNum.Visible = true;
+            newKeyboardText.Visible = false;
+            newMouseButtonsComboBox.Visible = true;
+            editButton.Enabled = settings.Moves.Count != 0;
         }
 
-        private void btnClear_Click(object sender, EventArgs e)
+        private void ClearButton_Click(object sender, EventArgs e)
         {
             settings.Moves.Clear();
-            btnRecord.Enabled = true;
-            btnStopRecord.Enabled = false;
-            btnStart.Enabled = false;
-            btnStop.Enabled = false;
-            btnClear.Enabled = false;
-            numPeriod1.Enabled = true;
-            cbRepeat.Enabled = true;
-            btnLoad.Enabled = true;
-            btnDelete.Enabled = true;
-            btnSave.Enabled = true;
-            tbName.Enabled = true;
-            btnEdit.Enabled = false;
-            comboBox1.SelectedIndex = 0;
-            comboBox2.SelectedIndex = 0;
-            numNewPeriod1.Value = 100;
-            numNewX.Value = 0;
-            numNewY.Value = 0;
-            textNew.Text = "";
-            label13.Text = "";
-            numNewX.Visible = true;
-            numNewY.Visible = true;
-            textNew.Visible = false;
-            comboBox2.Visible = true;
+            recordButton.Enabled = true;
+            stopRecordButton.Enabled = false;
+            startButton.Enabled = false;
+            stopButton.Enabled = false;
+            clearButton.Enabled = false;
+            afterActionPeriodNum.Enabled = true;
+            repeatSequenceCheckbox.Enabled = true;
+            loadButton.Enabled = true;
+            deleteButton.Enabled = true;
+            saveButton.Enabled = true;
+            fileNameText.Enabled = true;
+            editButton.Enabled = false;
+            newActionsComboBox.SelectedIndex = 0;
+            newMouseButtonsComboBox.SelectedIndex = 0;
+            newAfterActionPeriodNum.Value = 100;
+            newPointXNum.Value = 0;
+            newPointYNum.Value = 0;
+            newKeyboardText.Text = "";
+            sequenceCounterLabel.Text = "";
+            newPointXNum.Visible = true;
+            newPointYNum.Visible = true;
+            newKeyboardText.Visible = false;
+            newMouseButtonsComboBox.Visible = true;
             iteration = 1;
             repeatCounter = 0;
-            if (cbRepeat.Checked == true)
+            if (repeatSequenceCheckbox.Checked == true)
             {
-                numPeriodA.Enabled = true;
-                if (cbRandomInterval.Checked)
+                afterSequencePeriodStartNum.Enabled = true;
+                if (randomIntervalCheckbox.Checked)
                 {
-                    numPeriodB.Enabled = true;
+                    afterSequencePeriodStopNum.Enabled = true;
                 }
-                numOfRepeats.Enabled = true;
+                numberOfRepeatNum.Enabled = true;
             }
             else
             {
-                numPeriodA.Enabled = false;
-                numPeriodB.Enabled = false;
-                numOfRepeats.Enabled = false;
+                afterSequencePeriodStartNum.Enabled = false;
+                afterSequencePeriodStopNum.Enabled = false;
+                numberOfRepeatNum.Enabled = false;
             }
         }
 
@@ -338,40 +338,43 @@ namespace Clicker
 
         private void MouseListener_MouseDownExt(object sender, MouseEventExtArgs e)
         {
-            settings.Moves.Add(new MouseAction {
-                Id=settings.Moves.Count+1,
-                Point = new Point(Cursor.Position.X, Cursor.Position.Y),
-                Period = (int)numPeriod1.Value, 
-                Button=e.Button == MouseButtons.Middle 
-                ? MouseActions.Middle 
-                : e.Button == MouseButtons.Right 
-                    ? MouseActions.Right 
-                    : MouseActions.Left});
+            settings.Moves.Add(
+                new MouseAction
+                {
+                    Id = settings.Moves.Count + 1,
+                    Point = new Point(Cursor.Position.X, Cursor.Position.Y),
+                    Period = (int)afterActionPeriodNum.Value,
+                    Button = e.Button == MouseButtons.Middle
+                ? MouseActions.Middle
+                : e.Button == MouseButtons.Right
+                    ? MouseActions.Right
+                    : MouseActions.Left
+                });
         }
 
-        private void cbRepeat_CheckedChanged(object sender, EventArgs e)
+        private void RepeatSequenceCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            if (cbRepeat.Checked)
+            if (repeatSequenceCheckbox.Checked)
             {
-                numPeriodA.Enabled = true;
-                if (cbRandomInterval.Checked)
+                afterSequencePeriodStartNum.Enabled = true;
+                if (randomIntervalCheckbox.Checked)
                 {
-                    numPeriodB.Enabled = true;
+                    afterSequencePeriodStopNum.Enabled = true;
                 }
-                numOfRepeats.Enabled = true;
+                numberOfRepeatNum.Enabled = true;
             }
             else
             {
-                numPeriodA.Enabled = false;
-                numPeriodB.Enabled = false;
-                numOfRepeats.Enabled = false;
+                afterSequencePeriodStartNum.Enabled = false;
+                afterSequencePeriodStopNum.Enabled = false;
+                numberOfRepeatNum.Enabled = false;
             }
         }
 
-        private void btnLoad_Click(object sender, EventArgs e)
+        private void LoadButton_Click(object sender, EventArgs e)
         {
 
-            var str = listBox2.SelectedItem.ToString();
+            var str = profilesListBox.SelectedItem.ToString();
             try
             {
                 var json = File.ReadAllText(str);
@@ -383,76 +386,76 @@ namespace Clicker
                 throw;
             }
 
-            numOfRepeats.Value = settings.NumberOfRepeats;
-            cbRepeat.Checked = settings.Repeat;
-            cbRepeat.CheckedChanged += new EventHandler(cbRepeat_CheckedChanged);
-            cbRandomInterval.Checked = settings.RandomTimeInterval;
-            numPeriod1.Value = settings.Period1;
-            numPeriodA.Value = settings.PeriodA;
+            numberOfRepeatNum.Value = settings.NumberOfRepeats;
+            repeatSequenceCheckbox.Checked = settings.Repeat;
+            repeatSequenceCheckbox.CheckedChanged += new EventHandler(RepeatSequenceCheckbox_CheckedChanged);
+            randomIntervalCheckbox.Checked = settings.RandomTimeInterval;
+            afterActionPeriodNum.Value = settings.Period1;
+            afterSequencePeriodStartNum.Value = settings.PeriodA;
             if (settings.RandomTimeInterval)
             {
-                numPeriodB.Value = settings.PeriodB;
-            } 
+                afterSequencePeriodStopNum.Value = settings.PeriodB;
+            }
             else
             {
-                numPeriodB.Value = settings.PeriodA;
-            }             
+                afterSequencePeriodStopNum.Value = settings.PeriodA;
+            }
 
-            listBox1.DataSource = settings.Moves;
+            sequenceListBox.DataSource = settings.Moves;
 
-            btnRecord.Enabled = false;
-            btnStopRecord.Enabled = false;
-            btnStart.Enabled = true;
-            btnStop.Enabled = false;
-            btnClear.Enabled = true;
-            numPeriod1.Enabled = true;
-            cbRepeat.Enabled = true;
-            btnLoad.Enabled = true;
-            btnDelete.Enabled = true;
-            btnSave.Enabled = true;
-            tbName.Enabled = true;
-            tbName.Text = Path.GetFileNameWithoutExtension(str);
-            if (cbRepeat.Checked == true)
+            recordButton.Enabled = false;
+            stopRecordButton.Enabled = false;
+            startButton.Enabled = true;
+            stopButton.Enabled = false;
+            clearButton.Enabled = true;
+            afterActionPeriodNum.Enabled = true;
+            repeatSequenceCheckbox.Enabled = true;
+            loadButton.Enabled = true;
+            deleteButton.Enabled = true;
+            saveButton.Enabled = true;
+            fileNameText.Enabled = true;
+            fileNameText.Text = Path.GetFileNameWithoutExtension(str);
+            if (repeatSequenceCheckbox.Checked == true)
             {
-                numPeriodA.Enabled = true;
-                if (cbRandomInterval.Checked)
+                afterSequencePeriodStartNum.Enabled = true;
+                if (randomIntervalCheckbox.Checked)
                 {
-                    numPeriodB.Enabled = true;
+                    afterSequencePeriodStopNum.Enabled = true;
                 }
-                numOfRepeats.Enabled = true;
+                numberOfRepeatNum.Enabled = true;
             }
             else
             {
-                numPeriodA.Enabled = false;
-                numPeriodB.Enabled = false;
-                numOfRepeats.Enabled = false;
+                afterSequencePeriodStartNum.Enabled = false;
+                afterSequencePeriodStopNum.Enabled = false;
+                numberOfRepeatNum.Enabled = false;
             }
-            comboBox1.SelectedIndex = 0;
-            comboBox2.SelectedIndex = 0;
-            numNewPeriod1.Value = 100;
-            numNewX.Value = 0;
-            numNewY.Value = 0;
-            textNew.Text = "";
-            numNewX.Visible = true;
-            numNewY.Visible = true;
-            textNew.Visible = false;
-            comboBox2.Visible = true;
-            btnEdit.Enabled = settings.Moves.Count != 0;
+            newActionsComboBox.SelectedIndex = 0;
+            newMouseButtonsComboBox.SelectedIndex = 0;
+            newAfterActionPeriodNum.Value = 100;
+            newPointXNum.Value = 0;
+            newPointYNum.Value = 0;
+            newKeyboardText.Text = "";
+            newPointXNum.Visible = true;
+            newPointYNum.Visible = true;
+            newKeyboardText.Visible = false;
+            newMouseButtonsComboBox.Visible = true;
+            editButton.Enabled = settings.Moves.Count != 0;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void SaveButton_Click(object sender, EventArgs e)
         {
-            settings.Period1 = (int)numPeriod1.Value;
-            settings.PeriodA = (int)numPeriodA.Value;
-            settings.PeriodB = (int)numPeriodB.Value;
-            settings.NumberOfRepeats = (int)numOfRepeats.Value;
-            settings.Repeat = cbRepeat.Checked;
-            settings.RandomTimeInterval = cbRandomInterval.Checked;
+            settings.Period1 = (int)afterActionPeriodNum.Value;
+            settings.PeriodA = (int)afterSequencePeriodStartNum.Value;
+            settings.PeriodB = (int)afterSequencePeriodStopNum.Value;
+            settings.NumberOfRepeats = (int)numberOfRepeatNum.Value;
+            settings.Repeat = repeatSequenceCheckbox.Checked;
+            settings.RandomTimeInterval = randomIntervalCheckbox.Checked;
 
             try
             {
                 var json = JsonConvert.SerializeObject(settings, Formatting.Indented, jsonSettings);
-                File.WriteAllText(tbName.Text + ".json", json);
+                File.WriteAllText(fileNameText.Text + ".json", json);
             }
             catch (SerializationException ex)
             {
@@ -466,45 +469,45 @@ namespace Clicker
             {
                 files.Add(fi.Name);
             }
-            listBox2.DataSource = null;
-            listBox2.DataSource = files;
-            if (listBox2.Items.Count != 0)
+            profilesListBox.DataSource = null;
+            profilesListBox.DataSource = files;
+            if (profilesListBox.Items.Count != 0)
             {
-                btnLoad.Enabled = true;
-                btnDelete.Enabled = true;
+                loadButton.Enabled = true;
+                deleteButton.Enabled = true;
             }
             else
             {
-                btnLoad.Enabled = false;
-                btnDelete.Enabled = false;
+                loadButton.Enabled = false;
+                deleteButton.Enabled = false;
             }
         }
 
-        private void btnEdit_Click(object sender, EventArgs e)
+        private void EditButton_Click(object sender, EventArgs e)
         {
-            if (settings.Moves[listBox1.SelectedIndex].Type != (Actions)comboBox1.SelectedItem)
+            if (settings.Moves[sequenceListBox.SelectedIndex].Type != (Actions)newActionsComboBox.SelectedItem)
             {
-                settings.Moves[listBox1.SelectedIndex] = MigrateMove(settings.Moves[listBox1.SelectedIndex], (Actions)comboBox1.SelectedItem);
+                settings.Moves[sequenceListBox.SelectedIndex] = MigrateMove(settings.Moves[sequenceListBox.SelectedIndex], (Actions)newActionsComboBox.SelectedItem);
             }
             else
             {
-                switch (settings.Moves[listBox1.SelectedIndex])
+                switch (settings.Moves[sequenceListBox.SelectedIndex])
                 {
                     case MouseAction mouse:
-                        mouse.Point = new Point((int)numNewX.Value, (int)numNewY.Value);
-                        mouse.Button = (MouseActions)comboBox2.SelectedItem;
+                        mouse.Point = new Point((int)newPointXNum.Value, (int)newPointYNum.Value);
+                        mouse.Button = (MouseActions)newMouseButtonsComboBox.SelectedItem;
                         break;
                     case KeyboardAction keyboard:
-                        keyboard.Text = textNew.Text;
+                        keyboard.Text = newKeyboardText.Text;
                         break;
                 }
-                settings.Moves[listBox1.SelectedIndex].Period = (int)numNewPeriod1.Value;
+                settings.Moves[sequenceListBox.SelectedIndex].Period = (int)newAfterActionPeriodNum.Value;
             }
 
-            this.listBox1.SelectedIndexChanged -= new EventHandler(this.listBox1_SelectedIndexChanged);
-            listBox1.DataSource = null;
-            listBox1.DataSource = settings.Moves;
-            this.listBox1.SelectedIndexChanged += new EventHandler(this.listBox1_SelectedIndexChanged);
+            this.sequenceListBox.SelectedIndexChanged -= new EventHandler(this.SequenceListBox_SelectedIndexChanged);
+            sequenceListBox.DataSource = null;
+            sequenceListBox.DataSource = settings.Moves;
+            this.sequenceListBox.SelectedIndexChanged += new EventHandler(this.SequenceListBox_SelectedIndexChanged);
         }
 
         private Action MigrateMove(Action action, Actions newType)
@@ -516,68 +519,68 @@ namespace Clicker
                     {
                         Id = action.Id,
                         Type = Actions.Mouse,
-                        Period = (int)numNewPeriod1.Value,
-                        Point = new Point((int)numNewX.Value, (int)numNewY.Value),
-                        Button = (MouseActions)comboBox2.SelectedItem
+                        Period = (int)newAfterActionPeriodNum.Value,
+                        Point = new Point((int)newPointXNum.Value, (int)newPointYNum.Value),
+                        Button = (MouseActions)newMouseButtonsComboBox.SelectedItem
                     };
                 case Actions.Keyboard:
                     return new KeyboardAction
                     {
                         Id = action.Id,
                         Type = Actions.Keyboard,
-                        Period = (int)numNewPeriod1.Value,
-                        Text = textNew.Text
+                        Period = (int)newAfterActionPeriodNum.Value,
+                        Text = newKeyboardText.Text
                     };
             }
             throw new NotImplementedException();
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {        
-            if (listBox1 != null && listBox1.SelectedIndex > -1)
+        private void SequenceListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (sequenceListBox != null && sequenceListBox.SelectedIndex > -1)
             {
-                numNewPeriod1.Value = settings.Moves[listBox1.SelectedIndex].Period;
-                comboBox1.SelectedItem = settings.Moves[listBox1.SelectedIndex].Type;
-                switch (settings.Moves[listBox1.SelectedIndex])
+                newAfterActionPeriodNum.Value = settings.Moves[sequenceListBox.SelectedIndex].Period;
+                newActionsComboBox.SelectedItem = settings.Moves[sequenceListBox.SelectedIndex].Type;
+                switch (settings.Moves[sequenceListBox.SelectedIndex])
                 {
                     case MouseAction mouse:
-                        textNew.Visible = false;
-                        numNewX.Visible = true;
-                        numNewY.Visible = true;
-                        comboBox2.Visible = true;
-                        textNew.Text = "";
-                        numNewX.Value = mouse.Point.X;
-                        numNewY.Value = mouse.Point.Y;
+                        newKeyboardText.Visible = false;
+                        newPointXNum.Visible = true;
+                        newPointYNum.Visible = true;
+                        newMouseButtonsComboBox.Visible = true;
+                        newKeyboardText.Text = "";
+                        newPointXNum.Value = mouse.Point.X;
+                        newPointYNum.Value = mouse.Point.Y;
                         break;
                     case KeyboardAction keyboard:
-                        textNew.Visible = true;
-                        numNewX.Visible = false;
-                        numNewY.Visible = false;
-                        comboBox2.Visible = false;
-                        textNew.Text = keyboard.Text;
-                        numNewX.Value = 0;
-                        numNewY.Value = 0;
+                        newKeyboardText.Visible = true;
+                        newPointXNum.Visible = false;
+                        newPointYNum.Visible = false;
+                        newMouseButtonsComboBox.Visible = false;
+                        newKeyboardText.Text = keyboard.Text;
+                        newPointXNum.Value = 0;
+                        newPointYNum.Value = 0;
                         break;
                 }
             }
             else
             {
-                numNewPeriod1.Value = 100;
-                numNewX.Value = 0;
-                numNewY.Value = 0;
-                textNew.Text = "";
-                comboBox2.SelectedIndex = 0;
-                numNewX.Visible = true;
-                numNewY.Visible = true;
-                textNew.Visible = false;
-                comboBox2.Visible = true;
+                newAfterActionPeriodNum.Value = 100;
+                newPointXNum.Value = 0;
+                newPointYNum.Value = 0;
+                newKeyboardText.Text = "";
+                newMouseButtonsComboBox.SelectedIndex = 0;
+                newPointXNum.Visible = true;
+                newPointYNum.Visible = true;
+                newKeyboardText.Visible = false;
+                newMouseButtonsComboBox.Visible = true;
             }
-            btnEdit.Enabled = true;
+            editButton.Enabled = true;
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void DeleteButton_Click(object sender, EventArgs e)
         {
-            var str = listBox2.SelectedItem.ToString();
+            var str = profilesListBox.SelectedItem.ToString();
             if (File.Exists(str))
             {
                 try
@@ -595,83 +598,83 @@ namespace Clicker
                 {
                     files.Add(fi.Name);
                 }
-                listBox2.DataSource = null;
-                listBox2.DataSource = files;
-                if (listBox2.Items.Count != 0)
+                profilesListBox.DataSource = null;
+                profilesListBox.DataSource = files;
+                if (profilesListBox.Items.Count != 0)
                 {
-                    btnLoad.Enabled = true;
-                    btnDelete.Enabled = true;
+                    loadButton.Enabled = true;
+                    deleteButton.Enabled = true;
                 }
                 else
                 {
-                    btnLoad.Enabled = false;
-                    btnDelete.Enabled = false;
+                    loadButton.Enabled = false;
+                    deleteButton.Enabled = false;
                 }
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ActionsComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var move = listBox1.SelectedIndex > -1 && settings.Moves.Count > 0 ? settings.Moves[listBox1.SelectedIndex] : null;
+            var move = sequenceListBox.SelectedIndex > -1 && settings.Moves.Count > 0 ? settings.Moves[sequenceListBox.SelectedIndex] : null;
 
-            switch ((Actions)comboBox1.SelectedItem)
+            switch ((Actions)newActionsComboBox.SelectedItem)
             {
                 case Actions.Mouse:
                     if (move != null && move is MouseAction mouseMove)
                     {
-                        numNewX.Value = mouseMove.Point.X;
-                        numNewY.Value = mouseMove.Point.Y;
-                        comboBox2.SelectedIndex = (int)mouseMove.Button;
+                        newPointXNum.Value = mouseMove.Point.X;
+                        newPointYNum.Value = mouseMove.Point.Y;
+                        newMouseButtonsComboBox.SelectedIndex = (int)mouseMove.Button;
                     }
                     else
                     {
-                        numNewX.Value = 0;
-                        numNewY.Value = 0;
-                        comboBox2.SelectedIndex = 0;
+                        newPointXNum.Value = 0;
+                        newPointYNum.Value = 0;
+                        newMouseButtonsComboBox.SelectedIndex = 0;
                     }
-                    textNew.Visible = false;
-                    numNewX.Visible = true;
-                    numNewY.Visible = true;
-                    comboBox2.Visible = true;
-                    textNew.Text = "";
+                    newKeyboardText.Visible = false;
+                    newPointXNum.Visible = true;
+                    newPointYNum.Visible = true;
+                    newMouseButtonsComboBox.Visible = true;
+                    newKeyboardText.Text = "";
                     break;
                 case Actions.Keyboard:
                     if (move != null && move is KeyboardAction keyboardMove)
                     {
-                        textNew.Text = keyboardMove.Text;
+                        newKeyboardText.Text = keyboardMove.Text;
                     }
                     else
                     {
-                        textNew.Text = "";
+                        newKeyboardText.Text = "";
                     }
-                    textNew.Visible = true;
-                    numNewX.Visible = false;
-                    numNewY.Visible = false;
-                    comboBox2.Visible = false;
-                    numNewX.Value = 0;
-                    numNewY.Value = 0;
-                    comboBox2.SelectedIndex = 0;
+                    newKeyboardText.Visible = true;
+                    newPointXNum.Visible = false;
+                    newPointYNum.Visible = false;
+                    newMouseButtonsComboBox.Visible = false;
+                    newPointXNum.Value = 0;
+                    newPointYNum.Value = 0;
+                    newMouseButtonsComboBox.SelectedIndex = 0;
                     break;
             }
         }
 
-        private void cbRandomInterval_CheckedChanged(object sender, EventArgs e)
+        private void RandomIntervalCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            if (cbRandomInterval.Checked)
+            if (randomIntervalCheckbox.Checked)
             {
-                numPeriodB.Enabled = true;
+                afterSequencePeriodStopNum.Enabled = true;
             }
             else
             {
-                numPeriodB.Enabled = false;
+                afterSequencePeriodStopNum.Enabled = false;
             }
         }
 
-        private void numPeriodA_ValueChanged(object sender, EventArgs e)
+        private void AfterSequencePeriodStartNum_ValueChanged(object sender, EventArgs e)
         {
-            if (!cbRandomInterval.Checked && numPeriodA.Value >= numPeriodA.Minimum)
+            if (!randomIntervalCheckbox.Checked && afterSequencePeriodStartNum.Value >= afterSequencePeriodStartNum.Minimum)
             {
-                numPeriodB.Value = numPeriodA.Value;
+                afterSequencePeriodStopNum.Value = afterSequencePeriodStartNum.Value;
             }
         }
     }
