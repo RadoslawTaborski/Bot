@@ -1,7 +1,9 @@
-﻿using MouseKeyboardActivityMonitor;
+﻿using Clicker.Extensions;
+using MouseKeyboardActivityMonitor;
 using MouseKeyboardActivityMonitor.WinApi;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -64,6 +66,11 @@ namespace Clicker
             afterSequencePeriodStopNum.Increment = 1000;
             afterSequencePeriodStopNum.Value = 2000;
             afterSequencePeriodStartNum.Value = 2000;
+            numberOfRepeatNum.Minimum = 2;
+            numberOfRepeatNum.Maximum = 100000;
+            numberOfRepeatNum.Value = 1000;
+            editButton.Enabled = false;
+            sequenceCounterLabel.Text = "";
             newAfterActionPeriodNum.Minimum = 100;
             newAfterActionPeriodNum.Maximum = 10000000;
             newAfterActionPeriodNum.Value = 100;
@@ -76,11 +83,12 @@ namespace Clicker
             newPointYNum.Value = 0;
             newKeyboardText.Text = "";
             newKeyboardText.Visible = false;
-            numberOfRepeatNum.Minimum = 2;
-            numberOfRepeatNum.Maximum = 100000;
-            numberOfRepeatNum.Value = 1000;
-            editButton.Enabled = false;
-            sequenceCounterLabel.Text = "";
+            newSubsequenceIterationsNum.Minimum = 1;
+            newSubsequenceIterationsNum.Maximum = 100000;
+            newSubsequenceIterationsNum.Value = 1;
+            newSubsequenceIterationsNum.Visible = false;
+            newSubsequenceFilenameText.Text = "";
+            newSubsequenceFilenameText.Visible = false;
 
             string path = Directory.GetCurrentDirectory();
             DirectoryInfo dictionaryInfo = new DirectoryInfo(path);
@@ -112,6 +120,7 @@ namespace Clicker
             newActionsComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             newActionsComboBox.Items.Add(Actions.Mouse);
             newActionsComboBox.Items.Add(Actions.Keyboard);
+            newActionsComboBox.Items.Add(Actions.SubSequence);
             newActionsComboBox.SelectedIndex = 0;
         }
 
@@ -121,6 +130,13 @@ namespace Clicker
             {
                 sequenceCounterLabel.Text = $"Iteracja: {repeatCounter + 1} z {(repeatSequenceCheckbox.Checked ? numberOfRepeatNum.Value : 1)}";
             }));
+
+            if (settings.Moves[iteration].Type == Actions.SubSequence)
+            {
+                var subSequenceAction = settings.Moves[iteration] as SubSequenceAction;
+                settings.Moves.ReplaceWithRange(iteration,
+                    LoadNestedSequence(subSequenceAction.FileName, subSequenceAction.Iterations, subSequenceAction.Period));
+            }
             var numberOfActions = actionExecutor.Execute(settings.Moves[iteration], settings.Moves.Cast<Action>().ElementAtOrDefault(iteration + 1));
             iteration += numberOfActions;
             timer.Interval = settings.Moves[iteration].Period;
@@ -274,6 +290,10 @@ namespace Clicker
             newPointYNum.Visible = true;
             newKeyboardText.Visible = false;
             newMouseButtonsComboBox.Visible = true;
+            newSubsequenceIterationsNum.Value = 1;
+            newSubsequenceIterationsNum.Visible = false;
+            newSubsequenceFilenameText.Text = "";
+            newSubsequenceFilenameText.Visible = false;
             editButton.Enabled = settings.Moves.Count != 0;
         }
 
@@ -298,6 +318,10 @@ namespace Clicker
             newPointXNum.Value = 0;
             newPointYNum.Value = 0;
             newKeyboardText.Text = "";
+            newSubsequenceFilenameText.Text = "";
+            newSubsequenceFilenameText.Visible = false;
+            newSubsequenceIterationsNum.Value = 1;
+            newSubsequenceIterationsNum.Visible = false;
             sequenceCounterLabel.Text = "";
             newPointXNum.Visible = true;
             newPointYNum.Visible = true;
@@ -374,17 +398,8 @@ namespace Clicker
         private void LoadButton_Click(object sender, EventArgs e)
         {
 
-            var str = profilesListBox.SelectedItem.ToString();
-            try
-            {
-                var json = File.ReadAllText(str);
-                settings = JsonConvert.DeserializeObject<Settings>(json, jsonSettings);
-            }
-            catch (SerializationException ex)
-            {
-                MessageBox.Show(this, "Nastąpił następujący błąd: \n" + ex.ToString(), "BLAD", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw;
-            }
+            var fileName = profilesListBox.SelectedItem.ToString();
+            settings = LoadSettings(fileName);
 
             numberOfRepeatNum.Value = settings.NumberOfRepeats;
             repeatSequenceCheckbox.Checked = settings.Repeat;
@@ -414,7 +429,7 @@ namespace Clicker
             deleteButton.Enabled = true;
             saveButton.Enabled = true;
             fileNameText.Enabled = true;
-            fileNameText.Text = Path.GetFileNameWithoutExtension(str);
+            fileNameText.Text = Path.GetFileNameWithoutExtension(fileName);
             if (repeatSequenceCheckbox.Checked == true)
             {
                 afterSequencePeriodStartNum.Enabled = true;
@@ -439,6 +454,10 @@ namespace Clicker
             newPointXNum.Visible = true;
             newPointYNum.Visible = true;
             newKeyboardText.Visible = false;
+            newSubsequenceFilenameText.Text = "";
+            newSubsequenceFilenameText.Visible = false;
+            newSubsequenceIterationsNum.Value = 1;
+            newSubsequenceIterationsNum.Visible = false;
             newMouseButtonsComboBox.Visible = true;
             editButton.Enabled = settings.Moves.Count != 0;
         }
@@ -500,6 +519,10 @@ namespace Clicker
                     case KeyboardAction keyboard:
                         keyboard.Text = newKeyboardText.Text;
                         break;
+                    case SubSequenceAction subSequence:
+                        subSequence.FileName = newSubsequenceFilenameText.Text;
+                        subSequence.Iterations = (int)newSubsequenceIterationsNum.Value;
+                        break;
                 }
                 settings.Moves[sequenceListBox.SelectedIndex].Period = (int)newAfterActionPeriodNum.Value;
             }
@@ -531,6 +554,15 @@ namespace Clicker
                         Period = (int)newAfterActionPeriodNum.Value,
                         Text = newKeyboardText.Text
                     };
+                case Actions.SubSequence:
+                    return new SubSequenceAction
+                    {
+                        Id = action.Id,
+                        Type = Actions.SubSequence,
+                        Period = (int)newAfterActionPeriodNum.Value,
+                        FileName = newSubsequenceFilenameText.Text,
+                        Iterations = (int)newSubsequenceIterationsNum.Value
+                    };
             }
             throw new NotImplementedException();
         }
@@ -551,6 +583,10 @@ namespace Clicker
                         newKeyboardText.Text = "";
                         newPointXNum.Value = mouse.Point.X;
                         newPointYNum.Value = mouse.Point.Y;
+                        newSubsequenceFilenameText.Text = "";
+                        newSubsequenceFilenameText.Visible = false;
+                        newSubsequenceIterationsNum.Value = 1;
+                        newSubsequenceIterationsNum.Visible = false;
                         break;
                     case KeyboardAction keyboard:
                         newKeyboardText.Visible = true;
@@ -560,6 +596,23 @@ namespace Clicker
                         newKeyboardText.Text = keyboard.Text;
                         newPointXNum.Value = 0;
                         newPointYNum.Value = 0;
+                        newSubsequenceFilenameText.Text = "";
+                        newSubsequenceFilenameText.Visible = false;
+                        newSubsequenceIterationsNum.Value = 1;
+                        newSubsequenceIterationsNum.Visible = false;
+                        break;
+                    case SubSequenceAction subsequence:
+                        newKeyboardText.Visible = false;
+                        newPointXNum.Visible = false;
+                        newPointYNum.Visible = false;
+                        newMouseButtonsComboBox.Visible = false;
+                        newKeyboardText.Text = "";
+                        newPointXNum.Value = 0;
+                        newPointYNum.Value = 0;
+                        newSubsequenceFilenameText.Text = subsequence.FileName;
+                        newSubsequenceFilenameText.Visible = true;
+                        newSubsequenceIterationsNum.Value = subsequence.Iterations;
+                        newSubsequenceIterationsNum.Visible = true;
                         break;
                 }
             }
@@ -574,6 +627,10 @@ namespace Clicker
                 newPointYNum.Visible = true;
                 newKeyboardText.Visible = false;
                 newMouseButtonsComboBox.Visible = true;
+                newSubsequenceFilenameText.Text = "";
+                newSubsequenceFilenameText.Visible = false;
+                newSubsequenceIterationsNum.Value = 1;
+                newSubsequenceIterationsNum.Visible = false;
             }
             editButton.Enabled = true;
         }
@@ -637,6 +694,10 @@ namespace Clicker
                     newPointYNum.Visible = true;
                     newMouseButtonsComboBox.Visible = true;
                     newKeyboardText.Text = "";
+                    newSubsequenceFilenameText.Text = "";
+                    newSubsequenceFilenameText.Visible = false;
+                    newSubsequenceIterationsNum.Value = 1;
+                    newSubsequenceIterationsNum.Visible = false;
                     break;
                 case Actions.Keyboard:
                     if (move != null && move is KeyboardAction keyboardMove)
@@ -654,6 +715,32 @@ namespace Clicker
                     newPointXNum.Value = 0;
                     newPointYNum.Value = 0;
                     newMouseButtonsComboBox.SelectedIndex = 0;
+                    newSubsequenceFilenameText.Text = "";
+                    newSubsequenceFilenameText.Visible = false;
+                    newSubsequenceIterationsNum.Value = 1;
+                    newSubsequenceIterationsNum.Visible = false;
+                    break;
+                case Actions.SubSequence:
+                    if (move != null && move is SubSequenceAction subsequenceMove)
+                    {
+                        newSubsequenceFilenameText.Text = subsequenceMove.FileName;
+                        newSubsequenceIterationsNum.Value = subsequenceMove.Iterations;
+                    }
+                    else
+                    {
+                        newSubsequenceFilenameText.Text = "";
+                        newSubsequenceIterationsNum.Value = 1;
+                    }
+                    newKeyboardText.Text = "";
+                    newKeyboardText.Visible = false;
+                    newPointXNum.Visible = false;
+                    newPointYNum.Visible = false;
+                    newMouseButtonsComboBox.Visible = false;
+                    newPointXNum.Value = 0;
+                    newPointYNum.Value = 0;
+                    newMouseButtonsComboBox.SelectedIndex = 0;
+                    newSubsequenceFilenameText.Visible = true;
+                    newSubsequenceIterationsNum.Visible = true;
                     break;
             }
         }
@@ -676,6 +763,36 @@ namespace Clicker
             {
                 afterSequencePeriodStopNum.Value = afterSequencePeriodStartNum.Value;
             }
+        }
+
+        private Settings LoadSettings(string fileName)
+        {
+            try
+            {
+                var json = File.ReadAllText(fileName);
+                return JsonConvert.DeserializeObject<Settings>(json, jsonSettings);
+            }
+            catch (SerializationException ex)
+            {
+                MessageBox.Show(this, "Nastąpił następujący błąd: \n" + ex.ToString(), "BLAD", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
+        }
+
+        private List<Action> LoadNestedSequence(string fileName, int umberOfIterations, int period)
+        {
+            var tmpSettings = LoadSettings(fileName);
+            var newSequence = tmpSettings.Moves;
+            newSequence.RemoveAt(newSequence.Count - 1);
+            newSequence.RemoveAt(newSequence.Count - 1);
+            newSequence.RemoveAt(0);
+
+            var result = Enumerable.Repeat(newSequence, umberOfIterations)
+                .SelectMany(x => x)
+                .ToList();
+
+            result.ElementAt(newSequence.Count - 1).Period = period;
+            return result;
         }
     }
 }

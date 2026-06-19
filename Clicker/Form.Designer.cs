@@ -54,7 +54,9 @@
             this.saveButton = new System.Windows.Forms.Button();
             this.repeatSequenceCheckbox = new System.Windows.Forms.CheckBox();
             this.sequencePage = new System.Windows.Forms.TabPage();
+            this.newSubsequenceFilenameText = new System.Windows.Forms.TextBox();
             this.newKeyboardText = new System.Windows.Forms.TextBox();
+            this.newMouseButtonsComboBox = new System.Windows.Forms.ComboBox();
             this.newPointYNum = new System.Windows.Forms.NumericUpDown();
             this.label12 = new System.Windows.Forms.Label();
             this.newPointXNum = new System.Windows.Forms.NumericUpDown();
@@ -68,7 +70,8 @@
             this.deleteButton = new System.Windows.Forms.Button();
             this.profilesListBox = new System.Windows.Forms.ListBox();
             this.loadButton = new System.Windows.Forms.Button();
-            this.newMouseButtonsComboBox = new System.Windows.Forms.ComboBox();
+            this.newSubsequenceIterationsNum = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.afterActionPeriodNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.afterSequencePeriodStartNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.afterSequencePeriodStopNum)).BeginInit();
@@ -81,24 +84,25 @@
             ((System.ComponentModel.ISupportInitialize)(this.newPointXNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.newAfterActionPeriodNum)).BeginInit();
             this.profilesPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.newSubsequenceIterationsNum)).BeginInit();
             this.SuspendLayout();
             // 
-            // btnStart
+            // startButton
             // 
             this.startButton.Location = new System.Drawing.Point(8, 63);
             this.startButton.Margin = new System.Windows.Forms.Padding(4);
-            this.startButton.Name = "btnStart";
+            this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(172, 79);
             this.startButton.TabIndex = 0;
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.StartButton_Click);
             // 
-            // btnStop
+            // stopButton
             // 
             this.stopButton.Location = new System.Drawing.Point(188, 63);
             this.stopButton.Margin = new System.Windows.Forms.Padding(4);
-            this.stopButton.Name = "btnStop";
+            this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(172, 79);
             this.stopButton.TabIndex = 1;
             this.stopButton.Text = "Stop";
@@ -114,33 +118,33 @@
             this.label1.Size = new System.Drawing.Size(0, 16);
             this.label1.TabIndex = 2;
             // 
-            // btnRecord
+            // recordButton
             // 
             this.recordButton.Location = new System.Drawing.Point(8, 24);
             this.recordButton.Margin = new System.Windows.Forms.Padding(4);
-            this.recordButton.Name = "btnRecord";
+            this.recordButton.Name = "recordButton";
             this.recordButton.Size = new System.Drawing.Size(172, 36);
             this.recordButton.TabIndex = 3;
             this.recordButton.Text = "Nagraj";
             this.recordButton.UseVisualStyleBackColor = true;
             this.recordButton.Click += new System.EventHandler(this.RecordButton_Click);
             // 
-            // btnStopRecord
+            // stopRecordButton
             // 
             this.stopRecordButton.Location = new System.Drawing.Point(187, 24);
             this.stopRecordButton.Margin = new System.Windows.Forms.Padding(4);
-            this.stopRecordButton.Name = "btnStopRecord";
+            this.stopRecordButton.Name = "stopRecordButton";
             this.stopRecordButton.Size = new System.Drawing.Size(172, 36);
             this.stopRecordButton.TabIndex = 5;
             this.stopRecordButton.Text = "Zatrzymaj nagrywanie";
             this.stopRecordButton.UseVisualStyleBackColor = true;
             this.stopRecordButton.Click += new System.EventHandler(this.StopRecordButton_Click);
             // 
-            // btnClear
+            // clearButton
             // 
             this.clearButton.Location = new System.Drawing.Point(9, 147);
             this.clearButton.Margin = new System.Windows.Forms.Padding(4);
-            this.clearButton.Name = "btnClear";
+            this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(351, 30);
             this.clearButton.TabIndex = 6;
             this.clearButton.Text = "Wyczyść pamięć";
@@ -197,7 +201,7 @@
             this.label7.TabIndex = 15;
             this.label7.Text = "ms";
             // 
-            // numPeriod1
+            // afterActionPeriodNum
             // 
             this.afterActionPeriodNum.Increment = new decimal(new int[] {
             1000,
@@ -206,11 +210,11 @@
             0});
             this.afterActionPeriodNum.Location = new System.Drawing.Point(237, 6);
             this.afterActionPeriodNum.Margin = new System.Windows.Forms.Padding(4);
-            this.afterActionPeriodNum.Name = "numPeriod1";
+            this.afterActionPeriodNum.Name = "afterActionPeriodNum";
             this.afterActionPeriodNum.Size = new System.Drawing.Size(92, 22);
             this.afterActionPeriodNum.TabIndex = 16;
             // 
-            // numPeriodA
+            // afterSequencePeriodStartNum
             // 
             this.afterSequencePeriodStartNum.Increment = new decimal(new int[] {
             1000,
@@ -219,12 +223,12 @@
             0});
             this.afterSequencePeriodStartNum.Location = new System.Drawing.Point(101, 102);
             this.afterSequencePeriodStartNum.Margin = new System.Windows.Forms.Padding(4);
-            this.afterSequencePeriodStartNum.Name = "numPeriodA";
+            this.afterSequencePeriodStartNum.Name = "afterSequencePeriodStartNum";
             this.afterSequencePeriodStartNum.Size = new System.Drawing.Size(92, 22);
             this.afterSequencePeriodStartNum.TabIndex = 17;
             this.afterSequencePeriodStartNum.ValueChanged += new System.EventHandler(this.AfterSequencePeriodStartNum_ValueChanged);
             // 
-            // numPeriodB
+            // afterSequencePeriodStopNum
             // 
             this.afterSequencePeriodStopNum.Increment = new decimal(new int[] {
             1000,
@@ -233,7 +237,7 @@
             0});
             this.afterSequencePeriodStopNum.Location = new System.Drawing.Point(237, 102);
             this.afterSequencePeriodStopNum.Margin = new System.Windows.Forms.Padding(4);
-            this.afterSequencePeriodStopNum.Name = "numPeriodB";
+            this.afterSequencePeriodStopNum.Name = "afterSequencePeriodStopNum";
             this.afterSequencePeriodStopNum.Size = new System.Drawing.Size(92, 22);
             this.afterSequencePeriodStopNum.TabIndex = 18;
             // 
@@ -250,7 +254,7 @@
             this.tabControl1.Size = new System.Drawing.Size(371, 209);
             this.tabControl1.TabIndex = 19;
             // 
-            // tabPage1
+            // mainPage
             // 
             this.mainPage.Controls.Add(this.sequenceCounterLabel);
             this.mainPage.Controls.Add(this.stopButton);
@@ -261,24 +265,24 @@
             this.mainPage.Controls.Add(this.clearButton);
             this.mainPage.Location = new System.Drawing.Point(4, 25);
             this.mainPage.Margin = new System.Windows.Forms.Padding(4);
-            this.mainPage.Name = "tabPage1";
+            this.mainPage.Name = "mainPage";
             this.mainPage.Padding = new System.Windows.Forms.Padding(4);
             this.mainPage.Size = new System.Drawing.Size(363, 180);
             this.mainPage.TabIndex = 0;
             this.mainPage.Text = "tabPage1";
             this.mainPage.UseVisualStyleBackColor = true;
             // 
-            // label13
+            // sequenceCounterLabel
             // 
             this.sequenceCounterLabel.AutoSize = true;
             this.sequenceCounterLabel.Location = new System.Drawing.Point(10, 4);
             this.sequenceCounterLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.sequenceCounterLabel.Name = "label13";
+            this.sequenceCounterLabel.Name = "sequenceCounterLabel";
             this.sequenceCounterLabel.Size = new System.Drawing.Size(85, 16);
             this.sequenceCounterLabel.TabIndex = 10;
             this.sequenceCounterLabel.Text = "Iteracja: a z b";
             // 
-            // tabPage2
+            // settingsPage
             // 
             this.settingsPage.Controls.Add(this.randomIntervalCheckbox);
             this.settingsPage.Controls.Add(this.numberOfRepeatNum);
@@ -297,30 +301,30 @@
             this.settingsPage.Controls.Add(this.label6);
             this.settingsPage.Location = new System.Drawing.Point(4, 25);
             this.settingsPage.Margin = new System.Windows.Forms.Padding(4);
-            this.settingsPage.Name = "tabPage2";
+            this.settingsPage.Name = "settingsPage";
             this.settingsPage.Padding = new System.Windows.Forms.Padding(4);
             this.settingsPage.Size = new System.Drawing.Size(363, 180);
             this.settingsPage.TabIndex = 1;
             this.settingsPage.Text = "tabPage2";
             this.settingsPage.UseVisualStyleBackColor = true;
             // 
-            // cbRandomInterval
+            // randomIntervalCheckbox
             // 
             this.randomIntervalCheckbox.AutoSize = true;
             this.randomIntervalCheckbox.Location = new System.Drawing.Point(12, 65);
             this.randomIntervalCheckbox.Margin = new System.Windows.Forms.Padding(4);
-            this.randomIntervalCheckbox.Name = "cbRandomInterval";
+            this.randomIntervalCheckbox.Name = "randomIntervalCheckbox";
             this.randomIntervalCheckbox.Size = new System.Drawing.Size(296, 20);
             this.randomIntervalCheckbox.TabIndex = 26;
             this.randomIntervalCheckbox.Text = "Ruchomy odstęp czasu między sekwencjami";
             this.randomIntervalCheckbox.UseVisualStyleBackColor = true;
             this.randomIntervalCheckbox.CheckedChanged += new System.EventHandler(this.RandomIntervalCheckbox_CheckedChanged);
             // 
-            // numOfRepeats
+            // numberOfRepeatNum
             // 
             this.numberOfRepeatNum.Location = new System.Drawing.Point(13, 102);
             this.numberOfRepeatNum.Margin = new System.Windows.Forms.Padding(4);
-            this.numberOfRepeatNum.Name = "numOfRepeats";
+            this.numberOfRepeatNum.Name = "numberOfRepeatNum";
             this.numberOfRepeatNum.Size = new System.Drawing.Size(67, 22);
             this.numberOfRepeatNum.TabIndex = 25;
             // 
@@ -344,40 +348,43 @@
             this.label9.TabIndex = 23;
             this.label9.Text = ".json";
             // 
-            // tbName
+            // fileNameText
             // 
             this.fileNameText.Location = new System.Drawing.Point(120, 139);
             this.fileNameText.Margin = new System.Windows.Forms.Padding(4);
-            this.fileNameText.Name = "tbName";
+            this.fileNameText.Name = "fileNameText";
             this.fileNameText.Size = new System.Drawing.Size(199, 22);
             this.fileNameText.TabIndex = 22;
             this.fileNameText.Text = "nazwa pliku";
             // 
-            // btnSave
+            // saveButton
             // 
             this.saveButton.Location = new System.Drawing.Point(11, 138);
             this.saveButton.Margin = new System.Windows.Forms.Padding(4);
-            this.saveButton.Name = "btnSave";
+            this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(100, 28);
             this.saveButton.TabIndex = 20;
             this.saveButton.Text = "Zapisz";
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
-            // cbRepeat
+            // repeatSequenceCheckbox
             // 
             this.repeatSequenceCheckbox.AutoSize = true;
             this.repeatSequenceCheckbox.Location = new System.Drawing.Point(12, 37);
             this.repeatSequenceCheckbox.Margin = new System.Windows.Forms.Padding(4);
-            this.repeatSequenceCheckbox.Name = "cbRepeat";
+            this.repeatSequenceCheckbox.Name = "repeatSequenceCheckbox";
             this.repeatSequenceCheckbox.Size = new System.Drawing.Size(154, 20);
             this.repeatSequenceCheckbox.TabIndex = 19;
             this.repeatSequenceCheckbox.Text = "Powtarzaj sekwencję";
             this.repeatSequenceCheckbox.UseVisualStyleBackColor = true;
             this.repeatSequenceCheckbox.CheckedChanged += new System.EventHandler(this.RepeatSequenceCheckbox_CheckedChanged);
             // 
-            // tabPage3
+            // sequencePage
             // 
+            this.sequencePage.Controls.Add(this.newSubsequenceIterationsNum);
+            this.sequencePage.Controls.Add(this.label3);
+            this.sequencePage.Controls.Add(this.newSubsequenceFilenameText);
             this.sequencePage.Controls.Add(this.newKeyboardText);
             this.sequencePage.Controls.Add(this.newMouseButtonsComboBox);
             this.sequencePage.Controls.Add(this.newPointYNum);
@@ -391,26 +398,43 @@
             this.sequencePage.Controls.Add(this.sequenceListBox);
             this.sequencePage.Location = new System.Drawing.Point(4, 25);
             this.sequencePage.Margin = new System.Windows.Forms.Padding(4);
-            this.sequencePage.Name = "tabPage3";
+            this.sequencePage.Name = "sequencePage";
             this.sequencePage.Padding = new System.Windows.Forms.Padding(4);
             this.sequencePage.Size = new System.Drawing.Size(363, 180);
             this.sequencePage.TabIndex = 2;
             this.sequencePage.Text = "tabPage3";
             this.sequencePage.UseVisualStyleBackColor = true;
             // 
-            // textNew
+            // textBox1
+            // 
+            this.newSubsequenceFilenameText.Location = new System.Drawing.Point(97, 150);
+            this.newSubsequenceFilenameText.Margin = new System.Windows.Forms.Padding(4);
+            this.newSubsequenceFilenameText.Name = "textBox1";
+            this.newSubsequenceFilenameText.Size = new System.Drawing.Size(255, 22);
+            this.newSubsequenceFilenameText.TabIndex = 25;
+            // 
+            // newKeyboardText
             // 
             this.newKeyboardText.Location = new System.Drawing.Point(3, 151);
             this.newKeyboardText.Margin = new System.Windows.Forms.Padding(4);
-            this.newKeyboardText.Name = "textNew";
+            this.newKeyboardText.Name = "newKeyboardText";
             this.newKeyboardText.Size = new System.Drawing.Size(351, 22);
             this.newKeyboardText.TabIndex = 23;
             // 
-            // numNewY
+            // newMouseButtonsComboBox
+            // 
+            this.newMouseButtonsComboBox.FormattingEnabled = true;
+            this.newMouseButtonsComboBox.Location = new System.Drawing.Point(3, 149);
+            this.newMouseButtonsComboBox.Margin = new System.Windows.Forms.Padding(4);
+            this.newMouseButtonsComboBox.Name = "newMouseButtonsComboBox";
+            this.newMouseButtonsComboBox.Size = new System.Drawing.Size(133, 24);
+            this.newMouseButtonsComboBox.TabIndex = 24;
+            // 
+            // newPointYNum
             // 
             this.newPointYNum.Location = new System.Drawing.Point(268, 151);
             this.newPointYNum.Margin = new System.Windows.Forms.Padding(4);
-            this.newPointYNum.Name = "numNewY";
+            this.newPointYNum.Name = "newPointYNum";
             this.newPointYNum.Size = new System.Drawing.Size(84, 22);
             this.newPointYNum.TabIndex = 9;
             // 
@@ -424,11 +448,11 @@
             this.label12.TabIndex = 8;
             this.label12.Text = "Y:";
             // 
-            // numNewX
+            // newPointXNum
             // 
             this.newPointXNum.Location = new System.Drawing.Point(159, 151);
             this.newPointXNum.Margin = new System.Windows.Forms.Padding(4);
-            this.newPointXNum.Name = "numNewX";
+            this.newPointXNum.Name = "newPointXNum";
             this.newPointXNum.Size = new System.Drawing.Size(84, 22);
             this.newPointXNum.TabIndex = 7;
             // 
@@ -442,21 +466,21 @@
             this.label10.TabIndex = 6;
             this.label10.Text = "X:";
             // 
-            // comboBox1
+            // newActionsComboBox
             // 
             this.newActionsComboBox.FormattingEnabled = true;
             this.newActionsComboBox.Location = new System.Drawing.Point(3, 123);
             this.newActionsComboBox.Margin = new System.Windows.Forms.Padding(4);
-            this.newActionsComboBox.Name = "comboBox1";
+            this.newActionsComboBox.Name = "newActionsComboBox";
             this.newActionsComboBox.Size = new System.Drawing.Size(133, 24);
             this.newActionsComboBox.TabIndex = 5;
             this.newActionsComboBox.SelectedIndexChanged += new System.EventHandler(this.ActionsComboBox_SelectedIndexChanged);
             // 
-            // numNewPeriod1
+            // newAfterActionPeriodNum
             // 
             this.newAfterActionPeriodNum.Location = new System.Drawing.Point(159, 124);
             this.newAfterActionPeriodNum.Margin = new System.Windows.Forms.Padding(4);
-            this.newAfterActionPeriodNum.Name = "numNewPeriod1";
+            this.newAfterActionPeriodNum.Name = "newAfterActionPeriodNum";
             this.newAfterActionPeriodNum.Size = new System.Drawing.Size(84, 22);
             this.newAfterActionPeriodNum.TabIndex = 3;
             // 
@@ -470,82 +494,91 @@
             this.label8.TabIndex = 2;
             this.label8.Text = "P:";
             // 
-            // btnEdit
+            // editButton
             // 
             this.editButton.Location = new System.Drawing.Point(247, 121);
             this.editButton.Margin = new System.Windows.Forms.Padding(4);
-            this.editButton.Name = "btnEdit";
+            this.editButton.Name = "editButton";
             this.editButton.Size = new System.Drawing.Size(108, 28);
             this.editButton.TabIndex = 1;
             this.editButton.Text = "Edytuj";
             this.editButton.UseVisualStyleBackColor = true;
             this.editButton.Click += new System.EventHandler(this.EditButton_Click);
             // 
-            // listBox1
+            // sequenceListBox
             // 
             this.sequenceListBox.FormattingEnabled = true;
             this.sequenceListBox.ItemHeight = 16;
             this.sequenceListBox.Location = new System.Drawing.Point(3, 4);
             this.sequenceListBox.Margin = new System.Windows.Forms.Padding(4);
-            this.sequenceListBox.Name = "listBox1";
+            this.sequenceListBox.Name = "sequenceListBox";
             this.sequenceListBox.Size = new System.Drawing.Size(351, 116);
             this.sequenceListBox.TabIndex = 0;
             this.sequenceListBox.SelectedIndexChanged += new System.EventHandler(this.SequenceListBox_SelectedIndexChanged);
             // 
-            // tabPage4
+            // profilesPage
             // 
             this.profilesPage.Controls.Add(this.deleteButton);
             this.profilesPage.Controls.Add(this.profilesListBox);
             this.profilesPage.Controls.Add(this.loadButton);
             this.profilesPage.Location = new System.Drawing.Point(4, 25);
             this.profilesPage.Margin = new System.Windows.Forms.Padding(4);
-            this.profilesPage.Name = "tabPage4";
+            this.profilesPage.Name = "profilesPage";
             this.profilesPage.Padding = new System.Windows.Forms.Padding(4);
             this.profilesPage.Size = new System.Drawing.Size(363, 180);
             this.profilesPage.TabIndex = 3;
             this.profilesPage.Text = "tabPage4";
             this.profilesPage.UseVisualStyleBackColor = true;
             // 
-            // btnDelete
+            // deleteButton
             // 
             this.deleteButton.Location = new System.Drawing.Point(255, 140);
             this.deleteButton.Margin = new System.Windows.Forms.Padding(4);
-            this.deleteButton.Name = "btnDelete";
+            this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(100, 28);
             this.deleteButton.TabIndex = 22;
             this.deleteButton.Text = "Usuń";
             this.deleteButton.UseVisualStyleBackColor = true;
             this.deleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
             // 
-            // listBox2
+            // profilesListBox
             // 
             this.profilesListBox.FormattingEnabled = true;
             this.profilesListBox.ItemHeight = 16;
             this.profilesListBox.Location = new System.Drawing.Point(3, 2);
             this.profilesListBox.Margin = new System.Windows.Forms.Padding(4);
-            this.profilesListBox.Name = "listBox2";
+            this.profilesListBox.Name = "profilesListBox";
             this.profilesListBox.Size = new System.Drawing.Size(353, 132);
             this.profilesListBox.TabIndex = 0;
             // 
-            // btnLoad
+            // loadButton
             // 
             this.loadButton.Location = new System.Drawing.Point(3, 140);
             this.loadButton.Margin = new System.Windows.Forms.Padding(4);
-            this.loadButton.Name = "btnLoad";
+            this.loadButton.Name = "loadButton";
             this.loadButton.Size = new System.Drawing.Size(100, 28);
             this.loadButton.TabIndex = 21;
             this.loadButton.Text = "Wczytaj";
             this.loadButton.UseVisualStyleBackColor = true;
             this.loadButton.Click += new System.EventHandler(this.LoadButton_Click);
             // 
-            // comboBox2
+            // numericUpDown1
             // 
-            this.newMouseButtonsComboBox.FormattingEnabled = true;
-            this.newMouseButtonsComboBox.Location = new System.Drawing.Point(3, 149);
-            this.newMouseButtonsComboBox.Margin = new System.Windows.Forms.Padding(4);
-            this.newMouseButtonsComboBox.Name = "comboBox2";
-            this.newMouseButtonsComboBox.Size = new System.Drawing.Size(133, 24);
-            this.newMouseButtonsComboBox.TabIndex = 24;
+            this.newSubsequenceIterationsNum.Location = new System.Drawing.Point(4, 151);
+            this.newSubsequenceIterationsNum.Margin = new System.Windows.Forms.Padding(4);
+            this.newSubsequenceIterationsNum.Name = "numericUpDown1";
+            this.newSubsequenceIterationsNum.Size = new System.Drawing.Size(67, 22);
+            this.newSubsequenceIterationsNum.TabIndex = 27;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(76, 152);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(13, 16);
+            this.label3.TabIndex = 26;
+            this.label3.Text = "x";
             // 
             // Form
             // 
@@ -571,6 +604,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.newPointXNum)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.newAfterActionPeriodNum)).EndInit();
             this.profilesPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.newSubsequenceIterationsNum)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -618,6 +652,9 @@
         private System.Windows.Forms.Label sequenceCounterLabel;
         private System.Windows.Forms.CheckBox randomIntervalCheckbox;
         private System.Windows.Forms.ComboBox newMouseButtonsComboBox;
+        private System.Windows.Forms.TextBox newSubsequenceFilenameText;
+        private System.Windows.Forms.NumericUpDown newSubsequenceIterationsNum;
+        private System.Windows.Forms.Label label3;
     }
 }
 

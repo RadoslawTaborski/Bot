@@ -1,13 +1,12 @@
 ﻿namespace Clicker
 {
-    public class MouseAction : Action
+    public class KeyboardAction : Action
     {
-        public MouseActions Button { get; set; }
-        public System.Drawing.Point Point { get; set; }
+        public string Text { get; set; }
 
         public override string ToString()
         {
-            return Id + ". " + Button + " ; " + Period + " ; " + Point.X + " ; " + Point.Y;
+            return Id + ": Keyboard ; " + Period + " ; " + Text;
         }
     }
 }

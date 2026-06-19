@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionExecutor.cs" />
+    <Compile Include="Extensions\BindingListExtensions.cs" />
     <Compile Include="Models\Actions\Action.cs" />
     <Compile Include="Form.cs">
       <SubType>Form</SubType>
@@ -84,8 +85,9 @@
     <Compile Include="Form.Designer.cs">
       <DependentUpon>Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Actions\KeyboardAction.cs" />
+    <Compile Include="Models\Actions\SubSequenceAction.cs" />
     <Compile Include="Models\Actions\MouseAction.cs" />
+    <Compile Include="Models\Actions\KeyboardAction.cs" />
     <Compile Include="Enums\Actions.cs" />
     <Compile Include="Enums\MouseActions.cs" />
     <Compile Include="Program.cs" />

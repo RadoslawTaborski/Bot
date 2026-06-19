@@ -3,6 +3,7 @@
     public enum Actions
     {
         Mouse,
-        Keyboard
+        Keyboard,
+        SubSequence,
     }
 }
