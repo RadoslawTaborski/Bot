@@ -1,5 +1,4 @@
-﻿using Clicker.Properties;
-using MouseKeyboardActivityMonitor;
+﻿using MouseKeyboardActivityMonitor;
 using MouseKeyboardActivityMonitor.WinApi;
 using Newtonsoft.Json;
 using System;
@@ -73,15 +72,19 @@ namespace Clicker
             numPeriod1.Minimum = 100;
             numPeriod1.Maximum = 10000000;
             numPeriod1.Value = 2000;
+            numPeriod1.Increment = 1000;
             numPeriodA.Minimum = 100;
             numPeriodA.Maximum = 10000000;
-            numPeriodA.Value = 2000;
+            numPeriodA.Increment = 1000;
             numPeriodB.Minimum = 100;
             numPeriodB.Maximum = 10000000;
-            numPeriodB.Value = 3000;
+            numPeriodB.Increment = 1000;
+            numPeriodB.Value = 2000;
+            numPeriodA.Value = 2000;
             numNewPeriod1.Minimum = 100;
             numNewPeriod1.Maximum = 10000000;
             numNewPeriod1.Value = 100;
+            numNewPeriod1.Increment = 1000;
             numNewX.Minimum = 0;
             numNewX.Maximum = Screen.PrimaryScreen.Bounds.Width;
             numNewX.Value = 0;
@@ -94,6 +97,7 @@ namespace Clicker
             numOfRepeats.Maximum = 100000;
             numOfRepeats.Value = 1000;
             btnEdit.Enabled = false;
+            label13.Text = "";
 
             string path = Directory.GetCurrentDirectory();
             DirectoryInfo di = new DirectoryInfo(path);
@@ -127,6 +131,10 @@ namespace Clicker
 
         public void DoAction(object sender, ElapsedEventArgs e)
         {
+            label13.Invoke((MethodInvoker)(() =>
+            {
+                label13.Text = $"Iteracja: {repeatCounter + 1} z {(cbRepeat.Checked ? numOfRepeats.Value : 1)}";
+            }));
             if (settings.Moves[iteration].Action.Equals(Actions.Keyboard))
             {
                 foreach (char c in settings.Moves[iteration].Text)
@@ -182,7 +190,7 @@ namespace Clicker
                 }
                 else
                 {
-                    Invoke(new System.Action(delegate () 
+                    Invoke(new Action(delegate () 
                     {
                         btnStop_Click(null, null);
                     }));
@@ -230,6 +238,7 @@ namespace Clicker
             timer.Elapsed -= new ElapsedEventHandler(DoAction);
             iteration = 1;
             repeatCounter = 0;
+            label13.Text = "";
             btnRecord.Enabled = false;
             btnStopRecord.Enabled = false;
             btnStart.Enabled = true;
@@ -244,7 +253,10 @@ namespace Clicker
             if (cbRepeat.Checked == true)
             {
                 numPeriodA.Enabled = true;
-                numPeriodB.Enabled = true;
+                if (cbRandomInterval.Checked)
+                {
+                    numPeriodB.Enabled = true;
+                }
                 numOfRepeats.Enabled = true;
             }
             else
@@ -272,6 +284,7 @@ namespace Clicker
             btnDelete.Enabled = false;
             btnSave.Enabled = false;
             tbName.Enabled = false;
+            label13.Text = "";
         }
 
         private void btnStopRecord_Click(object sender, EventArgs e)
@@ -293,7 +306,10 @@ namespace Clicker
             if (cbRepeat.Checked == true)
             {
                 numPeriodA.Enabled = true;
-                numPeriodB.Enabled = true;
+                if (cbRandomInterval.Checked)
+                {
+                    numPeriodB.Enabled = true;
+                }
                 numOfRepeats.Enabled = true;
             }
             else
@@ -333,6 +349,7 @@ namespace Clicker
             numNewX.Value = 0;
             numNewY.Value = 0;
             textNew.Text = "";
+            label13.Text = "";
             numNewX.Visible = true;
             numNewY.Visible = true;
             textNew.Visible = false;
@@ -341,7 +358,10 @@ namespace Clicker
             if (cbRepeat.Checked == true)
             {
                 numPeriodA.Enabled = true;
-                numPeriodB.Enabled = true;
+                if (cbRandomInterval.Checked)
+                {
+                    numPeriodB.Enabled = true;
+                }
                 numOfRepeats.Enabled = true;
             }
             else
@@ -377,12 +397,15 @@ namespace Clicker
                     : Actions.MouseLeft});
         }
 
-        private void cbCookies_CheckedChanged(object sender, EventArgs e)
+        private void cbRepeat_CheckedChanged(object sender, EventArgs e)
         {
-            if (cbRepeat.Checked == true)
+            if (cbRepeat.Checked)
             {
                 numPeriodA.Enabled = true;
-                numPeriodB.Enabled = true;
+                if (cbRandomInterval.Checked)
+                {
+                    numPeriodB.Enabled = true;
+                }
                 numOfRepeats.Enabled = true;
             }
             else
@@ -408,12 +431,20 @@ namespace Clicker
                 throw;
             }
 
-            numPeriod1.Value = settings.Period1;
-            numPeriodA.Value = settings.PeriodA;
-            numPeriodB.Value = settings.PeriodB;
             numOfRepeats.Value = settings.NumberOfRepeats;
             cbRepeat.Checked = settings.Repeat;
-            cbRepeat.CheckedChanged += new EventHandler(cbCookies_CheckedChanged);
+            cbRepeat.CheckedChanged += new EventHandler(cbRepeat_CheckedChanged);
+            cbRandomInterval.Checked = settings.RandomTimeInterval;
+            numPeriod1.Value = settings.Period1;
+            numPeriodA.Value = settings.PeriodA;
+            if (settings.RandomTimeInterval)
+            {
+                numPeriodB.Value = settings.PeriodB;
+            } 
+            else
+            {
+                numPeriodB.Value = settings.PeriodA;
+            }             
 
             listBox1.DataSource = settings.Moves;
 
@@ -432,7 +463,10 @@ namespace Clicker
             if (cbRepeat.Checked == true)
             {
                 numPeriodA.Enabled = true;
-                numPeriodB.Enabled = true;
+                if (cbRandomInterval.Checked)
+                {
+                    numPeriodB.Enabled = true;
+                }
                 numOfRepeats.Enabled = true;
             }
             else
@@ -459,6 +493,7 @@ namespace Clicker
             settings.PeriodB = (int)numPeriodB.Value;
             settings.NumberOfRepeats = (int)numOfRepeats.Value;
             settings.Repeat = cbRepeat.Checked;
+            settings.RandomTimeInterval = cbRandomInterval.Checked;
 
             try
             {
@@ -598,6 +633,26 @@ namespace Clicker
                 textNew.Text = "";
                 numNewX.Value = move?.Point.X ?? 0;
                 numNewY.Value = move?.Point.Y ?? 0;
+            }
+        }
+
+        private void cbRandomInterval_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbRandomInterval.Checked)
+            {
+                numPeriodB.Enabled = true;
+            }
+            else
+            {
+                numPeriodB.Enabled = false;
+            }
+        }
+
+        private void numPeriodA_ValueChanged(object sender, EventArgs e)
+        {
+            if (!cbRandomInterval.Checked && numPeriodA.Value >= numPeriodA.Minimum)
+            {
+                numPeriodB.Value = numPeriodA.Value;
             }
         }
     }

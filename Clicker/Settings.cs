@@ -12,6 +12,7 @@ namespace Clicker
         public int PeriodB { get; set; }
 
         public bool Repeat { get; set; }
+        public bool RandomTimeInterval { get; set; }
         public int NumberOfRepeats { get; set; }
     }
 }
