@@ -1,11 +1,8 @@
-﻿using System;
-
-namespace Clicker
+﻿namespace Clicker
 {
-    [Serializable]
     public abstract class Action
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public int Period { get; set; }
         public string Tag { get; set; }
         public string Description { get; set; } = string.Empty;
