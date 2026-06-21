@@ -8,7 +8,9 @@
 
         public override string ToString()
         {
-            return Id + ". " + FileName + " x " + Iterations + " ; " + Period;
+            var tag = string.IsNullOrEmpty(Tag) ? "---" : Tag;
+            var description = string.IsNullOrWhiteSpace(Description) ? $"{Iterations}x{FileName}" : Description;
+            return $"{Id}. {tag} ; Sub ; {description} ; {Period}";
         }
     }
 }

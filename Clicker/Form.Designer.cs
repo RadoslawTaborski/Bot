@@ -54,6 +54,9 @@
             this.saveButton = new System.Windows.Forms.Button();
             this.repeatSequenceCheckbox = new System.Windows.Forms.CheckBox();
             this.sequencePage = new System.Windows.Forms.TabPage();
+            this.label13 = new System.Windows.Forms.Label();
+            this.newTagText = new System.Windows.Forms.TextBox();
+            this.newSubsequenceIterationsNum = new System.Windows.Forms.NumericUpDown();
             this.newSubsequenceFilenameText = new System.Windows.Forms.TextBox();
             this.newKeyboardText = new System.Windows.Forms.TextBox();
             this.newMouseButtonsComboBox = new System.Windows.Forms.ComboBox();
@@ -66,12 +69,15 @@
             this.label8 = new System.Windows.Forms.Label();
             this.editButton = new System.Windows.Forms.Button();
             this.sequenceListBox = new System.Windows.Forms.ListBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tags = new System.Windows.Forms.TabPage();
+            this.tagsListBox = new System.Windows.Forms.CheckedListBox();
             this.profilesPage = new System.Windows.Forms.TabPage();
             this.deleteButton = new System.Windows.Forms.Button();
             this.profilesListBox = new System.Windows.Forms.ListBox();
             this.loadButton = new System.Windows.Forms.Button();
-            this.newSubsequenceIterationsNum = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.newDescription = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.afterActionPeriodNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.afterSequencePeriodStartNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.afterSequencePeriodStopNum)).BeginInit();
@@ -80,16 +86,17 @@
             this.settingsPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfRepeatNum)).BeginInit();
             this.sequencePage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.newSubsequenceIterationsNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.newPointYNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.newPointXNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.newAfterActionPeriodNum)).BeginInit();
+            this.tags.SuspendLayout();
             this.profilesPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.newSubsequenceIterationsNum)).BeginInit();
             this.SuspendLayout();
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(8, 63);
+            this.startButton.Location = new System.Drawing.Point(8, 79);
             this.startButton.Margin = new System.Windows.Forms.Padding(4);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(172, 79);
@@ -100,7 +107,7 @@
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(188, 63);
+            this.stopButton.Location = new System.Drawing.Point(188, 79);
             this.stopButton.Margin = new System.Windows.Forms.Padding(4);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(172, 79);
@@ -123,7 +130,7 @@
             this.recordButton.Location = new System.Drawing.Point(8, 24);
             this.recordButton.Margin = new System.Windows.Forms.Padding(4);
             this.recordButton.Name = "recordButton";
-            this.recordButton.Size = new System.Drawing.Size(172, 36);
+            this.recordButton.Size = new System.Drawing.Size(172, 49);
             this.recordButton.TabIndex = 3;
             this.recordButton.Text = "Nagraj";
             this.recordButton.UseVisualStyleBackColor = true;
@@ -134,7 +141,7 @@
             this.stopRecordButton.Location = new System.Drawing.Point(187, 24);
             this.stopRecordButton.Margin = new System.Windows.Forms.Padding(4);
             this.stopRecordButton.Name = "stopRecordButton";
-            this.stopRecordButton.Size = new System.Drawing.Size(172, 36);
+            this.stopRecordButton.Size = new System.Drawing.Size(172, 49);
             this.stopRecordButton.TabIndex = 5;
             this.stopRecordButton.Text = "Zatrzymaj nagrywanie";
             this.stopRecordButton.UseVisualStyleBackColor = true;
@@ -142,10 +149,10 @@
             // 
             // clearButton
             // 
-            this.clearButton.Location = new System.Drawing.Point(9, 147);
+            this.clearButton.Location = new System.Drawing.Point(9, 163);
             this.clearButton.Margin = new System.Windows.Forms.Padding(4);
             this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(351, 30);
+            this.clearButton.Size = new System.Drawing.Size(351, 29);
             this.clearButton.TabIndex = 6;
             this.clearButton.Text = "Wyczyść pamięć";
             this.clearButton.UseVisualStyleBackColor = true;
@@ -154,7 +161,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 10);
+            this.label2.Location = new System.Drawing.Point(4, 14);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(212, 16);
@@ -164,7 +171,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(221, 106);
+            this.label4.Location = new System.Drawing.Point(221, 120);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(11, 16);
@@ -174,7 +181,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(329, 14);
+            this.label5.Location = new System.Drawing.Point(329, 18);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(25, 16);
@@ -184,7 +191,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(196, 108);
+            this.label6.Location = new System.Drawing.Point(196, 122);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(25, 16);
@@ -194,7 +201,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(329, 111);
+            this.label7.Location = new System.Drawing.Point(329, 125);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(25, 16);
@@ -208,7 +215,7 @@
             0,
             0,
             0});
-            this.afterActionPeriodNum.Location = new System.Drawing.Point(237, 6);
+            this.afterActionPeriodNum.Location = new System.Drawing.Point(237, 10);
             this.afterActionPeriodNum.Margin = new System.Windows.Forms.Padding(4);
             this.afterActionPeriodNum.Name = "afterActionPeriodNum";
             this.afterActionPeriodNum.Size = new System.Drawing.Size(92, 22);
@@ -221,7 +228,7 @@
             0,
             0,
             0});
-            this.afterSequencePeriodStartNum.Location = new System.Drawing.Point(101, 102);
+            this.afterSequencePeriodStartNum.Location = new System.Drawing.Point(101, 116);
             this.afterSequencePeriodStartNum.Margin = new System.Windows.Forms.Padding(4);
             this.afterSequencePeriodStartNum.Name = "afterSequencePeriodStartNum";
             this.afterSequencePeriodStartNum.Size = new System.Drawing.Size(92, 22);
@@ -235,7 +242,7 @@
             0,
             0,
             0});
-            this.afterSequencePeriodStopNum.Location = new System.Drawing.Point(237, 102);
+            this.afterSequencePeriodStopNum.Location = new System.Drawing.Point(237, 116);
             this.afterSequencePeriodStopNum.Margin = new System.Windows.Forms.Padding(4);
             this.afterSequencePeriodStopNum.Name = "afterSequencePeriodStopNum";
             this.afterSequencePeriodStopNum.Size = new System.Drawing.Size(92, 22);
@@ -246,12 +253,13 @@
             this.tabControl1.Controls.Add(this.mainPage);
             this.tabControl1.Controls.Add(this.settingsPage);
             this.tabControl1.Controls.Add(this.sequencePage);
+            this.tabControl1.Controls.Add(this.tags);
             this.tabControl1.Controls.Add(this.profilesPage);
             this.tabControl1.Location = new System.Drawing.Point(11, 9);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(371, 209);
+            this.tabControl1.Size = new System.Drawing.Size(371, 225);
             this.tabControl1.TabIndex = 19;
             // 
             // mainPage
@@ -267,9 +275,9 @@
             this.mainPage.Margin = new System.Windows.Forms.Padding(4);
             this.mainPage.Name = "mainPage";
             this.mainPage.Padding = new System.Windows.Forms.Padding(4);
-            this.mainPage.Size = new System.Drawing.Size(363, 180);
+            this.mainPage.Size = new System.Drawing.Size(363, 196);
             this.mainPage.TabIndex = 0;
-            this.mainPage.Text = "tabPage1";
+            this.mainPage.Text = "Główne";
             this.mainPage.UseVisualStyleBackColor = true;
             // 
             // sequenceCounterLabel
@@ -303,15 +311,15 @@
             this.settingsPage.Margin = new System.Windows.Forms.Padding(4);
             this.settingsPage.Name = "settingsPage";
             this.settingsPage.Padding = new System.Windows.Forms.Padding(4);
-            this.settingsPage.Size = new System.Drawing.Size(363, 180);
+            this.settingsPage.Size = new System.Drawing.Size(363, 196);
             this.settingsPage.TabIndex = 1;
-            this.settingsPage.Text = "tabPage2";
+            this.settingsPage.Text = "Ustawienia";
             this.settingsPage.UseVisualStyleBackColor = true;
             // 
             // randomIntervalCheckbox
             // 
             this.randomIntervalCheckbox.AutoSize = true;
-            this.randomIntervalCheckbox.Location = new System.Drawing.Point(12, 65);
+            this.randomIntervalCheckbox.Location = new System.Drawing.Point(12, 69);
             this.randomIntervalCheckbox.Margin = new System.Windows.Forms.Padding(4);
             this.randomIntervalCheckbox.Name = "randomIntervalCheckbox";
             this.randomIntervalCheckbox.Size = new System.Drawing.Size(296, 20);
@@ -322,7 +330,7 @@
             // 
             // numberOfRepeatNum
             // 
-            this.numberOfRepeatNum.Location = new System.Drawing.Point(13, 102);
+            this.numberOfRepeatNum.Location = new System.Drawing.Point(13, 116);
             this.numberOfRepeatNum.Margin = new System.Windows.Forms.Padding(4);
             this.numberOfRepeatNum.Name = "numberOfRepeatNum";
             this.numberOfRepeatNum.Size = new System.Drawing.Size(67, 22);
@@ -331,7 +339,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(85, 103);
+            this.label11.Location = new System.Drawing.Point(85, 117);
             this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(13, 16);
@@ -341,7 +349,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(320, 145);
+            this.label9.Location = new System.Drawing.Point(320, 167);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(35, 16);
@@ -350,7 +358,7 @@
             // 
             // fileNameText
             // 
-            this.fileNameText.Location = new System.Drawing.Point(120, 139);
+            this.fileNameText.Location = new System.Drawing.Point(120, 161);
             this.fileNameText.Margin = new System.Windows.Forms.Padding(4);
             this.fileNameText.Name = "fileNameText";
             this.fileNameText.Size = new System.Drawing.Size(199, 22);
@@ -359,7 +367,7 @@
             // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(11, 138);
+            this.saveButton.Location = new System.Drawing.Point(11, 160);
             this.saveButton.Margin = new System.Windows.Forms.Padding(4);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(100, 28);
@@ -371,7 +379,7 @@
             // repeatSequenceCheckbox
             // 
             this.repeatSequenceCheckbox.AutoSize = true;
-            this.repeatSequenceCheckbox.Location = new System.Drawing.Point(12, 37);
+            this.repeatSequenceCheckbox.Location = new System.Drawing.Point(12, 41);
             this.repeatSequenceCheckbox.Margin = new System.Windows.Forms.Padding(4);
             this.repeatSequenceCheckbox.Name = "repeatSequenceCheckbox";
             this.repeatSequenceCheckbox.Size = new System.Drawing.Size(154, 20);
@@ -382,8 +390,11 @@
             // 
             // sequencePage
             // 
+            this.sequencePage.Controls.Add(this.label14);
+            this.sequencePage.Controls.Add(this.newDescription);
+            this.sequencePage.Controls.Add(this.label13);
+            this.sequencePage.Controls.Add(this.newTagText);
             this.sequencePage.Controls.Add(this.newSubsequenceIterationsNum);
-            this.sequencePage.Controls.Add(this.label3);
             this.sequencePage.Controls.Add(this.newSubsequenceFilenameText);
             this.sequencePage.Controls.Add(this.newKeyboardText);
             this.sequencePage.Controls.Add(this.newMouseButtonsComboBox);
@@ -396,26 +407,53 @@
             this.sequencePage.Controls.Add(this.label8);
             this.sequencePage.Controls.Add(this.editButton);
             this.sequencePage.Controls.Add(this.sequenceListBox);
+            this.sequencePage.Controls.Add(this.label3);
             this.sequencePage.Location = new System.Drawing.Point(4, 25);
             this.sequencePage.Margin = new System.Windows.Forms.Padding(4);
             this.sequencePage.Name = "sequencePage";
             this.sequencePage.Padding = new System.Windows.Forms.Padding(4);
-            this.sequencePage.Size = new System.Drawing.Size(363, 180);
+            this.sequencePage.Size = new System.Drawing.Size(363, 196);
             this.sequencePage.TabIndex = 2;
-            this.sequencePage.Text = "tabPage3";
+            this.sequencePage.Text = "Sekwencja";
             this.sequencePage.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // label13
             // 
-            this.newSubsequenceFilenameText.Location = new System.Drawing.Point(97, 150);
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(190, 139);
+            this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(19, 16);
+            this.label13.TabIndex = 29;
+            this.label13.Text = "T:";
+            // 
+            // newTagText
+            // 
+            this.newTagText.Location = new System.Drawing.Point(212, 136);
+            this.newTagText.Margin = new System.Windows.Forms.Padding(4);
+            this.newTagText.Name = "newTagText";
+            this.newTagText.Size = new System.Drawing.Size(141, 22);
+            this.newTagText.TabIndex = 28;
+            // 
+            // newSubsequenceIterationsNum
+            // 
+            this.newSubsequenceIterationsNum.Location = new System.Drawing.Point(4, 163);
+            this.newSubsequenceIterationsNum.Margin = new System.Windows.Forms.Padding(4);
+            this.newSubsequenceIterationsNum.Name = "newSubsequenceIterationsNum";
+            this.newSubsequenceIterationsNum.Size = new System.Drawing.Size(67, 22);
+            this.newSubsequenceIterationsNum.TabIndex = 27;
+            // 
+            // newSubsequenceFilenameText
+            // 
+            this.newSubsequenceFilenameText.Location = new System.Drawing.Point(97, 163);
             this.newSubsequenceFilenameText.Margin = new System.Windows.Forms.Padding(4);
-            this.newSubsequenceFilenameText.Name = "textBox1";
-            this.newSubsequenceFilenameText.Size = new System.Drawing.Size(255, 22);
+            this.newSubsequenceFilenameText.Name = "newSubsequenceFilenameText";
+            this.newSubsequenceFilenameText.Size = new System.Drawing.Size(257, 22);
             this.newSubsequenceFilenameText.TabIndex = 25;
             // 
             // newKeyboardText
             // 
-            this.newKeyboardText.Location = new System.Drawing.Point(3, 151);
+            this.newKeyboardText.Location = new System.Drawing.Point(3, 163);
             this.newKeyboardText.Margin = new System.Windows.Forms.Padding(4);
             this.newKeyboardText.Name = "newKeyboardText";
             this.newKeyboardText.Size = new System.Drawing.Size(351, 22);
@@ -424,7 +462,7 @@
             // newMouseButtonsComboBox
             // 
             this.newMouseButtonsComboBox.FormattingEnabled = true;
-            this.newMouseButtonsComboBox.Location = new System.Drawing.Point(3, 149);
+            this.newMouseButtonsComboBox.Location = new System.Drawing.Point(3, 162);
             this.newMouseButtonsComboBox.Margin = new System.Windows.Forms.Padding(4);
             this.newMouseButtonsComboBox.Name = "newMouseButtonsComboBox";
             this.newMouseButtonsComboBox.Size = new System.Drawing.Size(133, 24);
@@ -432,7 +470,7 @@
             // 
             // newPointYNum
             // 
-            this.newPointYNum.Location = new System.Drawing.Point(268, 151);
+            this.newPointYNum.Location = new System.Drawing.Point(268, 163);
             this.newPointYNum.Margin = new System.Windows.Forms.Padding(4);
             this.newPointYNum.Name = "newPointYNum";
             this.newPointYNum.Size = new System.Drawing.Size(84, 22);
@@ -441,7 +479,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(248, 154);
+            this.label12.Location = new System.Drawing.Point(248, 166);
             this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(19, 16);
@@ -450,7 +488,7 @@
             // 
             // newPointXNum
             // 
-            this.newPointXNum.Location = new System.Drawing.Point(159, 151);
+            this.newPointXNum.Location = new System.Drawing.Point(159, 163);
             this.newPointXNum.Margin = new System.Windows.Forms.Padding(4);
             this.newPointXNum.Name = "newPointXNum";
             this.newPointXNum.Size = new System.Drawing.Size(84, 22);
@@ -459,7 +497,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(140, 154);
+            this.label10.Location = new System.Drawing.Point(140, 166);
             this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 16);
@@ -469,7 +507,7 @@
             // newActionsComboBox
             // 
             this.newActionsComboBox.FormattingEnabled = true;
-            this.newActionsComboBox.Location = new System.Drawing.Point(3, 123);
+            this.newActionsComboBox.Location = new System.Drawing.Point(3, 108);
             this.newActionsComboBox.Margin = new System.Windows.Forms.Padding(4);
             this.newActionsComboBox.Name = "newActionsComboBox";
             this.newActionsComboBox.Size = new System.Drawing.Size(133, 24);
@@ -478,7 +516,7 @@
             // 
             // newAfterActionPeriodNum
             // 
-            this.newAfterActionPeriodNum.Location = new System.Drawing.Point(159, 124);
+            this.newAfterActionPeriodNum.Location = new System.Drawing.Point(159, 109);
             this.newAfterActionPeriodNum.Margin = new System.Windows.Forms.Padding(4);
             this.newAfterActionPeriodNum.Name = "newAfterActionPeriodNum";
             this.newAfterActionPeriodNum.Size = new System.Drawing.Size(84, 22);
@@ -487,7 +525,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(140, 127);
+            this.label8.Location = new System.Drawing.Point(140, 112);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(19, 16);
@@ -496,7 +534,7 @@
             // 
             // editButton
             // 
-            this.editButton.Location = new System.Drawing.Point(247, 121);
+            this.editButton.Location = new System.Drawing.Point(247, 106);
             this.editButton.Margin = new System.Windows.Forms.Padding(4);
             this.editButton.Name = "editButton";
             this.editButton.Size = new System.Drawing.Size(108, 28);
@@ -512,9 +550,38 @@
             this.sequenceListBox.Location = new System.Drawing.Point(3, 4);
             this.sequenceListBox.Margin = new System.Windows.Forms.Padding(4);
             this.sequenceListBox.Name = "sequenceListBox";
-            this.sequenceListBox.Size = new System.Drawing.Size(351, 116);
+            this.sequenceListBox.Size = new System.Drawing.Size(351, 100);
             this.sequenceListBox.TabIndex = 0;
             this.sequenceListBox.SelectedIndexChanged += new System.EventHandler(this.SequenceListBox_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(76, 166);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(13, 16);
+            this.label3.TabIndex = 26;
+            this.label3.Text = "x";
+            // 
+            // tags
+            // 
+            this.tags.Controls.Add(this.tagsListBox);
+            this.tags.Location = new System.Drawing.Point(4, 25);
+            this.tags.Name = "tags";
+            this.tags.Padding = new System.Windows.Forms.Padding(3);
+            this.tags.Size = new System.Drawing.Size(363, 196);
+            this.tags.TabIndex = 4;
+            this.tags.Text = "Tagi";
+            this.tags.UseVisualStyleBackColor = true;
+            // 
+            // tagsListBox
+            // 
+            this.tagsListBox.FormattingEnabled = true;
+            this.tagsListBox.Location = new System.Drawing.Point(3, 3);
+            this.tagsListBox.Name = "tagsListBox";
+            this.tagsListBox.Size = new System.Drawing.Size(354, 191);
+            this.tagsListBox.TabIndex = 0;
             // 
             // profilesPage
             // 
@@ -525,14 +592,14 @@
             this.profilesPage.Margin = new System.Windows.Forms.Padding(4);
             this.profilesPage.Name = "profilesPage";
             this.profilesPage.Padding = new System.Windows.Forms.Padding(4);
-            this.profilesPage.Size = new System.Drawing.Size(363, 180);
+            this.profilesPage.Size = new System.Drawing.Size(363, 196);
             this.profilesPage.TabIndex = 3;
-            this.profilesPage.Text = "tabPage4";
+            this.profilesPage.Text = "Profile";
             this.profilesPage.UseVisualStyleBackColor = true;
             // 
             // deleteButton
             // 
-            this.deleteButton.Location = new System.Drawing.Point(255, 140);
+            this.deleteButton.Location = new System.Drawing.Point(255, 160);
             this.deleteButton.Margin = new System.Windows.Forms.Padding(4);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(100, 28);
@@ -548,12 +615,12 @@
             this.profilesListBox.Location = new System.Drawing.Point(3, 2);
             this.profilesListBox.Margin = new System.Windows.Forms.Padding(4);
             this.profilesListBox.Name = "profilesListBox";
-            this.profilesListBox.Size = new System.Drawing.Size(353, 132);
+            this.profilesListBox.Size = new System.Drawing.Size(353, 148);
             this.profilesListBox.TabIndex = 0;
             // 
             // loadButton
             // 
-            this.loadButton.Location = new System.Drawing.Point(3, 140);
+            this.loadButton.Location = new System.Drawing.Point(3, 160);
             this.loadButton.Margin = new System.Windows.Forms.Padding(4);
             this.loadButton.Name = "loadButton";
             this.loadButton.Size = new System.Drawing.Size(100, 28);
@@ -562,29 +629,29 @@
             this.loadButton.UseVisualStyleBackColor = true;
             this.loadButton.Click += new System.EventHandler(this.LoadButton_Click);
             // 
-            // numericUpDown1
+            // label14
             // 
-            this.newSubsequenceIterationsNum.Location = new System.Drawing.Point(4, 151);
-            this.newSubsequenceIterationsNum.Margin = new System.Windows.Forms.Padding(4);
-            this.newSubsequenceIterationsNum.Name = "numericUpDown1";
-            this.newSubsequenceIterationsNum.Size = new System.Drawing.Size(67, 22);
-            this.newSubsequenceIterationsNum.TabIndex = 27;
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(6, 139);
+            this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(20, 16);
+            this.label14.TabIndex = 31;
+            this.label14.Text = "D:";
             // 
-            // label3
+            // textBox1
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(76, 152);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(13, 16);
-            this.label3.TabIndex = 26;
-            this.label3.Text = "x";
+            this.newDescription.Location = new System.Drawing.Point(30, 136);
+            this.newDescription.Margin = new System.Windows.Forms.Padding(4);
+            this.newDescription.Name = "textBox1";
+            this.newDescription.Size = new System.Drawing.Size(152, 22);
+            this.newDescription.TabIndex = 30;
             // 
             // Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(392, 220);
+            this.ClientSize = new System.Drawing.Size(392, 235);
             this.Controls.Add(this.tabControl1);
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form";
@@ -600,11 +667,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.numberOfRepeatNum)).EndInit();
             this.sequencePage.ResumeLayout(false);
             this.sequencePage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.newSubsequenceIterationsNum)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.newPointYNum)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.newPointXNum)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.newAfterActionPeriodNum)).EndInit();
+            this.tags.ResumeLayout(false);
             this.profilesPage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.newSubsequenceIterationsNum)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -655,6 +723,12 @@
         private System.Windows.Forms.TextBox newSubsequenceFilenameText;
         private System.Windows.Forms.NumericUpDown newSubsequenceIterationsNum;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TabPage tags;
+        private System.Windows.Forms.TextBox newTagText;
+        private System.Windows.Forms.CheckedListBox tagsListBox;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox newDescription;
     }
 }
 

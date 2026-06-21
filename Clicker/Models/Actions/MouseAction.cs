@@ -7,7 +7,9 @@
 
         public override string ToString()
         {
-            return Id + ". " + Button + " ; " + Period + " ; " + Point.X + " ; " + Point.Y;
+            var tag = string.IsNullOrEmpty(Tag) ? "---" : Tag;
+            var description = string.IsNullOrWhiteSpace(Description) ? $"{Point.X}, {Point.Y}" : Description;
+            return $"{Id}. {tag} ; {Button} ; {description} ; {Period}";
         }
     }
 }

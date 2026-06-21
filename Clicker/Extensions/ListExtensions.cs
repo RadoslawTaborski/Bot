@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace Clicker.Extensions
 {
-    public static class BindingListExtensions
+    public static class ListExtensions
     {
-        public static void ReplaceWithRange<T>(this BindingList<T> list, int index, IEnumerable<T> items)
+        public static void ReplaceWithRange<T>(this List<T> list, int index, IEnumerable<T> items)
         {
             list.RemoveAt(index);
 

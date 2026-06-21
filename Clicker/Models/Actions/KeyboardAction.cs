@@ -1,4 +1,6 @@
-﻿namespace Clicker
+﻿using System.Drawing;
+
+namespace Clicker
 {
     public class KeyboardAction : Action
     {
@@ -6,7 +8,9 @@
 
         public override string ToString()
         {
-            return Id + ": Keyboard ; " + Period + " ; " + Text;
+            var tag = string.IsNullOrEmpty(Tag) ? "---" : Tag;
+            var description = string.IsNullOrWhiteSpace(Description) ? $"{Text}" : Description;
+            return $"{Id}. {tag} ; Text ; {description} ; {Period}";
         }
     }
 }

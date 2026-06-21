@@ -1,4 +1,5 @@
 ﻿using Clicker.Extensions;
+using Clicker.Models;
 using MouseKeyboardActivityMonitor;
 using MouseKeyboardActivityMonitor.WinApi;
 using Newtonsoft.Json;
@@ -28,6 +29,8 @@ namespace Clicker
 
         private MouseHookListener m_mouseListener;
         private Settings settings = new Settings();
+
+        private List<Action> sequence;
         private int iteration = 1;
         private int repeatCounter = 0;
 
@@ -38,10 +41,6 @@ namespace Clicker
             sequenceListBox.Items.Clear();
             sequenceListBox.DataSource = settings.Moves;
             sequenceListBox.HorizontalScrollbar = true;
-            this.mainPage.Text = "Sterowanie";
-            this.settingsPage.Text = "Ustawienia";
-            this.sequencePage.Text = "Sekwencja";
-            this.profilesPage.Text = "Profile";
             this.Text = "Clicker";
             recordButton.Enabled = true;
             stopRecordButton.Enabled = false;
@@ -75,6 +74,8 @@ namespace Clicker
             newAfterActionPeriodNum.Maximum = 10000000;
             newAfterActionPeriodNum.Value = 100;
             newAfterActionPeriodNum.Increment = 1000;
+            newTagText.Text = "";
+            newDescription.Text = "";
             newPointXNum.Minimum = -10000000;
             newPointXNum.Maximum = 10000000;
             newPointXNum.Value = 0;
@@ -131,17 +132,17 @@ namespace Clicker
                 sequenceCounterLabel.Text = $"Iteracja: {repeatCounter + 1} z {(repeatSequenceCheckbox.Checked ? numberOfRepeatNum.Value : 1)}";
             }));
 
-            if (settings.Moves[iteration].Type == Actions.SubSequence)
+            if (sequence[iteration].Type == Actions.SubSequence)
             {
-                var subSequenceAction = settings.Moves[iteration] as SubSequenceAction;
-                settings.Moves.ReplaceWithRange(iteration,
+                var subSequenceAction = sequence[iteration] as SubSequenceAction;
+                sequence.ReplaceWithRange(iteration,
                     LoadNestedSequence(subSequenceAction.FileName, subSequenceAction.Iterations, subSequenceAction.Period));
             }
-            var numberOfActions = actionExecutor.Execute(settings.Moves[iteration], settings.Moves.Cast<Action>().ElementAtOrDefault(iteration + 1));
+            var numberOfActions = actionExecutor.Execute(sequence[iteration], sequence.Cast<Action>().ElementAtOrDefault(iteration + 1));
+            timer.Interval = sequence[iteration].Period;
             iteration += numberOfActions;
-            timer.Interval = settings.Moves[iteration].Period;
 
-            if (iteration == settings.Moves.Count - 2)
+            if (iteration == sequence.Count - 2)
             {
                 repeatCounter++;
                 if (repeatSequenceCheckbox.Checked == true && repeatCounter < numberOfRepeatNum.Value)
@@ -176,6 +177,7 @@ namespace Clicker
             }
             else
             {
+                sequence = ProvideSequence();
                 RunTimer(2000);
                 recordButton.Enabled = false;
                 stopRecordButton.Enabled = false;
@@ -192,6 +194,12 @@ namespace Clicker
                 saveButton.Enabled = false;
                 fileNameText.Enabled = false;
             }
+        }
+
+        private List<Action> ProvideSequence()
+        {
+            var selectedTags = tagsListBox.CheckedItems.Cast<string>().ToList();
+            return settings.Moves.Where(x => x.Active && (selectedTags.Contains(x.Tag) || string.IsNullOrWhiteSpace(x.Tag))).ToList();
         }
 
         private void StopButton_Click(object sender, EventArgs e)
@@ -282,6 +290,8 @@ namespace Clicker
             }
             newActionsComboBox.SelectedIndex = 0;
             newAfterActionPeriodNum.Value = 100;
+            newTagText.Text = "";
+            newDescription.Text = "";
             newPointXNum.Value = 0;
             newPointYNum.Value = 0;
             newKeyboardText.Text = "";
@@ -315,6 +325,8 @@ namespace Clicker
             newActionsComboBox.SelectedIndex = 0;
             newMouseButtonsComboBox.SelectedIndex = 0;
             newAfterActionPeriodNum.Value = 100;
+            newTagText.Text = "";
+            newDescription.Text = "";
             newPointXNum.Value = 0;
             newPointYNum.Value = 0;
             newKeyboardText.Text = "";
@@ -397,7 +409,6 @@ namespace Clicker
 
         private void LoadButton_Click(object sender, EventArgs e)
         {
-
             var fileName = profilesListBox.SelectedItem.ToString();
             settings = LoadSettings(fileName);
 
@@ -407,6 +418,7 @@ namespace Clicker
             randomIntervalCheckbox.Checked = settings.RandomTimeInterval;
             afterActionPeriodNum.Value = settings.Period1;
             afterSequencePeriodStartNum.Value = settings.PeriodA;
+            SetTags();
             if (settings.RandomTimeInterval)
             {
                 afterSequencePeriodStopNum.Value = settings.PeriodB;
@@ -448,6 +460,8 @@ namespace Clicker
             newActionsComboBox.SelectedIndex = 0;
             newMouseButtonsComboBox.SelectedIndex = 0;
             newAfterActionPeriodNum.Value = 100;
+            newTagText.Text = "";
+            newDescription.Text = "";
             newPointXNum.Value = 0;
             newPointYNum.Value = 0;
             newKeyboardText.Text = "";
@@ -470,6 +484,9 @@ namespace Clicker
             settings.NumberOfRepeats = (int)numberOfRepeatNum.Value;
             settings.Repeat = repeatSequenceCheckbox.Checked;
             settings.RandomTimeInterval = randomIntervalCheckbox.Checked;
+
+            UpdateMovesIds();
+            SaveTags();
 
             try
             {
@@ -502,6 +519,69 @@ namespace Clicker
             }
         }
 
+        private void UpdateMovesIds()
+        {
+            var id = 0;
+            foreach (var move in settings.Moves)
+            {
+                move.Id = ++id;
+            }
+        }
+
+        private void SaveTags()
+        {
+            var allTags = settings.Moves.Where(x => !string.IsNullOrEmpty(x.Tag)).Select(x => x.Tag).Distinct().ToList();
+            var selectedTags = tagsListBox.CheckedItems.Cast<string>().ToList();
+            settings.Tags.Clear();
+            foreach (var tag in allTags)
+            {
+                settings.Tags.Add(new TagSetting { Name = tag, Active = selectedTags.Contains(tag) });
+            }
+        }
+
+        private void UpdateTags()
+        {
+            var actionsTags = settings.Moves.Where(x => !string.IsNullOrEmpty(x.Tag)).Select(x => x.Tag).Distinct().ToList();
+            var listedTags = tagsListBox.Items
+                .Cast<string>()
+                .ToDictionary(
+                    item => item,
+                    item => tagsListBox.GetItemChecked(
+                        tagsListBox.Items.IndexOf(item)
+                    )
+                );
+            tagsListBox.Items.Clear();
+            var finalTags = new List<TagSetting>();
+            foreach (var tag in actionsTags)
+            {
+                tagsListBox.Items.Add(tag, listedTags.ContainsKey(tag) ? listedTags[tag] : true);
+            }
+        }
+
+        private void SetTags()
+        {
+            var actionsTags = settings.Moves.Where(x => !string.IsNullOrEmpty(x.Tag)).Select(x => x.Tag).Distinct().ToList();
+            var finalTags = new List<TagSetting>();
+            foreach (var tag in actionsTags)
+            {
+                var existingTag = settings.Tags.FirstOrDefault(t => t.Name == tag);
+                if (existingTag != null)
+                {
+                    finalTags.Add(existingTag);
+                }
+                else
+                {
+                    settings.Tags.Add(new TagSetting { Name = tag, Active = false });
+                }
+            }
+
+            foreach (var tag in finalTags)
+            {
+                tagsListBox.Items.Add(tag.Name, tag.Active);
+            }
+        }
+
+
         private void EditButton_Click(object sender, EventArgs e)
         {
             if (settings.Moves[sequenceListBox.SelectedIndex].Type != (Actions)newActionsComboBox.SelectedItem)
@@ -525,8 +605,11 @@ namespace Clicker
                         break;
                 }
                 settings.Moves[sequenceListBox.SelectedIndex].Period = (int)newAfterActionPeriodNum.Value;
+                settings.Moves[sequenceListBox.SelectedIndex].Tag = newTagText.Text;
+                settings.Moves[sequenceListBox.SelectedIndex].Description = newDescription.Text;
             }
 
+            UpdateTags();
             this.sequenceListBox.SelectedIndexChanged -= new EventHandler(this.SequenceListBox_SelectedIndexChanged);
             sequenceListBox.DataSource = null;
             sequenceListBox.DataSource = settings.Moves;
@@ -542,6 +625,8 @@ namespace Clicker
                     {
                         Id = action.Id,
                         Type = Actions.Mouse,
+                        Description = newDescription.Text,
+                        Tag = newTagText.Text,
                         Period = (int)newAfterActionPeriodNum.Value,
                         Point = new Point((int)newPointXNum.Value, (int)newPointYNum.Value),
                         Button = (MouseActions)newMouseButtonsComboBox.SelectedItem
@@ -551,6 +636,8 @@ namespace Clicker
                     {
                         Id = action.Id,
                         Type = Actions.Keyboard,
+                        Description = newDescription.Text,
+                        Tag = newTagText.Text,
                         Period = (int)newAfterActionPeriodNum.Value,
                         Text = newKeyboardText.Text
                     };
@@ -559,6 +646,8 @@ namespace Clicker
                     {
                         Id = action.Id,
                         Type = Actions.SubSequence,
+                        Description = newDescription.Text,
+                        Tag = newTagText.Text,
                         Period = (int)newAfterActionPeriodNum.Value,
                         FileName = newSubsequenceFilenameText.Text,
                         Iterations = (int)newSubsequenceIterationsNum.Value
@@ -572,6 +661,8 @@ namespace Clicker
             if (sequenceListBox != null && sequenceListBox.SelectedIndex > -1)
             {
                 newAfterActionPeriodNum.Value = settings.Moves[sequenceListBox.SelectedIndex].Period;
+                newTagText.Text = settings.Moves[sequenceListBox.SelectedIndex].Tag;
+                newDescription.Text = settings.Moves[sequenceListBox.SelectedIndex].Description;
                 newActionsComboBox.SelectedItem = settings.Moves[sequenceListBox.SelectedIndex].Type;
                 switch (settings.Moves[sequenceListBox.SelectedIndex])
                 {
@@ -619,6 +710,8 @@ namespace Clicker
             else
             {
                 newAfterActionPeriodNum.Value = 100;
+                newTagText.Text = "";
+                newDescription.Text = "";
                 newPointXNum.Value = 0;
                 newPointYNum.Value = 0;
                 newKeyboardText.Text = "";
@@ -779,15 +872,17 @@ namespace Clicker
             }
         }
 
-        private List<Action> LoadNestedSequence(string fileName, int umberOfIterations, int period)
+        private List<Action> LoadNestedSequence(string fileName, int numberOfIterations, int period)
         {
             var tmpSettings = LoadSettings(fileName);
             var newSequence = tmpSettings.Moves;
             newSequence.RemoveAt(newSequence.Count - 1);
             newSequence.RemoveAt(newSequence.Count - 1);
             newSequence.RemoveAt(0);
+            var selectedTags = tagsListBox.CheckedItems.Cast<string>().ToList();
+            var newSequenceList = newSequence.Where(x => x.Active && (selectedTags.Contains(x.Tag) || string.IsNullOrWhiteSpace(x.Tag))).ToList();
 
-            var result = Enumerable.Repeat(newSequence, umberOfIterations)
+            var result = Enumerable.Repeat(newSequenceList, numberOfIterations)
                 .SelectMany(x => x)
                 .ToList();
 
