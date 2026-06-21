@@ -44,15 +44,13 @@
             this.afterSequencePeriodStopNum = new System.Windows.Forms.NumericUpDown();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.mainPage = new System.Windows.Forms.TabPage();
+            this.actrionLabel = new System.Windows.Forms.Label();
             this.subsequenceCounterLabel = new System.Windows.Forms.Label();
             this.sequenceCounterLabel = new System.Windows.Forms.Label();
             this.settingsPage = new System.Windows.Forms.TabPage();
             this.randomIntervalCheckbox = new System.Windows.Forms.CheckBox();
             this.numberOfRepeatNum = new System.Windows.Forms.NumericUpDown();
             this.label11 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.fileNameText = new System.Windows.Forms.TextBox();
-            this.saveButton = new System.Windows.Forms.Button();
             this.repeatSequenceCheckbox = new System.Windows.Forms.CheckBox();
             this.sequencePage = new System.Windows.Forms.TabPage();
             this.label14 = new System.Windows.Forms.Label();
@@ -79,7 +77,10 @@
             this.deleteButton = new System.Windows.Forms.Button();
             this.profilesListBox = new System.Windows.Forms.ListBox();
             this.loadButton = new System.Windows.Forms.Button();
-            this.actrionLabel = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.saveButton = new System.Windows.Forms.Button();
+            this.fileNameText = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.afterActionPeriodNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.afterSequencePeriodStartNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.afterSequencePeriodStopNum)).BeginInit();
@@ -98,7 +99,7 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(2, 81);
+            this.startButton.Location = new System.Drawing.Point(2, 83);
             this.startButton.Margin = new System.Windows.Forms.Padding(4);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(172, 79);
@@ -109,7 +110,7 @@
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(182, 81);
+            this.stopButton.Location = new System.Drawing.Point(182, 83);
             this.stopButton.Margin = new System.Windows.Forms.Padding(4);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(172, 79);
@@ -129,7 +130,7 @@
             // 
             // recordButton
             // 
-            this.recordButton.Location = new System.Drawing.Point(2, 41);
+            this.recordButton.Location = new System.Drawing.Point(2, 43);
             this.recordButton.Margin = new System.Windows.Forms.Padding(4);
             this.recordButton.Name = "recordButton";
             this.recordButton.Size = new System.Drawing.Size(172, 36);
@@ -140,7 +141,7 @@
             // 
             // stopRecordButton
             // 
-            this.stopRecordButton.Location = new System.Drawing.Point(181, 41);
+            this.stopRecordButton.Location = new System.Drawing.Point(181, 43);
             this.stopRecordButton.Margin = new System.Windows.Forms.Padding(4);
             this.stopRecordButton.Name = "stopRecordButton";
             this.stopRecordButton.Size = new System.Drawing.Size(172, 36);
@@ -151,7 +152,7 @@
             // 
             // clearButton
             // 
-            this.clearButton.Location = new System.Drawing.Point(3, 163);
+            this.clearButton.Location = new System.Drawing.Point(3, 165);
             this.clearButton.Margin = new System.Windows.Forms.Padding(4);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(351, 29);
@@ -173,7 +174,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(221, 120);
+            this.label4.Location = new System.Drawing.Point(221, 126);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(11, 16);
@@ -193,7 +194,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(196, 122);
+            this.label6.Location = new System.Drawing.Point(196, 128);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(25, 16);
@@ -203,7 +204,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(329, 125);
+            this.label7.Location = new System.Drawing.Point(329, 131);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(25, 16);
@@ -230,7 +231,7 @@
             0,
             0,
             0});
-            this.afterSequencePeriodStartNum.Location = new System.Drawing.Point(101, 116);
+            this.afterSequencePeriodStartNum.Location = new System.Drawing.Point(101, 122);
             this.afterSequencePeriodStartNum.Margin = new System.Windows.Forms.Padding(4);
             this.afterSequencePeriodStartNum.Name = "afterSequencePeriodStartNum";
             this.afterSequencePeriodStartNum.Size = new System.Drawing.Size(92, 22);
@@ -244,7 +245,7 @@
             0,
             0,
             0});
-            this.afterSequencePeriodStopNum.Location = new System.Drawing.Point(237, 116);
+            this.afterSequencePeriodStopNum.Location = new System.Drawing.Point(237, 122);
             this.afterSequencePeriodStopNum.Margin = new System.Windows.Forms.Padding(4);
             this.afterSequencePeriodStopNum.Name = "afterSequencePeriodStopNum";
             this.afterSequencePeriodStopNum.Size = new System.Drawing.Size(92, 22);
@@ -275,6 +276,7 @@
             this.mainPage.Controls.Add(this.recordButton);
             this.mainPage.Controls.Add(this.stopRecordButton);
             this.mainPage.Controls.Add(this.clearButton);
+            this.mainPage.Controls.Add(this.groupBox1);
             this.mainPage.Location = new System.Drawing.Point(4, 25);
             this.mainPage.Margin = new System.Windows.Forms.Padding(4);
             this.mainPage.Name = "mainPage";
@@ -283,6 +285,16 @@
             this.mainPage.TabIndex = 0;
             this.mainPage.Text = "Główne";
             this.mainPage.UseVisualStyleBackColor = true;
+            // 
+            // actrionLabel
+            // 
+            this.actrionLabel.AutoSize = true;
+            this.actrionLabel.Location = new System.Drawing.Point(5, 23);
+            this.actrionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.actrionLabel.Name = "actrionLabel";
+            this.actrionLabel.Size = new System.Drawing.Size(66, 16);
+            this.actrionLabel.TabIndex = 12;
+            this.actrionLabel.Text = "Akcja: xyz";
             // 
             // subsequenceCounterLabel
             // 
@@ -309,9 +321,6 @@
             this.settingsPage.Controls.Add(this.randomIntervalCheckbox);
             this.settingsPage.Controls.Add(this.numberOfRepeatNum);
             this.settingsPage.Controls.Add(this.label11);
-            this.settingsPage.Controls.Add(this.label9);
-            this.settingsPage.Controls.Add(this.fileNameText);
-            this.settingsPage.Controls.Add(this.saveButton);
             this.settingsPage.Controls.Add(this.repeatSequenceCheckbox);
             this.settingsPage.Controls.Add(this.afterSequencePeriodStopNum);
             this.settingsPage.Controls.Add(this.label2);
@@ -333,7 +342,7 @@
             // randomIntervalCheckbox
             // 
             this.randomIntervalCheckbox.AutoSize = true;
-            this.randomIntervalCheckbox.Location = new System.Drawing.Point(12, 89);
+            this.randomIntervalCheckbox.Location = new System.Drawing.Point(12, 92);
             this.randomIntervalCheckbox.Margin = new System.Windows.Forms.Padding(4);
             this.randomIntervalCheckbox.Name = "randomIntervalCheckbox";
             this.randomIntervalCheckbox.Size = new System.Drawing.Size(296, 20);
@@ -344,7 +353,7 @@
             // 
             // numberOfRepeatNum
             // 
-            this.numberOfRepeatNum.Location = new System.Drawing.Point(13, 116);
+            this.numberOfRepeatNum.Location = new System.Drawing.Point(13, 122);
             this.numberOfRepeatNum.Margin = new System.Windows.Forms.Padding(4);
             this.numberOfRepeatNum.Name = "numberOfRepeatNum";
             this.numberOfRepeatNum.Size = new System.Drawing.Size(67, 22);
@@ -353,42 +362,12 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(85, 117);
+            this.label11.Location = new System.Drawing.Point(85, 123);
             this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(13, 16);
             this.label11.TabIndex = 24;
             this.label11.Text = "x";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(320, 167);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(35, 16);
-            this.label9.TabIndex = 23;
-            this.label9.Text = ".json";
-            // 
-            // fileNameText
-            // 
-            this.fileNameText.Location = new System.Drawing.Point(120, 161);
-            this.fileNameText.Margin = new System.Windows.Forms.Padding(4);
-            this.fileNameText.Name = "fileNameText";
-            this.fileNameText.Size = new System.Drawing.Size(199, 22);
-            this.fileNameText.TabIndex = 22;
-            this.fileNameText.Text = "nazwa pliku";
-            // 
-            // saveButton
-            // 
-            this.saveButton.Location = new System.Drawing.Point(11, 160);
-            this.saveButton.Margin = new System.Windows.Forms.Padding(4);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(100, 28);
-            this.saveButton.TabIndex = 20;
-            this.saveButton.Text = "Zapisz";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
             // repeatSequenceCheckbox
             // 
@@ -618,6 +597,9 @@
             // profilesPage
             // 
             this.profilesPage.Controls.Add(this.deleteButton);
+            this.profilesPage.Controls.Add(this.label9);
+            this.profilesPage.Controls.Add(this.saveButton);
+            this.profilesPage.Controls.Add(this.fileNameText);
             this.profilesPage.Controls.Add(this.profilesListBox);
             this.profilesPage.Controls.Add(this.loadButton);
             this.profilesPage.Location = new System.Drawing.Point(4, 25);
@@ -631,7 +613,7 @@
             // 
             // deleteButton
             // 
-            this.deleteButton.Location = new System.Drawing.Point(255, 161);
+            this.deleteButton.Location = new System.Drawing.Point(256, 136);
             this.deleteButton.Margin = new System.Windows.Forms.Padding(4);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(100, 28);
@@ -647,12 +629,12 @@
             this.profilesListBox.Location = new System.Drawing.Point(3, 2);
             this.profilesListBox.Margin = new System.Windows.Forms.Padding(4);
             this.profilesListBox.Name = "profilesListBox";
-            this.profilesListBox.Size = new System.Drawing.Size(353, 148);
+            this.profilesListBox.Size = new System.Drawing.Size(353, 132);
             this.profilesListBox.TabIndex = 0;
             // 
             // loadButton
             // 
-            this.loadButton.Location = new System.Drawing.Point(3, 161);
+            this.loadButton.Location = new System.Drawing.Point(3, 136);
             this.loadButton.Margin = new System.Windows.Forms.Padding(4);
             this.loadButton.Name = "loadButton";
             this.loadButton.Size = new System.Drawing.Size(100, 28);
@@ -661,15 +643,43 @@
             this.loadButton.UseVisualStyleBackColor = true;
             this.loadButton.Click += new System.EventHandler(this.LoadButton_Click);
             // 
-            // label15
+            // groupBox1
             // 
-            this.actrionLabel.AutoSize = true;
-            this.actrionLabel.Location = new System.Drawing.Point(5, 23);
-            this.actrionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.actrionLabel.Name = "label15";
-            this.actrionLabel.Size = new System.Drawing.Size(66, 16);
-            this.actrionLabel.TabIndex = 12;
-            this.actrionLabel.Text = "Akcja: xyz";
+            this.groupBox1.Location = new System.Drawing.Point(2, -6);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(351, 48);
+            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabStop = false;
+            // 
+            // saveButton
+            // 
+            this.saveButton.Location = new System.Drawing.Point(3, 166);
+            this.saveButton.Margin = new System.Windows.Forms.Padding(4);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(100, 28);
+            this.saveButton.TabIndex = 20;
+            this.saveButton.Text = "Zapisz";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.SaveButton_Click);
+            // 
+            // fileNameText
+            // 
+            this.fileNameText.Location = new System.Drawing.Point(111, 168);
+            this.fileNameText.Margin = new System.Windows.Forms.Padding(4);
+            this.fileNameText.Name = "fileNameText";
+            this.fileNameText.Size = new System.Drawing.Size(209, 22);
+            this.fileNameText.TabIndex = 22;
+            this.fileNameText.Text = "nazwa pliku";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(320, 174);
+            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(35, 16);
+            this.label9.TabIndex = 23;
+            this.label9.Text = ".json";
             // 
             // Form
             // 
@@ -697,6 +707,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.newAfterActionPeriodNum)).EndInit();
             this.tags.ResumeLayout(false);
             this.profilesPage.ResumeLayout(false);
+            this.profilesPage.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -722,16 +733,13 @@
         private System.Windows.Forms.TabPage settingsPage;
         private System.Windows.Forms.CheckBox repeatSequenceCheckbox;
         private System.Windows.Forms.Button loadButton;
-        private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.TabPage sequencePage;
         private System.Windows.Forms.ListBox sequenceListBox;
         private System.Windows.Forms.NumericUpDown newAfterActionPeriodNum;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button editButton;
-        private System.Windows.Forms.TextBox fileNameText;
         private System.Windows.Forms.TabPage profilesPage;
         private System.Windows.Forms.ListBox profilesListBox;
-        private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.ComboBox newActionsComboBox;
         private System.Windows.Forms.NumericUpDown numberOfRepeatNum;
@@ -755,6 +763,10 @@
         private System.Windows.Forms.TextBox newDescription;
         private System.Windows.Forms.Label subsequenceCounterLabel;
         private System.Windows.Forms.Label actrionLabel;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.TextBox fileNameText;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button saveButton;
     }
 }
 

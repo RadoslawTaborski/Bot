@@ -35,6 +35,7 @@ namespace Clicker
         private List<Action> _sequence;
         private int _iteration = 1;
         private int _repeatCounter = 0;
+        private Dictionary<Guid, string> _nestedIterationNotes = new Dictionary<Guid, string>();
 
         public Form()
         {
@@ -135,10 +136,6 @@ namespace Clicker
             {
                 sequenceCounterLabel.Text = $"Iteracja: {_repeatCounter + 1} z {(repeatSequenceCheckbox.Checked ? numberOfRepeatNum.Value : 1)}";
             }));
-            //subsequenceCounterLabel.Invoke((MethodInvoker)(() =>
-            //{
-            //    subsequenceCounterLabel.Text = $"Podsekwencja: {subsequenceCounter + 1} z {(subsequenceIterationsNum.Value)}";
-            //})); //TODO:
 
             if (_sequence[_iteration].Type == Actions.SubSequence)
             {
@@ -146,6 +143,24 @@ namespace Clicker
                 _sequence.ReplaceWithRange(_iteration,
                     LoadNestedSequence(subSequenceAction.FileName, subSequenceAction.Id, subSequenceAction.Iterations, subSequenceAction.Period));
             }
+
+            actrionLabel.Invoke((MethodInvoker)(() =>
+            {
+                actrionLabel.Text = $"Akcja: {_sequence[_iteration]}";
+            }));
+
+            subsequenceCounterLabel.Invoke((MethodInvoker)(() =>
+            {
+                if (_nestedIterationNotes.ContainsKey(_sequence[_iteration].Guid))
+                {
+                    subsequenceCounterLabel.Text = $"Sub-iteracja: {_nestedIterationNotes[_sequence[_iteration].Guid]}";
+                }
+                else
+                {
+                    subsequenceCounterLabel.Text = "";
+                }                
+            }));
+
             var numberOfActions = _actionExecutor.Execute(_sequence[_iteration], _sequence.Cast<Action>().ElementAtOrDefault(_iteration + 1));
             _timer.Interval = _sequence[_iteration].Period;
             _iteration += numberOfActions;
@@ -212,6 +227,7 @@ namespace Clicker
 
         private void StopButton_Click(object sender, EventArgs e)
         {
+            _nestedIterationNotes.Clear();
             _timer.Stop();
             _timer.Elapsed -= new ElapsedEventHandler(DoAction);
             _iteration = 1;
@@ -572,7 +588,7 @@ namespace Clicker
             var finalTags = new List<TagSetting>();
             foreach (var tag in actionsTags)
             {
-                tagsListBox.Items.Add(tag, listedTags.ContainsKey(tag) ? listedTags[tag] : true);
+                tagsListBox.Items.Add(tag, !listedTags.ContainsKey(tag) || listedTags[tag]);
             }
         }
 
@@ -589,10 +605,11 @@ namespace Clicker
                 }
                 else
                 {
-                    _settings.Tags.Add(new TagSetting { Name = tag, Active = false });
+                    finalTags.Add(new TagSetting { Name = tag, Active = true });
                 }
             }
 
+            tagsListBox.Items.Clear();
             foreach (var tag in finalTags)
             {
                 tagsListBox.Items.Add(tag.Name, tag.Active);
@@ -897,20 +914,33 @@ namespace Clicker
             newSequence.RemoveAt(newSequence.Count - 1);
             newSequence.RemoveAt(newSequence.Count - 1);
             newSequence.RemoveAt(0);
-            var selectedTags = tagsListBox.CheckedItems.Cast<string>().ToList();
-            var newSequenceList = newSequence.Where(x => x.Active && (selectedTags.Contains(x.Tag) || string.IsNullOrWhiteSpace(x.Tag))).ToList();
+            var listedTags = tagsListBox.Items
+                .Cast<string>()
+                .ToDictionary(
+                    item => item,
+                    item => tagsListBox.GetItemChecked(
+                        tagsListBox.Items.IndexOf(item)
+                    )
+                );
 
-            var result = Enumerable.Repeat(newSequenceList, numberOfIterations)
-                .SelectMany(x => x)
+            var newSequenceList = newSequence.Where(x => x.Active && (string.IsNullOrWhiteSpace(x.Tag) || !listedTags.ContainsKey(x.Tag) || listedTags[x.Tag])).ToList();
+            var id = 0;
+            for (int i = 0; i < newSequenceList.Count; i++)
+            {
+                newSequenceList[i].Id = $"{oldId}_{++id}";
+            }
+
+            var result = Enumerable.Range(0, numberOfIterations)
+                .SelectMany(_ => newSequenceList.Select(x => x.Clone()))
                 .ToList();
 
-            result.ElementAt(newSequence.Count - 1).Period = period;
+            result.ElementAt(newSequenceList.Count - 1).Period = period;
 
-            var id = 0;
-            foreach (var move in result)
+            for (int i = 0; i < result.Count; i++)
             {
-                move.Id = $"{oldId}_{++id}";
+                _nestedIterationNotes.Add(result[i].Guid, $"{(i / newSequenceList.Count) + 1} z {numberOfIterations}");
             }
+
             return result;
         }
     }
