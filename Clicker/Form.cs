@@ -76,7 +76,7 @@ namespace Clicker
             sequenceCounterLabel.Text = "";
             subsequenceCounterLabel.Text = "";
             actrionLabel.Text = "";
-            newAfterActionPeriodNum.Minimum = 100;
+            newAfterActionPeriodNum.Minimum = 0;
             newAfterActionPeriodNum.Maximum = 10000000;
             newAfterActionPeriodNum.Value = 100;
             newAfterActionPeriodNum.Increment = 1000;
@@ -139,23 +139,26 @@ namespace Clicker
                 sequenceCounterLabel.Text = $"Iteracja: {_repeatCounter + 1} z {(repeatSequenceCheckbox.Checked ? numberOfRepeatNum.Value : 1)}";
             }));
 
-            if (_sequence[_iteration].Type == Actions.SubSequence)
+            var action = _sequence[_iteration];
+            if (action.Type == Actions.SubSequence)
             {
-                var subSequenceAction = _sequence[_iteration] as SubSequenceAction;
+                var subSequenceAction = action as SubSequenceAction;
+                var iterationsDictionary = GetIterationsDictionary();
+                var overrideIteration = iterationsDictionary.ContainsKey(subSequenceAction.FileName) ? iterationsDictionary[subSequenceAction.FileName] : subSequenceAction.Iterations;
                 _sequence.ReplaceWithRange(_iteration,
-                    LoadNestedSequence(subSequenceAction.FileName, subSequenceAction.Id, subSequenceAction.Iterations, subSequenceAction.Period));
+                    LoadNestedSequence(subSequenceAction.FileName, subSequenceAction.Id, overrideIteration, subSequenceAction.Period));
             }
 
             actrionLabel.Invoke((MethodInvoker)(() =>
             {
-                actrionLabel.Text = $"Akcja: {_sequence[_iteration]}";
+                actrionLabel.Text = $"Akcja: {action}";
             }));
 
             subsequenceCounterLabel.Invoke((MethodInvoker)(() =>
             {
-                if (_nestedIterationNotes.ContainsKey(_sequence[_iteration].Guid))
+                if (_nestedIterationNotes.ContainsKey(action.Guid))
                 {
-                    subsequenceCounterLabel.Text = $"Sub-iteracja: {_nestedIterationNotes[_sequence[_iteration].Guid]}";
+                    subsequenceCounterLabel.Text = $"Sub-iteracja: {_nestedIterationNotes[action.Guid]}";
                 }
                 else
                 {
@@ -167,12 +170,19 @@ namespace Clicker
             _timer.Interval = _sequence[_iteration].Period;
             _iteration += numberOfActions;
 
-            if (_iteration == _sequence.Count - 2)
+            if (_iteration >= _sequence.Count - 2)
             {
                 _repeatCounter++;
                 if (repeatSequenceCheckbox.Checked == true && _repeatCounter < numberOfRepeatNum.Value)
                 {
                     var time = _random.Next((int)afterSequencePeriodStartNum.Value, (int)afterSequencePeriodStopNum.Value);
+
+                    action.Period = time;
+                    actrionLabel.Invoke((MethodInvoker)(() =>
+                    {
+                        actrionLabel.Text = $"Akcja: {action}";
+                    }));
+
                     _timer.Interval = time;
                     _iteration = 1;
                 }
@@ -291,6 +301,31 @@ namespace Clicker
         {
             Deactivation();
 
+            if (_settings.Moves.Count > 2)
+            {
+                _settings.Moves[0] = new PauseAction
+                {
+                    Id = "0",
+                    Type = Actions.Pause,
+                    Description = "Dummy",
+                    Period = 0
+                };
+                _settings.Moves[_settings.Moves.Count - 1] = new PauseAction
+                {
+                    Id = "0",
+                    Type = Actions.Pause,
+                    Description = "Dummy",
+                    Period = 0
+                };
+                _settings.Moves[_settings.Moves.Count - 2] = new PauseAction
+                {
+                    Id = "0",
+                    Type = Actions.Pause,
+                    Description = "Dummy",
+                    Period = 0
+                };
+            }
+
             recordButton.Enabled = false;
             stopRecordButton.Enabled = false;
             startButton.Enabled = true;
@@ -343,6 +378,10 @@ namespace Clicker
         private void ClearButton_Click(object sender, EventArgs e)
         {
             _settings.Moves.Clear();
+            _settings.Iterations.Clear();
+            iterationsHelperText.Text = "";
+            tagsListBox.Items.Clear();
+            _settings.Tags.Clear();
             recordButton.Enabled = true;
             stopRecordButton.Enabled = false;
             startButton.Enabled = false;
@@ -458,6 +497,7 @@ namespace Clicker
             afterActionPeriodNum.Value = _settings.Period1;
             afterSequencePeriodStartNum.Value = _settings.PeriodA;
             SetTags();
+            SetIntervalsHelper();
             if (_settings.RandomTimeInterval)
             {
                 afterSequencePeriodStopNum.Value = _settings.PeriodB;
@@ -518,6 +558,12 @@ namespace Clicker
             editButton.Enabled = _settings.Moves.Count != 0;
         }
 
+        private void SetIntervalsHelper()
+        {
+            var lines = _settings.Iterations.Select(x => $"{x.Key}: {x.Value}").ToList();
+            iterationsHelperText.Text = string.Join(Environment.NewLine, lines);
+        }
+
         private void SaveButton_Click(object sender, EventArgs e)
         {
             _settings.Period1 = (int)afterActionPeriodNum.Value;
@@ -526,7 +572,7 @@ namespace Clicker
             _settings.NumberOfRepeats = (int)numberOfRepeatNum.Value;
             _settings.Repeat = repeatSequenceCheckbox.Checked;
             _settings.RandomTimeInterval = randomIntervalCheckbox.Checked;
-
+            _settings.Iterations = GetIterationsDictionary();
             UpdateMovesIds();
             SaveTags();
 
@@ -578,6 +624,7 @@ namespace Clicker
             var allTags = _settings.Moves.Where(x => !string.IsNullOrEmpty(x.Tag)).Select(x => x.Tag).Distinct().ToList();
             var selectedTags = tagsListBox.CheckedItems.Cast<string>().ToList();
             _settings.Tags.Clear();
+            allTags = allTags.OrderBy(x => x).ToList();
             foreach (var tag in allTags)
             {
                 _settings.Tags.Add(new TagSetting { Name = tag, Active = selectedTags.Contains(tag) });
@@ -596,7 +643,7 @@ namespace Clicker
                     )
                 );
             tagsListBox.Items.Clear();
-            var finalTags = new List<TagSetting>();
+            actionsTags = actionsTags.OrderBy(x => x).ToList();
             foreach (var tag in actionsTags)
             {
                 tagsListBox.Items.Add(tag, !listedTags.ContainsKey(tag) || listedTags[tag]);
@@ -621,6 +668,7 @@ namespace Clicker
             }
 
             tagsListBox.Items.Clear();
+            finalTags = finalTags.OrderBy(x => x.Name).ToList();
             foreach (var tag in finalTags)
             {
                 tagsListBox.Items.Add(tag.Name, tag.Active);
@@ -984,7 +1032,7 @@ namespace Clicker
         }
 
         private List<Action> LoadNestedSequence(string fileName, string oldId, int numberOfIterations, int period)
-        {
+        { 
             var tmpSettings = LoadSettings(fileName);
             var newSequence = tmpSettings.Moves;
             newSequence.RemoveAt(newSequence.Count - 1);
@@ -1018,6 +1066,26 @@ namespace Clicker
                 _nestedIterationNotes.Add(result[i].Guid, $"{(i / newSequenceList.Count) + 1} z {numberOfIterations}");
             }
 
+            return result;
+        }
+
+        private Dictionary<string, int> GetIterationsDictionary() 
+        {
+            var result = new Dictionary<string, int>();
+            var text = iterationsHelperText.Text;
+
+            foreach (string line in text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                string[] parts = line.Split(new[] { ':' }, 2);
+
+                if (parts.Length == 2)
+                {
+                    if (int.TryParse(parts[1].Trim(), out int value))
+                    {
+                        result[parts[0].Trim()] = value;
+                    }
+                }
+            }
             return result;
         }
     }
