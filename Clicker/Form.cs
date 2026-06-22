@@ -13,6 +13,7 @@ using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Timers;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Clicker
 {
@@ -127,6 +128,7 @@ namespace Clicker
             newActionsComboBox.Items.Add(Actions.Mouse);
             newActionsComboBox.Items.Add(Actions.Keyboard);
             newActionsComboBox.Items.Add(Actions.SubSequence);
+            newActionsComboBox.Items.Add(Actions.Pause);
             newActionsComboBox.SelectedIndex = 0;
         }
 
@@ -326,12 +328,15 @@ namespace Clicker
             newMouseButtonsComboBox.SelectedIndex = 0;
             newPointXNum.Visible = true;
             newPointYNum.Visible = true;
+            newPointXLabel.Visible = true;
+            newPointYLabel.Visible = true;
             newKeyboardText.Visible = false;
             newMouseButtonsComboBox.Visible = true;
             newSubsequenceIterationsNum.Value = 1;
             newSubsequenceIterationsNum.Visible = false;
             newSubsequenceFilenameText.Text = "";
             newSubsequenceFilenameText.Visible = false;
+            newSubsequenceIterationsLabel.Visible = false;
             editButton.Enabled = _settings.Moves.Count != 0;
         }
 
@@ -362,11 +367,14 @@ namespace Clicker
             newSubsequenceFilenameText.Visible = false;
             newSubsequenceIterationsNum.Value = 1;
             newSubsequenceIterationsNum.Visible = false;
+            newSubsequenceIterationsLabel.Visible = false;
             sequenceCounterLabel.Text = "";
             subsequenceCounterLabel.Text = "";
             actrionLabel.Text = "";
             newPointXNum.Visible = true;
             newPointYNum.Visible = true;
+            newPointXLabel.Visible = true;
+            newPointYLabel.Visible = true;
             newKeyboardText.Visible = false;
             newMouseButtonsComboBox.Visible = true;
             _iteration = 1;
@@ -498,11 +506,14 @@ namespace Clicker
             newKeyboardText.Text = "";
             newPointXNum.Visible = true;
             newPointYNum.Visible = true;
+            newPointXLabel.Visible = true;
+            newPointYLabel.Visible = true;
             newKeyboardText.Visible = false;
             newSubsequenceFilenameText.Text = "";
             newSubsequenceFilenameText.Visible = false;
             newSubsequenceIterationsNum.Value = 1;
             newSubsequenceIterationsNum.Visible = false;
+            newSubsequenceIterationsLabel.Visible = false;
             newMouseButtonsComboBox.Visible = true;
             editButton.Enabled = _settings.Moves.Count != 0;
         }
@@ -638,6 +649,8 @@ namespace Clicker
                         subSequence.FileName = newSubsequenceFilenameText.Text;
                         subSequence.Iterations = (int)newSubsequenceIterationsNum.Value;
                         break;
+                    case PauseAction pause:
+                        break;
                 }
                 _settings.Moves[sequenceListBox.SelectedIndex].Period = (int)newAfterActionPeriodNum.Value;
                 _settings.Moves[sequenceListBox.SelectedIndex].Tag = newTagText.Text;
@@ -687,6 +700,15 @@ namespace Clicker
                         FileName = newSubsequenceFilenameText.Text,
                         Iterations = (int)newSubsequenceIterationsNum.Value
                     };
+                case Actions.Pause:
+                    return new PauseAction
+                    {
+                        Id = action.Id,
+                        Type = Actions.Pause,
+                        Description = newDescription.Text,
+                        Tag = newTagText.Text,
+                        Period = (int)newAfterActionPeriodNum.Value
+                    };
             }
             throw new NotImplementedException();
         }
@@ -705,6 +727,8 @@ namespace Clicker
                         newKeyboardText.Visible = false;
                         newPointXNum.Visible = true;
                         newPointYNum.Visible = true;
+                        newPointXLabel.Visible = true;
+                        newPointYLabel.Visible = true;
                         newMouseButtonsComboBox.Visible = true;
                         newKeyboardText.Text = "";
                         newPointXNum.Value = mouse.Point.X;
@@ -713,11 +737,14 @@ namespace Clicker
                         newSubsequenceFilenameText.Visible = false;
                         newSubsequenceIterationsNum.Value = 1;
                         newSubsequenceIterationsNum.Visible = false;
+                        newSubsequenceIterationsLabel.Visible = false;
                         break;
                     case KeyboardAction keyboard:
                         newKeyboardText.Visible = true;
                         newPointXNum.Visible = false;
                         newPointYNum.Visible = false;
+                        newPointXLabel.Visible = false;
+                        newPointYLabel.Visible = false;
                         newMouseButtonsComboBox.Visible = false;
                         newKeyboardText.Text = keyboard.Text;
                         newPointXNum.Value = 0;
@@ -726,11 +753,14 @@ namespace Clicker
                         newSubsequenceFilenameText.Visible = false;
                         newSubsequenceIterationsNum.Value = 1;
                         newSubsequenceIterationsNum.Visible = false;
+                        newSubsequenceIterationsLabel.Visible = false;
                         break;
                     case SubSequenceAction subsequence:
                         newKeyboardText.Visible = false;
                         newPointXNum.Visible = false;
                         newPointYNum.Visible = false;
+                        newPointXLabel.Visible = false;
+                        newPointYLabel.Visible = false;
                         newMouseButtonsComboBox.Visible = false;
                         newKeyboardText.Text = "";
                         newPointXNum.Value = 0;
@@ -739,6 +769,23 @@ namespace Clicker
                         newSubsequenceFilenameText.Visible = true;
                         newSubsequenceIterationsNum.Value = subsequence.Iterations;
                         newSubsequenceIterationsNum.Visible = true;
+                        newSubsequenceIterationsLabel.Visible = true;
+                        break;
+                    case PauseAction pause:
+                        newKeyboardText.Visible = false;
+                        newPointXNum.Visible = false;
+                        newPointYNum.Visible = false;
+                        newPointXLabel.Visible = false;
+                        newPointYLabel.Visible = false;
+                        newMouseButtonsComboBox.Visible = false;
+                        newKeyboardText.Text = "";
+                        newPointXNum.Value = 0;
+                        newPointYNum.Value = 0;
+                        newSubsequenceFilenameText.Text = "";
+                        newSubsequenceFilenameText.Visible = false;
+                        newSubsequenceIterationsNum.Value = 1;
+                        newSubsequenceIterationsNum.Visible = false;
+                        newSubsequenceIterationsLabel.Visible = false;
                         break;
                 }
             }
@@ -753,12 +800,15 @@ namespace Clicker
                 newMouseButtonsComboBox.SelectedIndex = 0;
                 newPointXNum.Visible = true;
                 newPointYNum.Visible = true;
+                newPointXLabel.Visible = true;
+                newPointYLabel.Visible = true;
                 newKeyboardText.Visible = false;
                 newMouseButtonsComboBox.Visible = true;
                 newSubsequenceFilenameText.Text = "";
                 newSubsequenceFilenameText.Visible = false;
                 newSubsequenceIterationsNum.Value = 1;
                 newSubsequenceIterationsNum.Visible = false;
+                newSubsequenceIterationsLabel.Visible = false;
             }
             editButton.Enabled = true;
         }
@@ -820,12 +870,15 @@ namespace Clicker
                     newKeyboardText.Visible = false;
                     newPointXNum.Visible = true;
                     newPointYNum.Visible = true;
+                    newPointXLabel.Visible = true;
+                    newPointYLabel.Visible = true;
                     newMouseButtonsComboBox.Visible = true;
                     newKeyboardText.Text = "";
                     newSubsequenceFilenameText.Text = "";
                     newSubsequenceFilenameText.Visible = false;
                     newSubsequenceIterationsNum.Value = 1;
                     newSubsequenceIterationsNum.Visible = false;
+                    newSubsequenceIterationsLabel.Visible = false;
                     break;
                 case Actions.Keyboard:
                     if (move != null && move is KeyboardAction keyboardMove)
@@ -839,6 +892,8 @@ namespace Clicker
                     newKeyboardText.Visible = true;
                     newPointXNum.Visible = false;
                     newPointYNum.Visible = false;
+                    newPointXLabel.Visible = false;
+                    newPointYLabel.Visible = false;
                     newMouseButtonsComboBox.Visible = false;
                     newPointXNum.Value = 0;
                     newPointYNum.Value = 0;
@@ -847,6 +902,7 @@ namespace Clicker
                     newSubsequenceFilenameText.Visible = false;
                     newSubsequenceIterationsNum.Value = 1;
                     newSubsequenceIterationsNum.Visible = false;
+                    newSubsequenceIterationsLabel.Visible = false;
                     break;
                 case Actions.SubSequence:
                     if (move != null && move is SubSequenceAction subsequenceMove)
@@ -863,12 +919,32 @@ namespace Clicker
                     newKeyboardText.Visible = false;
                     newPointXNum.Visible = false;
                     newPointYNum.Visible = false;
+                    newPointXLabel.Visible = false;
+                    newPointYLabel.Visible = false;
                     newMouseButtonsComboBox.Visible = false;
                     newPointXNum.Value = 0;
                     newPointYNum.Value = 0;
                     newMouseButtonsComboBox.SelectedIndex = 0;
                     newSubsequenceFilenameText.Visible = true;
                     newSubsequenceIterationsNum.Visible = true;
+                    newSubsequenceIterationsLabel.Visible = true;
+                    break;
+                case Actions.Pause:
+                    newKeyboardText.Text = "";
+                    newKeyboardText.Visible = false;
+                    newPointXNum.Visible = false;
+                    newPointYNum.Visible = false;
+                    newPointXLabel.Visible = false;
+                    newPointYLabel.Visible = false;
+                    newMouseButtonsComboBox.Visible = false;
+                    newPointXNum.Value = 0;
+                    newPointYNum.Value = 0;
+                    newMouseButtonsComboBox.SelectedIndex = 0;
+                    newSubsequenceFilenameText.Text = "";
+                    newSubsequenceFilenameText.Visible = false;
+                    newSubsequenceIterationsNum.Value = 1;
+                    newSubsequenceIterationsNum.Visible = false;
+                    newSubsequenceIterationsLabel.Visible = false;
                     break;
             }
         }
@@ -924,6 +1000,7 @@ namespace Clicker
                 );
 
             var newSequenceList = newSequence.Where(x => x.Active && (string.IsNullOrWhiteSpace(x.Tag) || !listedTags.ContainsKey(x.Tag) || listedTags[x.Tag])).ToList();
+            newSequenceList[newSequenceList.Count - 1].Period = tmpSettings.PeriodB;
             var id = 0;
             for (int i = 0; i < newSequenceList.Count; i++)
             {
@@ -934,7 +1011,7 @@ namespace Clicker
                 .SelectMany(_ => newSequenceList.Select(x => x.Clone()))
                 .ToList();
 
-            result.ElementAt(newSequenceList.Count - 1).Period = period;
+            result.ElementAt(result.Count - 1).Period = period;
 
             for (int i = 0; i < result.Count; i++)
             {

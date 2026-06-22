@@ -1,11 +1,9 @@
 ﻿using Clicker.Models;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Clicker
 {
-    [Serializable]
     public class Settings
     {
         public BindingList<Action> Moves { get; set; } = new BindingList<Action>();

@@ -77,6 +77,9 @@ namespace Clicker
                     }
                     result++;
                     break;
+                case PauseAction _:
+                    result++;
+                    break;
 
                 default:
                     MessageBox.Show("Nieznany typ akcji", "BLAD", MessageBoxButtons.OK, MessageBoxIcon.Error);

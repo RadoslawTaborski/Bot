@@ -35,6 +35,12 @@ namespace Clicker.Json
                         root.GetRawText(),
                         options);
                 }
+                else if (type == (int)Actions.Pause)
+                {
+                    return JsonSerializer.Deserialize<PauseAction>(
+                        root.GetRawText(),
+                        options);
+                }
 
                 throw new JsonException("Unknown action type: " + type);
             }

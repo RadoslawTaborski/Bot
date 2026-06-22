@@ -5,5 +5,6 @@
         Mouse,
         Keyboard,
         SubSequence,
+        Pause
     }
 }
