@@ -13,7 +13,6 @@ using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Timers;
 using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Clicker
 {
@@ -140,14 +139,6 @@ namespace Clicker
             }));
 
             var action = _sequence[_iteration];
-            if (action.Type == Actions.SubSequence)
-            {
-                var subSequenceAction = action as SubSequenceAction;
-                var iterationsDictionary = GetIterationsDictionary();
-                var overrideIteration = iterationsDictionary.ContainsKey(subSequenceAction.FileName) ? iterationsDictionary[subSequenceAction.FileName] : subSequenceAction.Iterations;
-                _sequence.ReplaceWithRange(_iteration,
-                    LoadNestedSequence(subSequenceAction.FileName, subSequenceAction.Id, overrideIteration, subSequenceAction.Period));
-            }
 
             actrionLabel.Invoke((MethodInvoker)(() =>
             {
@@ -163,8 +154,20 @@ namespace Clicker
                 else
                 {
                     subsequenceCounterLabel.Text = "";
-                }                
+                }
             }));
+
+            if (action.Type == Actions.SubSequence)
+            {
+                var subSequenceAction = action as SubSequenceAction;
+                var iterationsDictionary = GetIterationsDictionary();
+                var overrideIteration = iterationsDictionary.ContainsKey(subSequenceAction.FileName) ? iterationsDictionary[subSequenceAction.FileName] : subSequenceAction.Iterations;
+                _sequence.ReplaceWithRange(_iteration,
+                    LoadNestedSequence(subSequenceAction.FileName, subSequenceAction.Id, overrideIteration, subSequenceAction.Period));
+
+                DoAction(sender, e);
+                return;
+            }
 
             var numberOfActions = _actionExecutor.Execute(_sequence[_iteration], _sequence.Cast<Action>().ElementAtOrDefault(_iteration + 1));
             _timer.Interval = _sequence[_iteration].Period;
