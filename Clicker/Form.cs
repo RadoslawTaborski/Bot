@@ -4,7 +4,9 @@ using Clicker.Models;
 using MouseKeyboardActivityMonitor;
 using MouseKeyboardActivityMonitor.WinApi;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -33,9 +35,10 @@ namespace Clicker
         private Settings _settings = new Settings();
 
         private List<Action> _sequence;
+        private Dictionary<string, Queue<int>> _iterationsDictionary;
         private int _iteration = 1;
         private int _repeatCounter = 0;
-        private Dictionary<Guid, string> _nestedIterationNotes = new Dictionary<Guid, string>();
+        private readonly Dictionary<Guid, string> _nestedIterationNotes = new Dictionary<Guid, string>();
 
         public Form()
         {
@@ -160,8 +163,21 @@ namespace Clicker
             if (action.Type == Actions.SubSequence)
             {
                 var subSequenceAction = action as SubSequenceAction;
-                var iterationsDictionary = GetIterationsDictionary();
-                var overrideIteration = iterationsDictionary.ContainsKey(subSequenceAction.FileName) ? iterationsDictionary[subSequenceAction.FileName] : subSequenceAction.Iterations;
+                
+                var overrideIteration = subSequenceAction.Iterations;
+                if (_iterationsDictionary.ContainsKey(subSequenceAction.FileName))
+                {
+                    var queue = _iterationsDictionary[subSequenceAction.FileName];
+                    if (queue.Count > 1)
+                    {
+                        overrideIteration = queue.Dequeue();
+                    }
+                    else if (queue.Count == 1)
+                    {
+                        overrideIteration = queue.Peek();
+                    }
+                }
+
                 _sequence.ReplaceWithRange(_iteration,
                     LoadNestedSequence(subSequenceAction.FileName, subSequenceAction.Id, overrideIteration, subSequenceAction.Period));
 
@@ -216,6 +232,7 @@ namespace Clicker
             else
             {
                 _sequence = ProvideSequence();
+                _iterationsDictionary = GetIterationsDictionary();
                 RunTimer(2000);
                 recordButton.Enabled = false;
                 stopRecordButton.Enabled = false;
@@ -382,6 +399,8 @@ namespace Clicker
         {
             _settings.Moves.Clear();
             _settings.Iterations.Clear();
+            _sequence.Clear();
+            _iterationsDictionary.Clear();
             iterationsHelperText.Text = "";
             tagsListBox.Items.Clear();
             _settings.Tags.Clear();
@@ -563,7 +582,7 @@ namespace Clicker
 
         private void SetIntervalsHelper()
         {
-            var lines = _settings.Iterations.Select(x => $"{x.Key}: {x.Value}").ToList();
+            var lines = _settings.Iterations.Select(x => $"{x.Key}: {string.Join(", ", x.Value)}").ToList();
             iterationsHelperText.Text = string.Join(Environment.NewLine, lines);
         }
 
@@ -1036,6 +1055,10 @@ namespace Clicker
 
         private List<Action> LoadNestedSequence(string fileName, string oldId, int numberOfIterations, int period)
         { 
+            if (numberOfIterations == 0)
+            {
+                return new List<Action>();
+            }
             var tmpSettings = LoadSettings(fileName);
             var newSequence = tmpSettings.Moves;
             newSequence.RemoveAt(newSequence.Count - 1);
@@ -1064,28 +1087,40 @@ namespace Clicker
 
             result.ElementAt(result.Count - 1).Period = period;
 
-            for (int i = 0; i < result.Count; i++)
+            if (numberOfIterations > 1)
             {
-                _nestedIterationNotes.Add(result[i].Guid, $"{(i / newSequenceList.Count) + 1} z {numberOfIterations}");
+                for (int i = 0; i < result.Count; i++)
+                {
+                    _nestedIterationNotes.Add(result[i].Guid, $"{(i / newSequenceList.Count) + 1} z {numberOfIterations}");
+                }
             }
 
             return result;
         }
 
-        private Dictionary<string, int> GetIterationsDictionary() 
+        private Dictionary<string, Queue<int>> GetIterationsDictionary() 
         {
-            var result = new Dictionary<string, int>();
+            var result = new Dictionary<string, Queue<int>>();
             var text = iterationsHelperText.Text;
 
             foreach (string line in text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
             {
-                string[] parts = line.Split(new[] { ':' }, 2);
+                var parts = line.Split(new[] { ':' }, 2);
 
                 if (parts.Length == 2)
                 {
-                    if (int.TryParse(parts[1].Trim(), out int value))
+                    var iterationsPart = parts[1].Split(new[] { ',' });
+
+                    foreach (var iteration in iterationsPart)
                     {
-                        result[parts[0].Trim()] = value;
+                        if (int.TryParse(iteration.Trim(), out int value))
+                        {
+                            if (!result.ContainsKey(parts[0].Trim()))
+                            {
+                                result[parts[0].Trim()] = new Queue<int>();
+                            }
+                            result[parts[0].Trim()].Enqueue(value);
+                        }
                     }
                 }
             }

@@ -8,7 +8,7 @@ namespace Clicker
     {
         public BindingList<Action> Moves { get; set; } = new BindingList<Action>();
         public List<TagSetting> Tags { get; set; } = new List<TagSetting>();
-        public Dictionary<string, int> Iterations { get; set; } = new Dictionary<string, int>();
+        public Dictionary<string, Queue<int>> Iterations { get; set; } = new Dictionary<string, Queue<int>>();
 
         public int Period1 { get; set; }
         public int PeriodA { get; set; }
