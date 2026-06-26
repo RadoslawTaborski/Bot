@@ -18,33 +18,14 @@ public class ActionConverter : JsonConverter<Action>
 
         var type = root.GetProperty("Type").GetInt32();
 
-        if (type == (int)Actions.Mouse)
+        return type switch
         {
-            return JsonSerializer.Deserialize<MouseAction>(
-                root.GetRawText(),
-                options);
-        }
-        else if (type == (int)Actions.Keyboard)
-        {
-            return JsonSerializer.Deserialize<KeyboardAction>(
-                root.GetRawText(),
-                options);
-        }
-        else if (type == (int)Actions.SubSequence)
-        {
-            return JsonSerializer.Deserialize<SubSequenceAction>(
-                root.GetRawText(),
-                options);
-        }
-        else if (type == (int)Actions.Pause)
-        {
-            return JsonSerializer.Deserialize<PauseAction>(
-                root.GetRawText(),
-                options);
-        }
-
-        throw new JsonException("Unknown action type: " + type);
-
+            (int)Actions.Mouse => JsonSerializer.Deserialize<MouseAction>(root.GetRawText(), options) ?? throw new JsonException("Failed to deserialize MouseAction."),
+            (int)Actions.Keyboard => JsonSerializer.Deserialize<KeyboardAction>(root.GetRawText(), options) ?? throw new JsonException("Failed to deserialize KeyboardAction."),
+            (int)Actions.SubSequence => JsonSerializer.Deserialize<SubSequenceAction>(root.GetRawText(), options) ?? throw new JsonException("Failed to deserialize SubSequenceAction."),
+            (int)Actions.Pause => JsonSerializer.Deserialize<PauseAction>(root.GetRawText(), options) ?? throw new JsonException("Failed to deserialize PauseAction."),
+            _ => throw new JsonException("Unknown action type: " + type),
+        };
     }
 
     public override void Write(Utf8JsonWriter writer, Action value, JsonSerializerOptions options)

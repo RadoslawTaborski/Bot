@@ -12,109 +12,25 @@ using Action = Clicker.Models.Actions.Action;
 
 namespace Clicker;
 
-public partial class Form : System.Windows.Forms.Form
+public partial class ClickerForm : Form
 {
-    private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
+    private readonly JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
         Converters = { new ActionConverter(), new Json.PointConverter() }
     };
 
-    private readonly BindingList<string> _files = new BindingList<string>();
-    private readonly System.Timers.Timer _timer = new System.Timers.Timer();
-    private readonly Random _random = new Random(DateTime.Now.Millisecond);
-    private readonly ActionExecutor _actionExecutor = new ActionExecutor();
+    private readonly BindingList<string> _files = [];
+    private readonly System.Timers.Timer _timer = new();
+    private readonly Random _random = new(DateTime.Now.Millisecond);
 
     private IKeyboardMouseEvents? _globalHook;
-    private Settings _settings = new Settings();
 
-    private List<Action> _sequence;
-    private Dictionary<string, Queue<int>> _iterationsDictionary;
-    private int _iteration = 1;
-    private int _repeatCounter = 0;
-    private readonly Dictionary<Guid, string> _nestedIterationNotes = new Dictionary<Guid, string>();
+    private readonly ClickerState _state;
 
-    public Form()
+    public ClickerForm()
     {
         InitializeComponent();
-
-        sequenceListBox.Items.Clear();
-        sequenceListBox.DataSource = _settings.Moves;
-        sequenceListBox.HorizontalScrollbar = true;
-        recordButton.Enabled = true;
-        stopRecordButton.Enabled = false;
-        startButton.Enabled = false;
-        stopButton.Enabled = false;
-        clearButton.Enabled = false;
-        afterActionPeriodNum.Enabled = true;
-        afterSequencePeriodStartNum.Enabled = false;
-        afterSequencePeriodStopNum.Enabled = false;
-        numberOfRepeatNum.Enabled = false;
-        repeatSequenceCheckbox.Enabled = true;
-        repeatSequenceCheckbox.Checked = true;
-        afterActionPeriodNum.Minimum = 100;
-        afterActionPeriodNum.Maximum = 10000000;
-        afterActionPeriodNum.Value = 2000;
-        afterActionPeriodNum.Increment = 1000;
-        afterSequencePeriodStartNum.Minimum = 100;
-        afterSequencePeriodStartNum.Maximum = 10000000;
-        afterSequencePeriodStartNum.Increment = 1000;
-        afterSequencePeriodStopNum.Minimum = 100;
-        afterSequencePeriodStopNum.Maximum = 10000000;
-        afterSequencePeriodStopNum.Increment = 1000;
-        afterSequencePeriodStopNum.Value = 2000;
-        afterSequencePeriodStartNum.Value = 2000;
-        numberOfRepeatNum.Minimum = 2;
-        numberOfRepeatNum.Maximum = 100000;
-        numberOfRepeatNum.Value = 1000;
-        editButton.Enabled = false;
-        sequenceCounterLabel.Text = "";
-        subsequenceCounterLabel.Text = "";
-        actionLabel.Text = "";
-        newAfterActionPeriodNum.Minimum = 0;
-        newAfterActionPeriodNum.Maximum = 10000000;
-        newAfterActionPeriodNum.Value = 100;
-        newAfterActionPeriodNum.Increment = 1000;
-        newTagText.Text = "";
-        newDescriptionText.Text = "";
-        newPointXNum.Minimum = -10000000;
-        newPointXNum.Maximum = 10000000;
-        newPointXNum.Value = 0;
-        newPointYNum.Minimum = -10000000;
-        newPointYNum.Maximum = 10000000;
-        newPointYNum.Value = 0;
-        newKeyboardText.Text = "";
-        newKeyboardText.Visible = false;
-        newSubsequenceIterationsNum.Minimum = 1;
-        newSubsequenceIterationsNum.Maximum = 100000;
-        newSubsequenceIterationsNum.Value = 1;
-        newSubsequenceIterationsNum.Visible = false;
-        newSubsequenceFilenameText.Text = "";
-        newSubsequenceFilenameText.Visible = false;
-
-        string path = Directory.GetCurrentDirectory();
-        string folderPath = Path.Combine(path, "Sequences");
-
-        Directory.CreateDirectory(folderPath);
-
-        DirectoryInfo dictionaryInfo = new DirectoryInfo(folderPath);
-        foreach (var fileInfo in dictionaryInfo.GetFiles("*.json"))
-        {
-            _files.Add(fileInfo.Name);
-        }
-        profilesListBox.DataSource = _files;
-        profilesListBox.HorizontalScrollbar = true;
-
-        if (profilesListBox.Items.Count != 0)
-        {
-            loadButton.Enabled = true;
-            deleteButton.Enabled = true;
-        }
-        else
-        {
-            loadButton.Enabled = false;
-            deleteButton.Enabled = false;
-        }
 
         newMouseButtonsComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         newMouseButtonsComboBox.Items.Add(MouseActions.Left);
@@ -129,16 +45,42 @@ public partial class Form : System.Windows.Forms.Form
         newActionsComboBox.Items.Add(Actions.SubSequence);
         newActionsComboBox.Items.Add(Actions.Pause);
         newActionsComboBox.SelectedIndex = 0;
+
+        _state = new ClickerState();
+        SetValuesFromSettings(_state.Settings);
+
+        string path = Directory.GetCurrentDirectory();
+        string folderPath = Path.Combine(path, "Sequences");
+
+        Directory.CreateDirectory(folderPath);
+
+        DirectoryInfo dictionaryInfo = new(folderPath);
+        foreach (var fileInfo in dictionaryInfo.GetFiles("*.json"))
+        {
+            _files.Add(fileInfo.Name);
+        }
+        profilesListBox.DataSource = _files;
+
+        if (profilesListBox.Items.Count != 0)
+        {
+            loadButton.Enabled = true;
+            deleteButton.Enabled = true;
+        }
+        else
+        {
+            loadButton.Enabled = false;
+            deleteButton.Enabled = false;
+        }
     }
 
     public void DoAction(object sender, ElapsedEventArgs e)
     {
         sequenceCounterLabel.Invoke((MethodInvoker)(() =>
         {
-            sequenceCounterLabel.Text = $"Iteracja: {_repeatCounter + 1} z {(repeatSequenceCheckbox.Checked ? numberOfRepeatNum.Value : 1)}";
+            sequenceCounterLabel.Text = $"Iteracja: {_state.IterationsCounter + 1} z {(repeatSequenceCheckbox.Checked ? numberOfRepeatNum.Value : 1)}";
         }));
 
-        var action = _sequence[_iteration];
+        var action = _state.CurrentSequence[_state.CurrentIndex];
 
         actionLabel.Invoke((MethodInvoker)(() =>
         {
@@ -147,9 +89,9 @@ public partial class Form : System.Windows.Forms.Form
 
         subsequenceCounterLabel.Invoke((MethodInvoker)(() =>
         {
-            if (_nestedIterationNotes.ContainsKey(action.Guid))
+            if (_state.NestedSequencesNotes.ContainsKey(action.Guid))
             {
-                subsequenceCounterLabel.Text = $"Sub-iteracja: {_nestedIterationNotes[action.Guid]}";
+                subsequenceCounterLabel.Text = $"Sub-iteracja: {_state.NestedSequencesNotes[action.Guid]}";
             }
             else
             {
@@ -162,9 +104,9 @@ public partial class Form : System.Windows.Forms.Form
             var subSequenceAction = action as SubSequenceAction;
 
             var overrideIteration = subSequenceAction.Iterations;
-            if (_iterationsDictionary.ContainsKey(subSequenceAction.FileName))
+            if (_state.OverrideIterationsQueues.ContainsKey(subSequenceAction.FileName))
             {
-                var queue = _iterationsDictionary[subSequenceAction.FileName];
+                var queue = _state.OverrideIterationsQueues[subSequenceAction.FileName];
                 if (queue.Count > 1)
                 {
                     overrideIteration = queue.Dequeue();
@@ -175,21 +117,21 @@ public partial class Form : System.Windows.Forms.Form
                 }
             }
 
-            _sequence.ReplaceWithRange(_iteration,
+            _state.CurrentSequence.ReplaceWithRange(_state.CurrentIndex,
                 LoadNestedSequence(subSequenceAction.FileName, subSequenceAction.Id, overrideIteration, subSequenceAction.Period));
 
             DoAction(sender, e);
             return;
         }
 
-        var numberOfActions = _actionExecutor.Execute(_sequence[_iteration], _sequence.Cast<Action>().ElementAtOrDefault(_iteration + 1));
-        _timer.Interval = _sequence[_iteration].Period;
-        _iteration += numberOfActions;
+        var numberOfActions = ActionExecutor.Execute(_state.CurrentSequence[_state.CurrentIndex], _state.CurrentSequence.Cast<Action>().ElementAtOrDefault(_state.CurrentIndex + 1));
+        _timer.Interval = _state.CurrentSequence[_state.CurrentIndex].Period;
+        _state.CurrentIndex += numberOfActions;
 
-        if (_iteration >= _sequence.Count - 2)
+        if (_state.CurrentIndex >= _state.CurrentSequence.Count - 2)
         {
-            _repeatCounter++;
-            if (repeatSequenceCheckbox.Checked == true && _repeatCounter < numberOfRepeatNum.Value)
+            _state.IterationsCounter++;
+            if (repeatSequenceCheckbox.Checked == true && _state.IterationsCounter < numberOfRepeatNum.Value)
             {
                 var time = _random.Next((int)afterSequencePeriodStartNum.Value, (int)afterSequencePeriodStopNum.Value);
 
@@ -200,7 +142,7 @@ public partial class Form : System.Windows.Forms.Form
                 }));
 
                 _timer.Interval = time;
-                _iteration = 1;
+                _state.CurrentIndex = 1;
             }
             else
             {
@@ -228,8 +170,8 @@ public partial class Form : System.Windows.Forms.Form
         }
         else
         {
-            _sequence = ProvideSequence();
-            _iterationsDictionary = GetIterationsDictionary();
+            _state.CurrentSequence = ProvideSequence();
+            _state.OverrideIterationsQueues = GetIterationsDictionary();
             RunTimer(2000);
             recordButton.Enabled = false;
             stopRecordButton.Enabled = false;
@@ -251,16 +193,16 @@ public partial class Form : System.Windows.Forms.Form
     private List<Action> ProvideSequence()
     {
         var selectedTags = tagsListBox.CheckedItems.Cast<string>().ToList();
-        return _settings.Moves.Where(x => x.Active && (selectedTags.Contains(x.Tag) || string.IsNullOrWhiteSpace(x.Tag))).ToList();
+        return _state.Settings.Moves.Where(x => x.Active && (selectedTags.Contains(x.Tag) || string.IsNullOrWhiteSpace(x.Tag))).ToList();
     }
 
     private void StopButton_Click(object sender, EventArgs e)
     {
-        _nestedIterationNotes.Clear();
+        _state.NestedSequencesNotes.Clear();
         _timer.Stop();
         _timer.Elapsed -= new ElapsedEventHandler(DoAction);
-        _iteration = 1;
-        _repeatCounter = 0;
+        _state.CurrentIndex = 1;
+        _state.IterationsCounter = 0;
         sequenceCounterLabel.Text = "";
         subsequenceCounterLabel.Text = "";
         actionLabel.Text = "";
@@ -318,28 +260,31 @@ public partial class Form : System.Windows.Forms.Form
     {
         Deactivation();
 
-        if (_settings.Moves.Count > 2)
+        if (_state.Settings.Moves.Count > 2)
         {
-            _settings.Moves[0] = new PauseAction
+            _state.Settings.Moves[0] = new PauseAction
             {
                 Id = "0",
                 Type = Actions.Pause,
                 Description = "Dummy",
-                Period = 0
+                Period = 0,
+                Active = true
             };
-            _settings.Moves[_settings.Moves.Count - 1] = new PauseAction
+            _state.Settings.Moves[_state.Settings.Moves.Count - 1] = new PauseAction
             {
                 Id = "0",
                 Type = Actions.Pause,
                 Description = "Dummy",
-                Period = 0
+                Period = 0,
+                Active = true
             };
-            _settings.Moves[_settings.Moves.Count - 2] = new PauseAction
+            _state.Settings.Moves[_state.Settings.Moves.Count - 2] = new PauseAction
             {
                 Id = "0",
                 Type = Actions.Pause,
                 Description = "Dummy",
-                Period = 0
+                Period = 0,
+                Active = true
             };
         }
 
@@ -354,7 +299,7 @@ public partial class Form : System.Windows.Forms.Form
         deleteButton.Enabled = true;
         saveButton.Enabled = true;
         fileNameText.Enabled = true;
-        sequenceListBox.DataSource = _settings.Moves;
+        sequenceListBox.DataSource = _state.Settings.Moves;
         if (repeatSequenceCheckbox.Checked == true)
         {
             afterSequencePeriodStartNum.Enabled = true;
@@ -389,18 +334,15 @@ public partial class Form : System.Windows.Forms.Form
         newSubsequenceFilenameText.Text = "";
         newSubsequenceFilenameText.Visible = false;
         newSubsequenceIterationsLabel.Visible = false;
-        editButton.Enabled = _settings.Moves.Count != 0;
+        editButton.Enabled = _state.Settings.Moves.Count != 0;
     }
 
     private void ClearButton_Click(object sender, EventArgs e)
     {
-        _settings.Moves.Clear();
-        _settings.Iterations.Clear();
-        _sequence.Clear();
-        _iterationsDictionary.Clear();
+        _state.Reset();
         iterationsHelperText.Text = "";
         tagsListBox.Items.Clear();
-        _settings.Tags.Clear();
+        _state.Settings.Tags.Clear();
         recordButton.Enabled = true;
         stopRecordButton.Enabled = false;
         startButton.Enabled = false;
@@ -435,8 +377,8 @@ public partial class Form : System.Windows.Forms.Form
         newPointYLabel.Visible = true;
         newKeyboardText.Visible = false;
         newMouseButtonsComboBox.Visible = true;
-        _iteration = 1;
-        _repeatCounter = 0;
+        _state.CurrentIndex = 1;
+        _state.IterationsCounter = 0;
         if (repeatSequenceCheckbox.Checked == true)
         {
             afterSequencePeriodStartNum.Enabled = true;
@@ -467,17 +409,19 @@ public partial class Form : System.Windows.Forms.Form
 
     private void GlobalHook_MouseDownExt(object? sender, MouseEventExtArgs e)
     {
-        _settings.Moves.Add(
+        _state.Settings.Moves.Add(
             new MouseAction
             {
-                Id = (_settings.Moves.Count + 1).ToString(),
+                Id = (_state.Settings.Moves.Count + 1).ToString(),
+                Type = Actions.Mouse,
                 Point = new Point(Cursor.Position.X, Cursor.Position.Y),
                 Period = (int)afterActionPeriodNum.Value,
                 Button = e.Button == MouseButtons.Middle
-            ? MouseActions.Middle
-            : e.Button == MouseButtons.Right
-                ? MouseActions.Right
-                : MouseActions.Left
+                    ? MouseActions.Middle
+                    : e.Button == MouseButtons.Right
+                        ? MouseActions.Right
+                        : MouseActions.Left,
+                Active = true
             });
     }
 
@@ -503,27 +447,27 @@ public partial class Form : System.Windows.Forms.Form
     private void LoadButton_Click(object sender, EventArgs e)
     {
         var fileName = profilesListBox.SelectedItem.ToString();
-        _settings = LoadSettings(fileName);
-        UpdateMovesIds();
+        _state.Settings = LoadSettings(fileName);
+        UpdateMovesIds(_state.Settings);
 
-        numberOfRepeatNum.Value = _settings.NumberOfRepeats;
-        repeatSequenceCheckbox.Checked = _settings.Repeat;
+        numberOfRepeatNum.Value = _state.Settings.NumberOfRepeats;
+        repeatSequenceCheckbox.Checked = _state.Settings.Repeat;
         repeatSequenceCheckbox.CheckedChanged += new EventHandler(RepeatSequenceCheckbox_CheckedChanged);
-        randomIntervalCheckbox.Checked = _settings.RandomTimeInterval;
-        afterActionPeriodNum.Value = _settings.Period1;
-        afterSequencePeriodStartNum.Value = _settings.PeriodA;
-        SetTags();
-        SetIntervalsHelper();
-        if (_settings.RandomTimeInterval)
+        randomIntervalCheckbox.Checked = _state.Settings.RandomTimeInterval;
+        afterActionPeriodNum.Value = _state.Settings.Period1;
+        afterSequencePeriodStartNum.Value = _state.Settings.PeriodA;
+        SetTags(_state.Settings);
+        SetIntervalsHelper(_state.Settings);
+        if (_state.Settings.RandomTimeInterval)
         {
-            afterSequencePeriodStopNum.Value = _settings.PeriodB;
+            afterSequencePeriodStopNum.Value = _state.Settings.PeriodB;
         }
         else
         {
-            afterSequencePeriodStopNum.Value = _settings.PeriodA;
+            afterSequencePeriodStopNum.Value = _state.Settings.PeriodA;
         }
 
-        sequenceListBox.DataSource = _settings.Moves;
+        sequenceListBox.DataSource = _state.Settings.Moves;
 
         recordButton.Enabled = false;
         stopRecordButton.Enabled = false;
@@ -571,30 +515,30 @@ public partial class Form : System.Windows.Forms.Form
         newSubsequenceIterationsNum.Visible = false;
         newSubsequenceIterationsLabel.Visible = false;
         newMouseButtonsComboBox.Visible = true;
-        editButton.Enabled = _settings.Moves.Count != 0;
+        editButton.Enabled = _state.Settings.Moves.Count != 0;
     }
 
-    private void SetIntervalsHelper()
+    private void SetIntervalsHelper(Settings settings)
     {
-        var lines = _settings.Iterations.Select(x => $"{x.Key}: {string.Join(", ", x.Value)}").ToList();
+        var lines = settings.Iterations.Select(x => $"{x.Key}: {string.Join(", ", x.Value)}").ToList();
         iterationsHelperText.Text = string.Join(Environment.NewLine, lines);
     }
 
     private void SaveButton_Click(object sender, EventArgs e)
     {
-        _settings.Period1 = (int)afterActionPeriodNum.Value;
-        _settings.PeriodA = (int)afterSequencePeriodStartNum.Value;
-        _settings.PeriodB = (int)afterSequencePeriodStopNum.Value;
-        _settings.NumberOfRepeats = (int)numberOfRepeatNum.Value;
-        _settings.Repeat = repeatSequenceCheckbox.Checked;
-        _settings.RandomTimeInterval = randomIntervalCheckbox.Checked;
-        _settings.Iterations = GetIterationsDictionary();
-        UpdateMovesIds();
+        _state.Settings.Period1 = (int)afterActionPeriodNum.Value;
+        _state.Settings.PeriodA = (int)afterSequencePeriodStartNum.Value;
+        _state.Settings.PeriodB = (int)afterSequencePeriodStopNum.Value;
+        _state.Settings.NumberOfRepeats = (int)numberOfRepeatNum.Value;
+        _state.Settings.Repeat = repeatSequenceCheckbox.Checked;
+        _state.Settings.RandomTimeInterval = randomIntervalCheckbox.Checked;
+        _state.Settings.Iterations = GetIterationsDictionary();
+        UpdateMovesIds(_state.Settings);
         SaveTags();
 
         try
         {
-            var json = JsonSerializer.Serialize(_settings, _jsonOptions);
+            var json = JsonSerializer.Serialize(_state.Settings, _jsonOptions);
             File.WriteAllText(@$"Sequences\{fileNameText.Text}.json", json);
         }
         catch (SerializationException ex)
@@ -625,33 +569,33 @@ public partial class Form : System.Windows.Forms.Form
         }
     }
 
-    private void UpdateMovesIds()
+    private static void UpdateMovesIds(Settings settings)
     {
         var id = 0;
-        for (int i = 0; i < _settings.Moves.Count - 2; i++)
+        for (int i = 0; i < settings.Moves.Count - 2; i++)
         {
-            var move = _settings.Moves[i];
-            move.Id = (id++).ToString();
+            var move = settings.Moves[i];
+            move.Id = id++.ToString();
         }
-        _settings.Moves[_settings.Moves.Count - 1].Id = "0";
-        _settings.Moves[_settings.Moves.Count - 2].Id = "0";
+        settings.Moves[^1].Id = "0";
+        settings.Moves[^2].Id = "0";
     }
 
     private void SaveTags()
     {
-        var allTags = _settings.Moves.Where(x => !string.IsNullOrEmpty(x.Tag)).Select(x => x.Tag).Distinct().ToList();
+        var allTags = _state.Settings.Moves.Where(x => !string.IsNullOrEmpty(x.Tag)).Select(x => x.Tag).Distinct().ToList();
         var selectedTags = tagsListBox.CheckedItems.Cast<string>().ToList();
-        _settings.Tags.Clear();
+        _state.Settings.Tags.Clear();
         allTags = allTags.OrderBy(x => x).ToList();
         foreach (var tag in allTags)
         {
-            _settings.Tags.Add(new TagSetting { Name = tag, Active = selectedTags.Contains(tag) });
+            _state.Settings.Tags.Add(new TagSetting { Name = tag, Active = selectedTags.Contains(tag) });
         }
     }
 
-    private void UpdateTags()
+    private void UpdateTags(Settings settings)
     {
-        var actionsTags = _settings.Moves.Where(x => !string.IsNullOrEmpty(x.Tag)).Select(x => x.Tag).Distinct().ToList();
+        var actionsTags = settings.Moves.Where(x => !string.IsNullOrEmpty(x.Tag)).Select(x => x.Tag).Distinct().ToList();
         var listedTags = tagsListBox.Items
             .Cast<string>()
             .ToDictionary(
@@ -661,32 +605,32 @@ public partial class Form : System.Windows.Forms.Form
                 )
             );
         tagsListBox.Items.Clear();
-        actionsTags = actionsTags.OrderBy(x => x).ToList();
+        actionsTags = [.. actionsTags.OrderBy(x => x)];
         foreach (var tag in actionsTags)
         {
-            tagsListBox.Items.Add(tag, !listedTags.ContainsKey(tag) || listedTags[tag]);
+            tagsListBox.Items.Add(tag!, !listedTags.ContainsKey(tag!) || listedTags[tag!]);
         }
     }
 
-    private void SetTags()
+    private void SetTags(Settings settings)
     {
-        var actionsTags = _settings.Moves.Where(x => !string.IsNullOrEmpty(x.Tag)).Select(x => x.Tag).Distinct().ToList();
+        var actionsTags = settings.Moves.Where(x => !string.IsNullOrEmpty(x.Tag)).Select(x => x.Tag).Distinct().ToList();
         var finalTags = new List<TagSetting>();
         foreach (var tag in actionsTags)
         {
-            var existingTag = _settings.Tags.FirstOrDefault(t => t.Name == tag);
+            var existingTag = settings.Tags.FirstOrDefault(t => t.Name == tag);
             if (existingTag != null)
             {
                 finalTags.Add(existingTag);
             }
             else
             {
-                finalTags.Add(new TagSetting { Name = tag, Active = true });
+                finalTags.Add(new TagSetting { Name = tag!, Active = true });
             }
         }
 
         tagsListBox.Items.Clear();
-        finalTags = finalTags.OrderBy(x => x.Name).ToList();
+        finalTags = [.. finalTags.OrderBy(x => x.Name)];
         foreach (var tag in finalTags)
         {
             tagsListBox.Items.Add(tag.Name, tag.Active);
@@ -696,13 +640,13 @@ public partial class Form : System.Windows.Forms.Form
 
     private void EditButton_Click(object sender, EventArgs e)
     {
-        if (_settings.Moves[sequenceListBox.SelectedIndex].Type != (Actions)newActionsComboBox.SelectedItem)
+        if (_state.Settings.Moves[sequenceListBox.SelectedIndex].Type != (Actions)newActionsComboBox.SelectedItem)
         {
-            _settings.Moves[sequenceListBox.SelectedIndex] = MigrateMove(_settings.Moves[sequenceListBox.SelectedIndex], (Actions)newActionsComboBox.SelectedItem);
+            _state.Settings.Moves[sequenceListBox.SelectedIndex] = MigrateMove(_state.Settings.Moves[sequenceListBox.SelectedIndex], (Actions)newActionsComboBox.SelectedItem);
         }
         else
         {
-            switch (_settings.Moves[sequenceListBox.SelectedIndex])
+            switch (_state.Settings.Moves[sequenceListBox.SelectedIndex])
             {
                 case MouseAction mouse:
                     mouse.Point = new Point((int)newPointXNum.Value, (int)newPointYNum.Value);
@@ -718,76 +662,77 @@ public partial class Form : System.Windows.Forms.Form
                 case PauseAction pause:
                     break;
             }
-            _settings.Moves[sequenceListBox.SelectedIndex].Period = (int)newAfterActionPeriodNum.Value;
-            _settings.Moves[sequenceListBox.SelectedIndex].Tag = newTagText.Text;
-            _settings.Moves[sequenceListBox.SelectedIndex].Description = newDescriptionText.Text;
+            _state.Settings.Moves[sequenceListBox.SelectedIndex].Period = (int)newAfterActionPeriodNum.Value;
+            _state.Settings.Moves[sequenceListBox.SelectedIndex].Tag = newTagText.Text;
+            _state.Settings.Moves[sequenceListBox.SelectedIndex].Description = newDescriptionText.Text;
         }
 
-        UpdateTags();
+        UpdateTags(_state.Settings);
         this.sequenceListBox.SelectedIndexChanged -= new EventHandler(this.SequenceListBox_SelectedIndexChanged);
         sequenceListBox.DataSource = null;
-        sequenceListBox.DataSource = _settings.Moves;
+        sequenceListBox.DataSource = _state.Settings.Moves;
         this.sequenceListBox.SelectedIndexChanged += new EventHandler(this.SequenceListBox_SelectedIndexChanged);
     }
 
     private Action MigrateMove(Action action, Actions newType)
     {
-        switch (newType)
+        return newType switch 
         {
-            case Actions.Mouse:
-                return new MouseAction
-                {
-                    Id = action.Id,
-                    Type = Actions.Mouse,
-                    Description = newDescriptionText.Text,
-                    Tag = newTagText.Text,
-                    Period = (int)newAfterActionPeriodNum.Value,
-                    Point = new Point((int)newPointXNum.Value, (int)newPointYNum.Value),
-                    Button = (MouseActions)newMouseButtonsComboBox.SelectedItem
-                };
-            case Actions.Keyboard:
-                return new KeyboardAction
-                {
-                    Id = action.Id,
-                    Type = Actions.Keyboard,
-                    Description = newDescriptionText.Text,
-                    Tag = newTagText.Text,
-                    Period = (int)newAfterActionPeriodNum.Value,
-                    Text = newKeyboardText.Text
-                };
-            case Actions.SubSequence:
-                return new SubSequenceAction
-                {
-                    Id = action.Id,
-                    Type = Actions.SubSequence,
-                    Description = newDescriptionText.Text,
-                    Tag = newTagText.Text,
-                    Period = (int)newAfterActionPeriodNum.Value,
-                    FileName = newSubsequenceFilenameText.Text,
-                    Iterations = (int)newSubsequenceIterationsNum.Value
-                };
-            case Actions.Pause:
-                return new PauseAction
-                {
-                    Id = action.Id,
-                    Type = Actions.Pause,
-                    Description = newDescriptionText.Text,
-                    Tag = newTagText.Text,
-                    Period = (int)newAfterActionPeriodNum.Value
-                };
-        }
-        throw new NotImplementedException();
+            Actions.Mouse => new MouseAction
+            {
+                Id = action.Id,
+                Type = Actions.Mouse,
+                Description = newDescriptionText.Text,
+                Tag = newTagText.Text,
+                Period = (int)newAfterActionPeriodNum.Value,
+                Point = new Point((int)newPointXNum.Value, (int)newPointYNum.Value),
+                Button = (MouseActions)newMouseButtonsComboBox.SelectedItem,
+                Active = true
+            },
+            Actions.Keyboard => new KeyboardAction
+            {
+                Id = action.Id,
+                Type = Actions.Keyboard,
+                Description = newDescriptionText.Text,
+                Tag = newTagText.Text,
+                Period = (int)newAfterActionPeriodNum.Value,
+                Text = newKeyboardText.Text,
+                Active = true
+            },
+            Actions.SubSequence => new SubSequenceAction
+            {
+                Id = action.Id,
+                Type = Actions.SubSequence,
+                Description = newDescriptionText.Text,
+                Tag = newTagText.Text,
+                Period = (int)newAfterActionPeriodNum.Value,
+                FileName = newSubsequenceFilenameText.Text,
+                Iterations = (int)newSubsequenceIterationsNum.Value,
+                Active = true
+            },
+            Actions.Pause => new PauseAction
+            {
+                Id = action.Id,
+                Type = Actions.Pause,
+                Description = newDescriptionText.Text,
+                Tag = newTagText.Text,
+                Period = (int)newAfterActionPeriodNum.Value,
+                Active = true
+            },
+            _ => throw new NotImplementedException()
+        };
+
     }
 
     private void SequenceListBox_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (sequenceListBox != null && sequenceListBox.SelectedIndex > -1)
         {
-            newAfterActionPeriodNum.Value = _settings.Moves[sequenceListBox.SelectedIndex].Period;
-            newTagText.Text = _settings.Moves[sequenceListBox.SelectedIndex].Tag;
-            newDescriptionText.Text = _settings.Moves[sequenceListBox.SelectedIndex].Description;
-            newActionsComboBox.SelectedItem = _settings.Moves[sequenceListBox.SelectedIndex].Type;
-            switch (_settings.Moves[sequenceListBox.SelectedIndex])
+            newAfterActionPeriodNum.Value = _state.Settings.Moves[sequenceListBox.SelectedIndex].Period;
+            newTagText.Text = _state.Settings.Moves[sequenceListBox.SelectedIndex].Tag;
+            newDescriptionText.Text = _state.Settings.Moves[sequenceListBox.SelectedIndex].Description;
+            newActionsComboBox.SelectedItem = _state.Settings.Moves[sequenceListBox.SelectedIndex].Type;
+            switch (_state.Settings.Moves[sequenceListBox.SelectedIndex])
             {
                 case MouseAction mouse:
                     newKeyboardText.Visible = false;
@@ -881,20 +826,21 @@ public partial class Form : System.Windows.Forms.Form
 
     private void DeleteButton_Click(object sender, EventArgs e)
     {
-        var str = profilesListBox.SelectedItem.ToString();
-        if (File.Exists(str))
+        string path = Directory.GetCurrentDirectory();
+        string folderPath = Path.Combine(path, "Sequences");
+        string filePath = Path.Combine(folderPath, profilesListBox.SelectedItem.ToString());
+        if (File.Exists(filePath))
         {
             try
             {
-                File.Delete(str);
+                File.Delete(filePath);
             }
             catch (IOException ex)
             {
                 MessageBox.Show(ex.Message);
             }
             _files.Clear();
-            string path = Directory.GetCurrentDirectory();
-            string folderPath = Path.Combine(path, "Sequences");
+
             DirectoryInfo di = new DirectoryInfo(folderPath);
             foreach (var fi in di.GetFiles("*.json"))
             {
@@ -917,7 +863,7 @@ public partial class Form : System.Windows.Forms.Form
 
     private void ActionsComboBox_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var move = sequenceListBox.SelectedIndex > -1 && _settings.Moves.Count > 0 ? _settings.Moves[sequenceListBox.SelectedIndex] : null;
+        var move = sequenceListBox.SelectedIndex > -1 && _state.Settings.Moves.Count > 0 ? _state.Settings.Moves[sequenceListBox.SelectedIndex] : null;
 
         switch ((Actions)newActionsComboBox.SelectedItem)
         {
@@ -1013,6 +959,8 @@ public partial class Form : System.Windows.Forms.Form
                 newSubsequenceIterationsNum.Visible = false;
                 newSubsequenceIterationsLabel.Visible = false;
                 break;
+            default:
+                break;
         }
     }
 
@@ -1041,7 +989,8 @@ public partial class Form : System.Windows.Forms.Form
         try
         {
             var json = File.ReadAllText(@$"Sequences\{fileName}");
-            return JsonSerializer.Deserialize<Settings>(json, _jsonOptions);
+            var settings = JsonSerializer.Deserialize<Settings>(json, _jsonOptions);
+            return settings is null ? throw new SerializationException("Deserialized Settings is null.") : settings;
         }
         catch (SerializationException ex)
         {
@@ -1054,7 +1003,7 @@ public partial class Form : System.Windows.Forms.Form
     {
         if (numberOfIterations == 0)
         {
-            return new List<Action>();
+            return [];
         }
         var tmpSettings = LoadSettings(fileName);
         var newSequence = tmpSettings.Moves;
@@ -1071,7 +1020,7 @@ public partial class Form : System.Windows.Forms.Form
             );
 
         var newSequenceList = newSequence.Where(x => x.Active && (string.IsNullOrWhiteSpace(x.Tag) || !listedTags.ContainsKey(x.Tag) || listedTags[x.Tag])).ToList();
-        newSequenceList[newSequenceList.Count - 1].Period = tmpSettings.PeriodB;
+        newSequenceList[^1].Period = tmpSettings.PeriodB;
         var id = 0;
         for (int i = 0; i < newSequenceList.Count; i++)
         {
@@ -1088,7 +1037,7 @@ public partial class Form : System.Windows.Forms.Form
         {
             for (int i = 0; i < result.Count; i++)
             {
-                _nestedIterationNotes.Add(result[i].Guid, $"{(i / newSequenceList.Count) + 1} z {numberOfIterations}");
+                _state.NestedSequencesNotes.Add(result[i].Guid, $"{(i / newSequenceList.Count) + 1} z {numberOfIterations}");
             }
         }
 
@@ -1102,11 +1051,11 @@ public partial class Form : System.Windows.Forms.Form
 
         foreach (string line in text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
         {
-            var parts = line.Split(new[] { ':' }, 2);
+            var parts = line.Split([':'], 2);
 
             if (parts.Length == 2)
             {
-                var iterationsPart = parts[1].Split(new[] { ',' });
+                var iterationsPart = parts[1].Split([',']);
 
                 foreach (var iteration in iterationsPart)
                 {
@@ -1122,5 +1071,86 @@ public partial class Form : System.Windows.Forms.Form
             }
         }
         return result;
+    }
+
+    private void SetValuesFromSettings(Settings settings)
+    {
+        if (settings.Moves.Any())
+        {
+            recordButton.Enabled = false;
+            stopRecordButton.Enabled = false;
+            startButton.Enabled = true;
+            stopButton.Enabled = false;
+            clearButton.Enabled = true;
+            saveButton.Enabled = true;
+            deleteButton.Enabled = true;
+            editButton.Enabled = true;
+
+            UpdateMovesIds(settings);
+        }
+        SetTags(settings);
+        SetIntervalsHelper(settings);
+
+        afterActionPeriodNum.Enabled = true;
+        afterActionPeriodNum.Value = settings.Period1;
+        afterSequencePeriodStartNum.Value = settings.PeriodA;
+        numberOfRepeatNum.Value = settings.NumberOfRepeats;
+        randomIntervalCheckbox.Checked = settings.RandomTimeInterval;
+        repeatSequenceCheckbox.Enabled = true;
+        repeatSequenceCheckbox.Checked = settings.Repeat;
+
+        if (settings.RandomTimeInterval)
+        {
+            afterSequencePeriodStopNum.Value = settings.PeriodB;
+        }
+        else
+        {
+            afterSequencePeriodStopNum.Value = settings.PeriodA;
+        }
+
+        if (repeatSequenceCheckbox.Checked == true)
+        {
+            afterSequencePeriodStartNum.Enabled = true;
+            if (randomIntervalCheckbox.Checked)
+            {
+                afterSequencePeriodStopNum.Enabled = true;
+            }
+            numberOfRepeatNum.Enabled = true;
+        }
+        else
+        {
+            afterSequencePeriodStartNum.Enabled = false;
+            afterSequencePeriodStopNum.Enabled = false;
+            numberOfRepeatNum.Enabled = false;
+        }
+        sequenceListBox.DataSource = settings.Moves;
+
+        ResetEditActionControls();
+    }
+
+    private void ResetEditActionControls()
+    {
+        newActionsComboBox.SelectedIndex = 0;
+        newAfterActionPeriodNum.Value = 100;
+        newDescriptionText.Text = "";
+        newTagText.Text = "";
+
+        newMouseButtonsComboBox.Visible = true;
+        newMouseButtonsComboBox.SelectedIndex = 0;
+        newPointXLabel.Visible = true;
+        newPointXNum.Visible = true;
+        newPointXNum.Value = 0;
+        newPointYLabel.Visible = true;
+        newPointYNum.Visible = true;
+        newPointYNum.Value = 0;
+
+        newKeyboardText.Visible = false;
+        newKeyboardText.Text = "";
+
+        newSubsequenceIterationsNum.Visible = false;
+        newSubsequenceIterationsNum.Value = 1;
+        newSubsequenceFilenameText.Visible = false;
+        newSubsequenceFilenameText.Text = "";
+        newSubsequenceIterationsLabel.Visible = false;
     }
 }
