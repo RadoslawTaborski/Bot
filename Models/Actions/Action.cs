@@ -4,12 +4,12 @@ namespace Clicker.Models.Actions;
 
 public abstract class Action
 {
-    public string Id { get; set; }
-    public int Period { get; set; }
-    public string Tag { get; set; }
-    public string Description { get; set; } = string.Empty;
-    public bool Active { get; set; } = true;
-    public Enums.Actions Type { get; set; }
+    public required string Id { get; set; }
+    public required int Period { get; set; }
+    public string? Tag { get; set; }
+    public string? Description { get; set; } = string.Empty;
+    public required bool Active { get; set; } = true;
+    public required Enums.Actions Type { get; set; }
 
     public Action Clone()
     {
@@ -19,5 +19,5 @@ public abstract class Action
     }
 
     [JsonIgnore]
-    internal Guid Guid { get; set; } = Guid.NewGuid();
+    public Guid Guid { get; set; } = Guid.NewGuid();
 }

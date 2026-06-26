@@ -4,8 +4,8 @@ namespace Clicker.Models.Actions;
 
 public class MouseAction : Action
 {
-    public MouseActions Button { get; set; }
-    public System.Drawing.Point Point { get; set; }
+    public required MouseActions Button { get; set; }
+    public required Point Point { get; set; }
 
     public override string ToString()
     {

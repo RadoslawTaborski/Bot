@@ -2,7 +2,7 @@
 
 public class KeyboardAction : Action
 {
-    public string Text { get; set; }
+    public required string Text { get; set; }
 
     public override string ToString()
     {

@@ -1,6 +1,6 @@
 ﻿namespace Clicker
 {
-    partial class Form
+    partial class ClickerForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClickerForm));
             tabControl = new TabControl();
             mainPage = new TabPage();
             infoBox = new GroupBox();
@@ -54,7 +54,6 @@
             repeatSequenceCheckbox = new CheckBox();
             afterActionPeriodLabel = new Label();
             sequencePage = new TabPage();
-            newSubsequenceFilenameText = new TextBox();
             newSubsequenceIterationsLabel = new Label();
             newSubsequenceIterationsNum = new NumericUpDown();
             newPointYLabel = new Label();
@@ -72,6 +71,7 @@
             newActionsComboBox = new ComboBox();
             sequenceListBox = new ListBox();
             newKeyboardText = new TextBox();
+            newSubsequenceFilenameText = new TextBox();
             tagsPage = new TabPage();
             tagsListBox = new CheckedListBox();
             profilesPage = new TabPage();
@@ -151,9 +151,8 @@
             subsequenceCounterLabel.Font = new Font("Microsoft Sans Serif", 7.8F);
             subsequenceCounterLabel.Location = new Point(166, 13);
             subsequenceCounterLabel.Name = "subsequenceCounterLabel";
-            subsequenceCounterLabel.Size = new Size(114, 16);
+            subsequenceCounterLabel.Size = new Size(0, 16);
             subsequenceCounterLabel.TabIndex = 2;
-            subsequenceCounterLabel.Text = "Wewnętrzna: a z b";
             // 
             // actionLabel
             // 
@@ -161,9 +160,8 @@
             actionLabel.Font = new Font("Microsoft Sans Serif", 7.8F);
             actionLabel.Location = new Point(2, 38);
             actionLabel.Name = "actionLabel";
-            actionLabel.Size = new Size(26, 16);
+            actionLabel.Size = new Size(0, 16);
             actionLabel.TabIndex = 1;
-            actionLabel.Text = "xyz";
             // 
             // sequenceCounterLabel
             // 
@@ -171,17 +169,17 @@
             sequenceCounterLabel.Font = new Font("Microsoft Sans Serif", 7.8F);
             sequenceCounterLabel.Location = new Point(2, 13);
             sequenceCounterLabel.Name = "sequenceCounterLabel";
-            sequenceCounterLabel.Size = new Size(85, 16);
+            sequenceCounterLabel.Size = new Size(0, 16);
             sequenceCounterLabel.TabIndex = 0;
-            sequenceCounterLabel.Text = "Iteracja: a z b";
             // 
             // stopRecordButton
             // 
+            stopRecordButton.Enabled = false;
             stopRecordButton.Font = new Font("Microsoft Sans Serif", 7.8F);
-            stopRecordButton.Location = new Point(166, 70);
+            stopRecordButton.Location = new Point(166, 66);
             stopRecordButton.Margin = new Padding(3, 4, 3, 4);
             stopRecordButton.Name = "stopRecordButton";
-            stopRecordButton.Size = new Size(151, 47);
+            stopRecordButton.Size = new Size(151, 53);
             stopRecordButton.TabIndex = 4;
             stopRecordButton.Text = "Zatrzymaj nagrywanie";
             stopRecordButton.UseVisualStyleBackColor = true;
@@ -190,10 +188,10 @@
             // recordButton
             // 
             recordButton.Font = new Font("Microsoft Sans Serif", 7.8F);
-            recordButton.Location = new Point(3, 72);
+            recordButton.Location = new Point(3, 66);
             recordButton.Margin = new Padding(3, 4, 3, 4);
             recordButton.Name = "recordButton";
-            recordButton.Size = new Size(160, 45);
+            recordButton.Size = new Size(160, 53);
             recordButton.TabIndex = 3;
             recordButton.Text = "Nagraj";
             recordButton.UseVisualStyleBackColor = true;
@@ -201,11 +199,12 @@
             // 
             // stopButton
             // 
+            stopButton.Enabled = false;
             stopButton.Font = new Font("Microsoft Sans Serif", 7.8F);
-            stopButton.Location = new Point(166, 125);
+            stopButton.Location = new Point(166, 120);
             stopButton.Margin = new Padding(3, 4, 3, 4);
             stopButton.Name = "stopButton";
-            stopButton.Size = new Size(151, 69);
+            stopButton.Size = new Size(151, 83);
             stopButton.TabIndex = 2;
             stopButton.Text = "Stop";
             stopButton.UseVisualStyleBackColor = true;
@@ -213,8 +212,9 @@
             // 
             // clearButton
             // 
+            clearButton.Enabled = false;
             clearButton.Font = new Font("Microsoft Sans Serif", 7.8F);
-            clearButton.Location = new Point(3, 201);
+            clearButton.Location = new Point(3, 203);
             clearButton.Margin = new Padding(3, 4, 3, 4);
             clearButton.Name = "clearButton";
             clearButton.Size = new Size(314, 29);
@@ -225,11 +225,12 @@
             // 
             // startButton
             // 
+            startButton.Enabled = false;
             startButton.Font = new Font("Microsoft Sans Serif", 7.8F);
-            startButton.Location = new Point(3, 125);
+            startButton.Location = new Point(3, 120);
             startButton.Margin = new Padding(3, 4, 3, 4);
             startButton.Name = "startButton";
-            startButton.Size = new Size(160, 69);
+            startButton.Size = new Size(160, 83);
             startButton.TabIndex = 0;
             startButton.Text = "Start";
             startButton.UseVisualStyleBackColor = true;
@@ -280,10 +281,14 @@
             // afterSequencePeriodStopNum
             // 
             afterSequencePeriodStopNum.Font = new Font("Microsoft Sans Serif", 7.8F);
+            afterSequencePeriodStopNum.Increment = new decimal(new int[] { 1000, 0, 0, 0 });
             afterSequencePeriodStopNum.Location = new Point(213, 70);
+            afterSequencePeriodStopNum.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
+            afterSequencePeriodStopNum.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
             afterSequencePeriodStopNum.Name = "afterSequencePeriodStopNum";
             afterSequencePeriodStopNum.Size = new Size(80, 22);
             afterSequencePeriodStopNum.TabIndex = 9;
+            afterSequencePeriodStopNum.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
             // msLabel2
             // 
@@ -297,10 +302,14 @@
             // afterSequencePeriodStartNum
             // 
             afterSequencePeriodStartNum.Font = new Font("Microsoft Sans Serif", 7.8F);
+            afterSequencePeriodStartNum.Increment = new decimal(new int[] { 1000, 0, 0, 0 });
             afterSequencePeriodStartNum.Location = new Point(92, 70);
+            afterSequencePeriodStartNum.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
+            afterSequencePeriodStartNum.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
             afterSequencePeriodStartNum.Name = "afterSequencePeriodStartNum";
             afterSequencePeriodStartNum.Size = new Size(80, 22);
             afterSequencePeriodStartNum.TabIndex = 7;
+            afterSequencePeriodStartNum.Value = new decimal(new int[] { 100, 0, 0, 0 });
             afterSequencePeriodStartNum.ValueChanged += AfterSequencePeriodStartNum_ValueChanged;
             // 
             // msLabel1
@@ -315,10 +324,14 @@
             // afterActionPeriodNum
             // 
             afterActionPeriodNum.Font = new Font("Microsoft Sans Serif", 7.8F);
+            afterActionPeriodNum.Increment = new decimal(new int[] { 1000, 0, 0, 0 });
             afterActionPeriodNum.Location = new Point(213, 2);
+            afterActionPeriodNum.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
+            afterActionPeriodNum.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
             afterActionPeriodNum.Name = "afterActionPeriodNum";
             afterActionPeriodNum.Size = new Size(80, 22);
             afterActionPeriodNum.TabIndex = 5;
+            afterActionPeriodNum.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
             // iterationsHelperText
             // 
@@ -334,9 +347,12 @@
             // 
             numberOfRepeatNum.Font = new Font("Microsoft Sans Serif", 7.8F);
             numberOfRepeatNum.Location = new Point(4, 70);
+            numberOfRepeatNum.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
+            numberOfRepeatNum.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
             numberOfRepeatNum.Name = "numberOfRepeatNum";
             numberOfRepeatNum.Size = new Size(65, 22);
             numberOfRepeatNum.TabIndex = 3;
+            numberOfRepeatNum.Value = new decimal(new int[] { 2, 0, 0, 0 });
             // 
             // randomIntervalCheckbox
             // 
@@ -376,13 +392,8 @@
             // 
             // sequencePage
             // 
-            sequencePage.Controls.Add(newSubsequenceFilenameText);
             sequencePage.Controls.Add(newSubsequenceIterationsLabel);
             sequencePage.Controls.Add(newSubsequenceIterationsNum);
-            sequencePage.Controls.Add(newPointYLabel);
-            sequencePage.Controls.Add(newPointYNum);
-            sequencePage.Controls.Add(newPointXLabel);
-            sequencePage.Controls.Add(newPointXNum);
             sequencePage.Controls.Add(newMouseButtonsComboBox);
             sequencePage.Controls.Add(editButton);
             sequencePage.Controls.Add(newAfterActionPeriodLabel);
@@ -393,6 +404,11 @@
             sequencePage.Controls.Add(newDescriptionText);
             sequencePage.Controls.Add(newActionsComboBox);
             sequencePage.Controls.Add(sequenceListBox);
+            sequencePage.Controls.Add(newSubsequenceFilenameText);
+            sequencePage.Controls.Add(newPointXNum);
+            sequencePage.Controls.Add(newPointYNum);
+            sequencePage.Controls.Add(newPointXLabel);
+            sequencePage.Controls.Add(newPointYLabel);
             sequencePage.Controls.Add(newKeyboardText);
             sequencePage.Font = new Font("Microsoft Sans Serif", 7.8F);
             sequencePage.Location = new Point(4, 25);
@@ -403,13 +419,6 @@
             sequencePage.Text = "Sekwencja";
             sequencePage.UseVisualStyleBackColor = true;
             // 
-            // newSubsequenceFilenameText
-            // 
-            newSubsequenceFilenameText.Location = new Point(88, 208);
-            newSubsequenceFilenameText.Name = "newSubsequenceFilenameText";
-            newSubsequenceFilenameText.Size = new Size(231, 22);
-            newSubsequenceFilenameText.TabIndex = 18;
-            // 
             // newSubsequenceIterationsLabel
             // 
             newSubsequenceIterationsLabel.AutoSize = true;
@@ -418,14 +427,19 @@
             newSubsequenceIterationsLabel.Size = new Size(13, 16);
             newSubsequenceIterationsLabel.TabIndex = 17;
             newSubsequenceIterationsLabel.Text = "x";
+            newSubsequenceIterationsLabel.Visible = false;
             // 
             // newSubsequenceIterationsNum
             // 
             newSubsequenceIterationsNum.Font = new Font("Microsoft Sans Serif", 7.8F);
             newSubsequenceIterationsNum.Location = new Point(2, 208);
+            newSubsequenceIterationsNum.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
+            newSubsequenceIterationsNum.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             newSubsequenceIterationsNum.Name = "newSubsequenceIterationsNum";
             newSubsequenceIterationsNum.Size = new Size(62, 22);
             newSubsequenceIterationsNum.TabIndex = 16;
+            newSubsequenceIterationsNum.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            newSubsequenceIterationsNum.Visible = false;
             // 
             // newPointYLabel
             // 
@@ -439,6 +453,8 @@
             // newPointYNum
             // 
             newPointYNum.Location = new Point(242, 208);
+            newPointYNum.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
+            newPointYNum.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
             newPointYNum.Name = "newPointYNum";
             newPointYNum.Size = new Size(77, 22);
             newPointYNum.TabIndex = 13;
@@ -455,6 +471,8 @@
             // newPointXNum
             // 
             newPointXNum.Location = new Point(141, 208);
+            newPointXNum.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
+            newPointXNum.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
             newPointXNum.Name = "newPointXNum";
             newPointXNum.Size = new Size(77, 22);
             newPointXNum.TabIndex = 11;
@@ -469,6 +487,7 @@
             // 
             // editButton
             // 
+            editButton.Enabled = false;
             editButton.Location = new Point(225, 151);
             editButton.Name = "editButton";
             editButton.Size = new Size(94, 29);
@@ -488,10 +507,14 @@
             // 
             // newAfterActionPeriodNum
             // 
+            newAfterActionPeriodNum.Increment = new decimal(new int[] { 1000, 0, 0, 0 });
             newAfterActionPeriodNum.Location = new Point(141, 155);
+            newAfterActionPeriodNum.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
+            newAfterActionPeriodNum.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
             newAfterActionPeriodNum.Name = "newAfterActionPeriodNum";
             newAfterActionPeriodNum.Size = new Size(77, 22);
             newAfterActionPeriodNum.TabIndex = 7;
+            newAfterActionPeriodNum.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
             // newTagLabel
             // 
@@ -537,7 +560,8 @@
             // sequenceListBox
             // 
             sequenceListBox.FormattingEnabled = true;
-            sequenceListBox.Location = new Point(2, 1);
+            sequenceListBox.HorizontalScrollbar = true;
+            sequenceListBox.Location = new Point(2, 2);
             sequenceListBox.Name = "sequenceListBox";
             sequenceListBox.Size = new Size(317, 148);
             sequenceListBox.TabIndex = 0;
@@ -549,6 +573,15 @@
             newKeyboardText.Name = "newKeyboardText";
             newKeyboardText.Size = new Size(317, 22);
             newKeyboardText.TabIndex = 15;
+            newKeyboardText.Visible = false;
+            // 
+            // newSubsequenceFilenameText
+            // 
+            newSubsequenceFilenameText.Location = new Point(88, 208);
+            newSubsequenceFilenameText.Name = "newSubsequenceFilenameText";
+            newSubsequenceFilenameText.Size = new Size(231, 22);
+            newSubsequenceFilenameText.TabIndex = 18;
+            newSubsequenceFilenameText.Visible = false;
             // 
             // tagsPage
             // 
@@ -566,7 +599,7 @@
             // 
             tagsListBox.Font = new Font("Microsoft Sans Serif", 7.8F);
             tagsListBox.FormattingEnabled = true;
-            tagsListBox.Location = new Point(2, 1);
+            tagsListBox.Location = new Point(2, 2);
             tagsListBox.Margin = new Padding(3, 4, 3, 4);
             tagsListBox.Name = "tagsListBox";
             tagsListBox.Size = new Size(317, 225);
@@ -593,7 +626,8 @@
             // 
             profilesListBox.Font = new Font("Microsoft Sans Serif", 7.8F);
             profilesListBox.FormattingEnabled = true;
-            profilesListBox.Location = new Point(2, 1);
+            profilesListBox.HorizontalScrollbar = true;
+            profilesListBox.Location = new Point(2, 2);
             profilesListBox.Margin = new Padding(3, 4, 3, 4);
             profilesListBox.Name = "profilesListBox";
             profilesListBox.Size = new Size(317, 164);
@@ -654,7 +688,7 @@
             saveButton.UseVisualStyleBackColor = true;
             saveButton.Click += SaveButton_Click;
             // 
-            // Form
+            // ClickerForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -665,7 +699,7 @@
             MaximizeBox = false;
             MaximumSize = new Size(350, 312);
             MinimumSize = new Size(350, 312);
-            Name = "Form";
+            Name = "ClickerForm";
             SizeGripStyle = SizeGripStyle.Hide;
             Text = "Clicker";
             tabControl.ResumeLayout(false);

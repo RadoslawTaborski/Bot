@@ -2,8 +2,8 @@
 
 public class SubSequenceAction : Action
 {
-    public string FileName { get; set; }
-    public int Iterations { get; set; }
+    public required string FileName { get; set; }
+    public required int Iterations { get; set; }
 
     public override string ToString()
     {
