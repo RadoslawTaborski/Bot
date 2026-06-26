@@ -20,13 +20,14 @@ public partial class ClickerForm : Form
         Converters = { new ActionConverter(), new Json.PointConverter() }
     };
 
-    private readonly BindingList<string> _files = [];
+    private readonly BindingList<string> _files;
     private readonly System.Timers.Timer _timer = new();
     private readonly Random _random = new(DateTime.Now.Millisecond);
 
     private IKeyboardMouseEvents? _globalHook;
 
     private readonly ClickerState _state;
+    private readonly string _sequencePath;
 
     public ClickerForm()
     {
@@ -46,34 +47,19 @@ public partial class ClickerForm : Form
         newActionsComboBox.Items.Add(Actions.Pause);
         newActionsComboBox.SelectedIndex = 0;
 
+        _files = [];
         _state = new ClickerState();
         SetValuesFromSettings(_state.Settings);
 
-        string path = Directory.GetCurrentDirectory();
-        string folderPath = Path.Combine(path, "Sequences");
+        var path = Directory.GetCurrentDirectory();
+        _sequencePath = Path.Combine(path, "Sequences");
 
-        Directory.CreateDirectory(folderPath);
+        Directory.CreateDirectory(_sequencePath);
 
-        DirectoryInfo dictionaryInfo = new(folderPath);
-        foreach (var fileInfo in dictionaryInfo.GetFiles("*.json"))
-        {
-            _files.Add(fileInfo.Name);
-        }
-        profilesListBox.DataSource = _files;
-
-        if (profilesListBox.Items.Count != 0)
-        {
-            loadButton.Enabled = true;
-            deleteButton.Enabled = true;
-        }
-        else
-        {
-            loadButton.Enabled = false;
-            deleteButton.Enabled = false;
-        }
+        LoadProfiles();
     }
 
-    public void DoAction(object sender, ElapsedEventArgs e)
+    public void DoAction(object? sender, ElapsedEventArgs e)
     {
         sequenceCounterLabel.Invoke((MethodInvoker)(() =>
         {
@@ -89,9 +75,9 @@ public partial class ClickerForm : Form
 
         subsequenceCounterLabel.Invoke((MethodInvoker)(() =>
         {
-            if (_state.NestedSequencesNotes.ContainsKey(action.Guid))
+            if (_state.NestedSequencesNotes.TryGetValue(action.Guid, out string? value))
             {
-                subsequenceCounterLabel.Text = $"Sub-iteracja: {_state.NestedSequencesNotes[action.Guid]}";
+                subsequenceCounterLabel.Text = $"Sub-iteracja: {value}";
             }
             else
             {
@@ -99,14 +85,11 @@ public partial class ClickerForm : Form
             }
         }));
 
-        if (action.Type == Actions.SubSequence)
+        if (action is SubSequenceAction subSequenceAction)
         {
-            var subSequenceAction = action as SubSequenceAction;
-
             var overrideIteration = subSequenceAction.Iterations;
-            if (_state.OverrideIterationsQueues.ContainsKey(subSequenceAction.FileName))
+            if (_state.OverrideIterationsQueues.TryGetValue(subSequenceAction.FileName, out Queue<int>? queue))
             {
-                var queue = _state.OverrideIterationsQueues[subSequenceAction.FileName];
                 if (queue.Count > 1)
                 {
                     overrideIteration = queue.Dequeue();
@@ -148,7 +131,7 @@ public partial class ClickerForm : Form
             {
                 Invoke(new System.Action(delegate ()
                 {
-                    StopButton_Click(null, null);
+                    StopButton_Click(sender, e);
                 }));
             }
         }
@@ -193,10 +176,10 @@ public partial class ClickerForm : Form
     private List<Action> ProvideSequence()
     {
         var selectedTags = tagsListBox.CheckedItems.Cast<string>().ToList();
-        return _state.Settings.Moves.Where(x => x.Active && (selectedTags.Contains(x.Tag) || string.IsNullOrWhiteSpace(x.Tag))).ToList();
+        return [.. _state.Settings.Moves.Where(x => x.Active && (string.IsNullOrWhiteSpace(x.Tag) || selectedTags.Contains(x.Tag)))];
     }
 
-    private void StopButton_Click(object sender, EventArgs e)
+    private void StopButton_Click(object? sender, EventArgs e)
     {
         _state.NestedSequencesNotes.Clear();
         _timer.Stop();
@@ -234,7 +217,7 @@ public partial class ClickerForm : Form
         }
     }
 
-    private void RecordButton_Click(object sender, EventArgs e)
+    private void RecordButton_Click(object? sender, EventArgs e)
     {
         Activation();
         recordButton.Enabled = false;
@@ -256,7 +239,7 @@ public partial class ClickerForm : Form
         actionLabel.Text = "";
     }
 
-    private void StopRecordButton_Click(object sender, EventArgs e)
+    private void StopRecordButton_Click(object? sender, EventArgs e)
     {
         Deactivation();
 
@@ -270,7 +253,7 @@ public partial class ClickerForm : Form
                 Period = 0,
                 Active = true
             };
-            _state.Settings.Moves[_state.Settings.Moves.Count - 1] = new PauseAction
+            _state.Settings.Moves[^1] = new PauseAction
             {
                 Id = "0",
                 Type = Actions.Pause,
@@ -278,7 +261,7 @@ public partial class ClickerForm : Form
                 Period = 0,
                 Active = true
             };
-            _state.Settings.Moves[_state.Settings.Moves.Count - 2] = new PauseAction
+            _state.Settings.Moves[^2] = new PauseAction
             {
                 Id = "0",
                 Type = Actions.Pause,
@@ -446,76 +429,14 @@ public partial class ClickerForm : Form
 
     private void LoadButton_Click(object sender, EventArgs e)
     {
+        if (profilesListBox.SelectedItem == null)
+        {
+            MessageBox.Show("Nie wybrano profilu do wczytania", "BLAD", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
         var fileName = profilesListBox.SelectedItem.ToString();
-        _state.Settings = LoadSettings(fileName);
-        UpdateMovesIds(_state.Settings);
-
-        numberOfRepeatNum.Value = _state.Settings.NumberOfRepeats;
-        repeatSequenceCheckbox.Checked = _state.Settings.Repeat;
-        repeatSequenceCheckbox.CheckedChanged += new EventHandler(RepeatSequenceCheckbox_CheckedChanged);
-        randomIntervalCheckbox.Checked = _state.Settings.RandomTimeInterval;
-        afterActionPeriodNum.Value = _state.Settings.Period1;
-        afterSequencePeriodStartNum.Value = _state.Settings.PeriodA;
-        SetTags(_state.Settings);
-        SetIntervalsHelper(_state.Settings);
-        if (_state.Settings.RandomTimeInterval)
-        {
-            afterSequencePeriodStopNum.Value = _state.Settings.PeriodB;
-        }
-        else
-        {
-            afterSequencePeriodStopNum.Value = _state.Settings.PeriodA;
-        }
-
-        sequenceListBox.DataSource = _state.Settings.Moves;
-
-        recordButton.Enabled = false;
-        stopRecordButton.Enabled = false;
-        startButton.Enabled = true;
-        stopButton.Enabled = false;
-        clearButton.Enabled = true;
-        afterActionPeriodNum.Enabled = true;
-        repeatSequenceCheckbox.Enabled = true;
-        loadButton.Enabled = true;
-        deleteButton.Enabled = true;
-        saveButton.Enabled = true;
-        fileNameText.Enabled = true;
-        fileNameText.Text = Path.GetFileNameWithoutExtension(fileName);
-        if (repeatSequenceCheckbox.Checked == true)
-        {
-            afterSequencePeriodStartNum.Enabled = true;
-            if (randomIntervalCheckbox.Checked)
-            {
-                afterSequencePeriodStopNum.Enabled = true;
-            }
-            numberOfRepeatNum.Enabled = true;
-        }
-        else
-        {
-            afterSequencePeriodStartNum.Enabled = false;
-            afterSequencePeriodStopNum.Enabled = false;
-            numberOfRepeatNum.Enabled = false;
-        }
-        newActionsComboBox.SelectedIndex = 0;
-        newMouseButtonsComboBox.SelectedIndex = 0;
-        newAfterActionPeriodNum.Value = 100;
-        newTagText.Text = "";
-        newDescriptionText.Text = "";
-        newPointXNum.Value = 0;
-        newPointYNum.Value = 0;
-        newKeyboardText.Text = "";
-        newPointXNum.Visible = true;
-        newPointYNum.Visible = true;
-        newPointXLabel.Visible = true;
-        newPointYLabel.Visible = true;
-        newKeyboardText.Visible = false;
-        newSubsequenceFilenameText.Text = "";
-        newSubsequenceFilenameText.Visible = false;
-        newSubsequenceIterationsNum.Value = 1;
-        newSubsequenceIterationsNum.Visible = false;
-        newSubsequenceIterationsLabel.Visible = false;
-        newMouseButtonsComboBox.Visible = true;
-        editButton.Enabled = _state.Settings.Moves.Count != 0;
+        _state.Settings = LoadSettings(fileName!);
+        SetValuesFromSettings(_state.Settings);
     }
 
     private void SetIntervalsHelper(Settings settings)
@@ -546,27 +467,7 @@ public partial class ClickerForm : Form
             MessageBox.Show(this, "Nastąpił następujący błąd: \n" + ex.ToString(), "BLAD", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        _files.Clear();
-        string path = Directory.GetCurrentDirectory();
-        string folderPath = Path.Combine(path, "Sequences");
-
-        DirectoryInfo di = new DirectoryInfo(folderPath);
-        foreach (var fi in di.GetFiles("*.json"))
-        {
-            _files.Add(fi.Name);
-        }
-        profilesListBox.DataSource = null;
-        profilesListBox.DataSource = _files;
-        if (profilesListBox.Items.Count != 0)
-        {
-            loadButton.Enabled = true;
-            deleteButton.Enabled = true;
-        }
-        else
-        {
-            loadButton.Enabled = false;
-            deleteButton.Enabled = false;
-        }
+        LoadProfiles();
     }
 
     private static void UpdateMovesIds(Settings settings)
@@ -586,10 +487,10 @@ public partial class ClickerForm : Form
         var allTags = _state.Settings.Moves.Where(x => !string.IsNullOrEmpty(x.Tag)).Select(x => x.Tag).Distinct().ToList();
         var selectedTags = tagsListBox.CheckedItems.Cast<string>().ToList();
         _state.Settings.Tags.Clear();
-        allTags = allTags.OrderBy(x => x).ToList();
+        allTags = [.. allTags.OrderBy(x => x)];
         foreach (var tag in allTags)
         {
-            _state.Settings.Tags.Add(new TagSetting { Name = tag, Active = selectedTags.Contains(tag) });
+            _state.Settings.Tags.Add(new TagSetting { Name = tag!, Active = selectedTags.Contains(tag!) });
         }
     }
 
@@ -637,12 +538,11 @@ public partial class ClickerForm : Form
         }
     }
 
-
-    private void EditButton_Click(object sender, EventArgs e)
+    private void EditButton_Click(object? sender, EventArgs e)
     {
-        if (_state.Settings.Moves[sequenceListBox.SelectedIndex].Type != (Actions)newActionsComboBox.SelectedItem)
+        if (_state.Settings.Moves[sequenceListBox.SelectedIndex].Type != (Actions)(newActionsComboBox.SelectedItem ?? 0))
         {
-            _state.Settings.Moves[sequenceListBox.SelectedIndex] = MigrateMove(_state.Settings.Moves[sequenceListBox.SelectedIndex], (Actions)newActionsComboBox.SelectedItem);
+            _state.Settings.Moves[sequenceListBox.SelectedIndex] = MigrateMove(_state.Settings.Moves[sequenceListBox.SelectedIndex], (Actions)(newActionsComboBox.SelectedItem ?? 0));
         }
         else
         {
@@ -650,7 +550,7 @@ public partial class ClickerForm : Form
             {
                 case MouseAction mouse:
                     mouse.Point = new Point((int)newPointXNum.Value, (int)newPointYNum.Value);
-                    mouse.Button = (MouseActions)newMouseButtonsComboBox.SelectedItem;
+                    mouse.Button = (MouseActions)(newMouseButtonsComboBox.SelectedItem ?? 0);
                     break;
                 case KeyboardAction keyboard:
                     keyboard.Text = newKeyboardText.Text;
@@ -659,7 +559,7 @@ public partial class ClickerForm : Form
                     subSequence.FileName = newSubsequenceFilenameText.Text;
                     subSequence.Iterations = (int)newSubsequenceIterationsNum.Value;
                     break;
-                case PauseAction pause:
+                case PauseAction:
                     break;
             }
             _state.Settings.Moves[sequenceListBox.SelectedIndex].Period = (int)newAfterActionPeriodNum.Value;
@@ -668,15 +568,12 @@ public partial class ClickerForm : Form
         }
 
         UpdateTags(_state.Settings);
-        this.sequenceListBox.SelectedIndexChanged -= new EventHandler(this.SequenceListBox_SelectedIndexChanged);
-        sequenceListBox.DataSource = null;
         sequenceListBox.DataSource = _state.Settings.Moves;
-        this.sequenceListBox.SelectedIndexChanged += new EventHandler(this.SequenceListBox_SelectedIndexChanged);
     }
 
     private Action MigrateMove(Action action, Actions newType)
     {
-        return newType switch 
+        return newType switch
         {
             Actions.Mouse => new MouseAction
             {
@@ -686,7 +583,7 @@ public partial class ClickerForm : Form
                 Tag = newTagText.Text,
                 Period = (int)newAfterActionPeriodNum.Value,
                 Point = new Point((int)newPointXNum.Value, (int)newPointYNum.Value),
-                Button = (MouseActions)newMouseButtonsComboBox.SelectedItem,
+                Button = (MouseActions)(newMouseButtonsComboBox.SelectedItem ?? 0),
                 Active = true
             },
             Actions.Keyboard => new KeyboardAction
@@ -724,7 +621,7 @@ public partial class ClickerForm : Form
 
     }
 
-    private void SequenceListBox_SelectedIndexChanged(object sender, EventArgs e)
+    private void SequenceListBox_SelectedIndexChanged(object? sender, EventArgs e)
     {
         if (sequenceListBox != null && sequenceListBox.SelectedIndex > -1)
         {
@@ -782,7 +679,7 @@ public partial class ClickerForm : Form
                     newSubsequenceIterationsNum.Visible = true;
                     newSubsequenceIterationsLabel.Visible = true;
                     break;
-                case PauseAction pause:
+                case PauseAction:
                     newKeyboardText.Visible = false;
                     newPointXNum.Visible = false;
                     newPointYNum.Visible = false;
@@ -802,33 +699,20 @@ public partial class ClickerForm : Form
         }
         else
         {
-            newAfterActionPeriodNum.Value = 100;
-            newTagText.Text = "";
-            newDescriptionText.Text = "";
-            newPointXNum.Value = 0;
-            newPointYNum.Value = 0;
-            newKeyboardText.Text = "";
-            newMouseButtonsComboBox.SelectedIndex = 0;
-            newPointXNum.Visible = true;
-            newPointYNum.Visible = true;
-            newPointXLabel.Visible = true;
-            newPointYLabel.Visible = true;
-            newKeyboardText.Visible = false;
-            newMouseButtonsComboBox.Visible = true;
-            newSubsequenceFilenameText.Text = "";
-            newSubsequenceFilenameText.Visible = false;
-            newSubsequenceIterationsNum.Value = 1;
-            newSubsequenceIterationsNum.Visible = false;
-            newSubsequenceIterationsLabel.Visible = false;
+            ResetEditActionControls();
         }
         editButton.Enabled = true;
     }
 
-    private void DeleteButton_Click(object sender, EventArgs e)
+    private void DeleteButton_Click(object? sender, EventArgs e)
     {
-        string path = Directory.GetCurrentDirectory();
-        string folderPath = Path.Combine(path, "Sequences");
-        string filePath = Path.Combine(folderPath, profilesListBox.SelectedItem.ToString());
+        var selectedProfileName = profilesListBox.SelectedItem?.ToString();
+        if (string.IsNullOrEmpty(selectedProfileName))
+        {
+            return;
+        }
+
+        var filePath = Path.Combine(_sequencePath, selectedProfileName);
         if (File.Exists(filePath))
         {
             try
@@ -839,36 +723,24 @@ public partial class ClickerForm : Form
             {
                 MessageBox.Show(ex.Message);
             }
-            _files.Clear();
 
-            DirectoryInfo di = new DirectoryInfo(folderPath);
-            foreach (var fi in di.GetFiles("*.json"))
-            {
-                _files.Add(fi.Name);
-            }
-            profilesListBox.DataSource = null;
-            profilesListBox.DataSource = _files;
-            if (profilesListBox.Items.Count != 0)
-            {
-                loadButton.Enabled = true;
-                deleteButton.Enabled = true;
-            }
-            else
-            {
-                loadButton.Enabled = false;
-                deleteButton.Enabled = false;
-            }
+            LoadProfiles();
         }
     }
 
     private void ActionsComboBox_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var move = sequenceListBox.SelectedIndex > -1 && _state.Settings.Moves.Count > 0 ? _state.Settings.Moves[sequenceListBox.SelectedIndex] : null;
+        if (newActionsComboBox.SelectedItem == null)
+        {
+            return;
+        }
+
+        var action = sequenceListBox.SelectedIndex > -1 && _state.Settings.Moves.Count > 0 ? _state.Settings.Moves[sequenceListBox.SelectedIndex] : null;
 
         switch ((Actions)newActionsComboBox.SelectedItem)
         {
             case Actions.Mouse:
-                if (move != null && move is MouseAction mouseMove)
+                if (action != null && action is MouseAction mouseMove)
                 {
                     newPointXNum.Value = mouseMove.Point.X;
                     newPointYNum.Value = mouseMove.Point.Y;
@@ -894,7 +766,7 @@ public partial class ClickerForm : Form
                 newSubsequenceIterationsLabel.Visible = false;
                 break;
             case Actions.Keyboard:
-                if (move != null && move is KeyboardAction keyboardMove)
+                if (action != null && action is KeyboardAction keyboardMove)
                 {
                     newKeyboardText.Text = keyboardMove.Text;
                 }
@@ -918,7 +790,7 @@ public partial class ClickerForm : Form
                 newSubsequenceIterationsLabel.Visible = false;
                 break;
             case Actions.SubSequence:
-                if (move != null && move is SubSequenceAction subsequenceMove)
+                if (action != null && action is SubSequenceAction subsequenceMove)
                 {
                     newSubsequenceFilenameText.Text = subsequenceMove.FileName;
                     newSubsequenceIterationsNum.Value = subsequenceMove.Iterations;
@@ -1049,7 +921,7 @@ public partial class ClickerForm : Form
         var result = new Dictionary<string, Queue<int>>();
         var text = iterationsHelperText.Text;
 
-        foreach (string line in text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
+        foreach (string line in text.Split(["\r\n", "\n"], StringSplitOptions.RemoveEmptyEntries))
         {
             var parts = line.Split([':'], 2);
 
@@ -1152,5 +1024,27 @@ public partial class ClickerForm : Form
         newSubsequenceFilenameText.Visible = false;
         newSubsequenceFilenameText.Text = "";
         newSubsequenceIterationsLabel.Visible = false;
+    }
+
+    private void LoadProfiles()
+    {
+        _files.Clear();
+        DirectoryInfo dictionaryInfo = new(_sequencePath);
+        foreach (var fileInfo in dictionaryInfo.GetFiles("*.json"))
+        {
+            _files.Add(fileInfo.Name);
+        }
+        profilesListBox.DataSource = _files;
+
+        if (profilesListBox.Items.Count != 0)
+        {
+            loadButton.Enabled = true;
+            deleteButton.Enabled = true;
+        }
+        else
+        {
+            loadButton.Enabled = false;
+            deleteButton.Enabled = false;
+        }
     }
 }
