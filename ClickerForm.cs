@@ -33,6 +33,21 @@ public partial class ClickerForm : Form
     {
         InitializeComponent();
 
+        PrepareComboBoxes();
+
+        _files = [];
+        _state = new ClickerState();
+
+        var path = Directory.GetCurrentDirectory();
+        _sequencePath = Path.Combine(path, "Sequences");
+        Directory.CreateDirectory(_sequencePath);
+
+        LoadProfiles();
+        SetValuesFromSettings(_state.Settings);
+    }
+
+    private void PrepareComboBoxes()
+    {
         newMouseButtonsComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         newMouseButtonsComboBox.Items.Add(MouseActions.Left);
         newMouseButtonsComboBox.Items.Add(MouseActions.Right);
@@ -46,17 +61,6 @@ public partial class ClickerForm : Form
         newActionsComboBox.Items.Add(Actions.SubSequence);
         newActionsComboBox.Items.Add(Actions.Pause);
         newActionsComboBox.SelectedIndex = 0;
-
-        _files = [];
-        _state = new ClickerState();
-        SetValuesFromSettings(_state.Settings);
-
-        var path = Directory.GetCurrentDirectory();
-        _sequencePath = Path.Combine(path, "Sequences");
-
-        Directory.CreateDirectory(_sequencePath);
-
-        LoadProfiles();
     }
 
     private void GlobalHook_MouseDownExt(object? sender, MouseEventExtArgs e)
@@ -82,8 +86,9 @@ public partial class ClickerForm : Form
         Activation();
         ResetInfoLabels();
         SetMainTabControls(stopRecord: true);
-        SetSettingsTabControls(enabled: true);
-        SetProfilesTabControls();
+        SetSettingsTabControls(enabled: false);
+        SetSequenceTabControls(enabled: false);
+        SetProfilesTabControls(enabledSave: false, enableLoadAndDelete: false);
     }
 
     private void StopRecordButton_Click(object? sender, EventArgs e)
@@ -116,14 +121,20 @@ public partial class ClickerForm : Form
                 Period = 0,
                 Active = true
             };
+        } else
+        {
+            _state.Settings.Moves.Clear();
+            SetMainTabControls(record: true);
+            SetSettingsTabControls(enabled: true);
+            SetProfilesTabControls(enabledSave: false, enableLoadAndDelete: true);
+            return;
         }
 
         SetMainTabControls(start: true);
         SetSettingsTabControls(enabled: true);
-        SetProfilesTabControls(enabled: true);
+        SetProfilesTabControls(enabledSave: true, enableLoadAndDelete: true);
         sequenceListBox.DataSource = _state.Settings.Moves;
-
-        editButton.Enabled = _state.Settings.Moves.Count != 0;
+        SetSequenceTabControls(enabled: true);
         ResetEditActionControls();
     }
 
@@ -141,7 +152,8 @@ public partial class ClickerForm : Form
 
             SetMainTabControls(stop: true);
             SetSettingsTabControls(enabled: false);
-            SetProfilesTabControls();
+            SetSequenceTabControls(enabled: false);
+            SetProfilesTabControls(enabledSave: false, enableLoadAndDelete: false);
         }
     }
 
@@ -155,10 +167,9 @@ public partial class ClickerForm : Form
 
         ResetInfoLabels();
         SetMainTabControls(start: true);
-
-        SetSettingsTabControls(true);
-
-        SetProfilesTabControls(true);
+        SetSettingsTabControls(enabled: true);
+        SetSequenceTabControls(enabled: true);
+        SetProfilesTabControls(enabledSave: true, enableLoadAndDelete: true);
     }
 
     private void ClearButton_Click(object sender, EventArgs e)
@@ -174,9 +185,10 @@ public partial class ClickerForm : Form
         editButton.Enabled = false;
         ResetEditActionControls();
 
-        tagsListBox.Items.Clear();
+        SetSequenceTabControls(enabled: false);
 
-        SetProfilesTabControls();
+        tagsListBox.Items.Clear();
+        SetProfilesTabControls(enabledSave: false, enableLoadAndDelete: true);
     }
 
     private void RepeatSequenceCheckbox_CheckedChanged(object? sender, EventArgs e)
@@ -251,9 +263,11 @@ public partial class ClickerForm : Form
         catch (SerializationException ex)
         {
             MessageBox.Show(this, "Nastąpił następujący błąd: \n" + ex.ToString(), "BLAD", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
         }
 
         LoadProfiles();
+        SetProfilesTabControls(enabledSave: true, enableLoadAndDelete: true);
     }
 
     private void DeleteButton_Click(object? sender, EventArgs e)
@@ -277,6 +291,7 @@ public partial class ClickerForm : Form
             }
 
             LoadProfiles();
+            SetProfilesTabControls(enabledSave: true, enableLoadAndDelete: true);
         }
     }
 
@@ -553,9 +568,14 @@ public partial class ClickerForm : Form
     {
         if (settings.Moves.Any())
         {
-            SetMainTabControls();
-            SetProfilesTabControls(enabled: true);
+            SetMainTabControls(start: true);
+            SetProfilesTabControls(enabledSave: true, enableLoadAndDelete: true);
+            SetSequenceTabControls(enabled: true);
             UpdateActionsIds(settings);
+        } else
+        {
+            SetProfilesTabControls(enabledSave: false, enableLoadAndDelete: true);
+            SetSequenceTabControls(enabled: false);
         }
         SetTags(settings);
         SetIntervalsHelper(settings);
@@ -590,8 +610,6 @@ public partial class ClickerForm : Form
             _files.Add(fileInfo.Name);
         }
         profilesListBox.DataSource = _files;
-
-        SetProfilesTabControls(enabled: true);
     }
 
     private List<Action> ProvideSequence()
@@ -780,6 +798,8 @@ public partial class ClickerForm : Form
     {
         afterActionPeriodNum.Enabled = enabled;
         repeatSequenceCheckbox.Enabled = enabled;
+        randomIntervalCheckbox.Enabled = enabled;
+        iterationsHelperText.Enabled = enabled;
         SetRepeatSettingsControls(enabled);
     }
 
@@ -851,12 +871,27 @@ public partial class ClickerForm : Form
         newSubsequenceIterationsLabel.Visible = visible;
     }
 
-    private void SetProfilesTabControls(bool enabled = false)
+    private void SetSequenceTabControls(bool enabled = false)
     {
-        if (enabled && profilesListBox.Items.Count > 0)
+        newActionsComboBox.Enabled = enabled;
+        newAfterActionPeriodNum.Enabled = enabled;
+        newDescriptionText.Enabled = enabled;
+        newTagText.Enabled = enabled;
+        newMouseButtonsComboBox.Enabled = enabled;
+        newPointXNum.Enabled = enabled;
+        newPointYNum.Enabled = enabled;
+        newKeyboardText.Enabled = enabled;
+        newSubsequenceIterationsNum.Visible = enabled;
+        newSubsequenceFilenameText.Visible = enabled;
+        editButton.Enabled = enabled && _state.Settings.Moves.Count != 0;
+    }
+
+    private void SetProfilesTabControls(bool enabledSave = false, bool enableLoadAndDelete = false)
+    {
+        if (enableLoadAndDelete && profilesListBox.Items.Count > 0)
         {
-            loadButton.Enabled = enabled;
-            deleteButton.Enabled = enabled;
+            loadButton.Enabled = true;
+            deleteButton.Enabled = true;
         }
         else
         {
@@ -864,7 +899,7 @@ public partial class ClickerForm : Form
             deleteButton.Enabled = false;
         }
 
-        saveButton.Enabled = enabled;
-        fileNameText.Enabled = enabled;
+        saveButton.Enabled = enabledSave;
+        fileNameText.Enabled = enabledSave;
     }
 }

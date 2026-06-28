@@ -56,10 +56,6 @@
             sequencePage = new TabPage();
             newSubsequenceIterationsLabel = new Label();
             newSubsequenceIterationsNum = new NumericUpDown();
-            newPointYLabel = new Label();
-            newPointYNum = new NumericUpDown();
-            newPointXLabel = new Label();
-            newPointXNum = new NumericUpDown();
             newMouseButtonsComboBox = new ComboBox();
             editButton = new Button();
             newAfterActionPeriodLabel = new Label();
@@ -70,8 +66,12 @@
             newDescriptionText = new TextBox();
             newActionsComboBox = new ComboBox();
             sequenceListBox = new ListBox();
-            newKeyboardText = new TextBox();
             newSubsequenceFilenameText = new TextBox();
+            newPointXNum = new NumericUpDown();
+            newPointYNum = new NumericUpDown();
+            newPointXLabel = new Label();
+            newPointYLabel = new Label();
+            newKeyboardText = new TextBox();
             tagsPage = new TabPage();
             tagsListBox = new CheckedListBox();
             profilesPage = new TabPage();
@@ -91,9 +91,9 @@
             ((System.ComponentModel.ISupportInitialize)numberOfRepeatNum).BeginInit();
             sequencePage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)newSubsequenceIterationsNum).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)newPointYNum).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)newPointXNum).BeginInit();
             ((System.ComponentModel.ISupportInitialize)newAfterActionPeriodNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)newPointXNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)newPointYNum).BeginInit();
             tagsPage.SuspendLayout();
             profilesPage.SuspendLayout();
             SuspendLayout();
@@ -441,42 +441,6 @@
             newSubsequenceIterationsNum.Value = new decimal(new int[] { 1, 0, 0, 0 });
             newSubsequenceIterationsNum.Visible = false;
             // 
-            // newPointYLabel
-            // 
-            newPointYLabel.AutoSize = true;
-            newPointYLabel.Location = new Point(223, 210);
-            newPointYLabel.Name = "newPointYLabel";
-            newPointYLabel.Size = new Size(19, 16);
-            newPointYLabel.TabIndex = 14;
-            newPointYLabel.Text = "Y:";
-            // 
-            // newPointYNum
-            // 
-            newPointYNum.Location = new Point(242, 208);
-            newPointYNum.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
-            newPointYNum.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
-            newPointYNum.Name = "newPointYNum";
-            newPointYNum.Size = new Size(77, 22);
-            newPointYNum.TabIndex = 13;
-            // 
-            // newPointXLabel
-            // 
-            newPointXLabel.AutoSize = true;
-            newPointXLabel.Location = new Point(122, 210);
-            newPointXLabel.Name = "newPointXLabel";
-            newPointXLabel.Size = new Size(18, 16);
-            newPointXLabel.TabIndex = 12;
-            newPointXLabel.Text = "X:";
-            // 
-            // newPointXNum
-            // 
-            newPointXNum.Location = new Point(141, 208);
-            newPointXNum.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
-            newPointXNum.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
-            newPointXNum.Name = "newPointXNum";
-            newPointXNum.Size = new Size(77, 22);
-            newPointXNum.TabIndex = 11;
-            // 
             // newMouseButtonsComboBox
             // 
             newMouseButtonsComboBox.FormattingEnabled = true;
@@ -510,7 +474,6 @@
             newAfterActionPeriodNum.Increment = new decimal(new int[] { 1000, 0, 0, 0 });
             newAfterActionPeriodNum.Location = new Point(141, 155);
             newAfterActionPeriodNum.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
-            newAfterActionPeriodNum.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
             newAfterActionPeriodNum.Name = "newAfterActionPeriodNum";
             newAfterActionPeriodNum.Size = new Size(77, 22);
             newAfterActionPeriodNum.TabIndex = 7;
@@ -567,14 +530,6 @@
             sequenceListBox.TabIndex = 0;
             sequenceListBox.SelectedIndexChanged += SequenceListBox_SelectedIndexChanged;
             // 
-            // newKeyboardText
-            // 
-            newKeyboardText.Location = new Point(2, 210);
-            newKeyboardText.Name = "newKeyboardText";
-            newKeyboardText.Size = new Size(317, 22);
-            newKeyboardText.TabIndex = 15;
-            newKeyboardText.Visible = false;
-            // 
             // newSubsequenceFilenameText
             // 
             newSubsequenceFilenameText.Location = new Point(88, 208);
@@ -582,6 +537,50 @@
             newSubsequenceFilenameText.Size = new Size(231, 22);
             newSubsequenceFilenameText.TabIndex = 18;
             newSubsequenceFilenameText.Visible = false;
+            // 
+            // newPointXNum
+            // 
+            newPointXNum.Location = new Point(141, 208);
+            newPointXNum.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
+            newPointXNum.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
+            newPointXNum.Name = "newPointXNum";
+            newPointXNum.Size = new Size(77, 22);
+            newPointXNum.TabIndex = 11;
+            // 
+            // newPointYNum
+            // 
+            newPointYNum.Location = new Point(242, 208);
+            newPointYNum.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
+            newPointYNum.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
+            newPointYNum.Name = "newPointYNum";
+            newPointYNum.Size = new Size(77, 22);
+            newPointYNum.TabIndex = 13;
+            // 
+            // newPointXLabel
+            // 
+            newPointXLabel.AutoSize = true;
+            newPointXLabel.Location = new Point(122, 210);
+            newPointXLabel.Name = "newPointXLabel";
+            newPointXLabel.Size = new Size(18, 16);
+            newPointXLabel.TabIndex = 12;
+            newPointXLabel.Text = "X:";
+            // 
+            // newPointYLabel
+            // 
+            newPointYLabel.AutoSize = true;
+            newPointYLabel.Location = new Point(223, 210);
+            newPointYLabel.Name = "newPointYLabel";
+            newPointYLabel.Size = new Size(19, 16);
+            newPointYLabel.TabIndex = 14;
+            newPointYLabel.Text = "Y:";
+            // 
+            // newKeyboardText
+            // 
+            newKeyboardText.Location = new Point(2, 210);
+            newKeyboardText.Name = "newKeyboardText";
+            newKeyboardText.Size = new Size(317, 22);
+            newKeyboardText.TabIndex = 15;
+            newKeyboardText.Visible = false;
             // 
             // tagsPage
             // 
@@ -715,9 +714,9 @@
             sequencePage.ResumeLayout(false);
             sequencePage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)newSubsequenceIterationsNum).EndInit();
-            ((System.ComponentModel.ISupportInitialize)newPointYNum).EndInit();
-            ((System.ComponentModel.ISupportInitialize)newPointXNum).EndInit();
             ((System.ComponentModel.ISupportInitialize)newAfterActionPeriodNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)newPointXNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)newPointYNum).EndInit();
             tagsPage.ResumeLayout(false);
             profilesPage.ResumeLayout(false);
             profilesPage.PerformLayout();
