@@ -7,8 +7,8 @@ public class SubSequenceAction : Action
 
     public override string ToString()
     {
-        var tag = string.IsNullOrEmpty(Tag) ? "---" : Tag;
-        var description = string.IsNullOrWhiteSpace(Description) ? $"{Iterations}x {FileName}" : Description;
+        string tag = string.IsNullOrEmpty(Tag) ? "---" : Tag;
+        string description = string.IsNullOrWhiteSpace(Description) ? $"{Iterations}x {FileName}" : Description;
         return $"{Id}. {tag} ; Sub ; {description} ; {Period}";
     }
 }

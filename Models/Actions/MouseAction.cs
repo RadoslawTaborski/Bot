@@ -9,8 +9,8 @@ public class MouseAction : Action
 
     public override string ToString()
     {
-        var tag = string.IsNullOrEmpty(Tag) ? "---" : Tag;
-        var description = string.IsNullOrWhiteSpace(Description) ? $"{Point.X}, {Point.Y}" : Description;
+        string tag = string.IsNullOrEmpty(Tag) ? "---" : Tag;
+        string description = string.IsNullOrWhiteSpace(Description) ? $"{Point.X}, {Point.Y}" : Description;
         return $"{Id}. {tag} ; {Button} ; {description} ; {Period}";
     }
 }

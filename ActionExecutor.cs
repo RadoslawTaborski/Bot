@@ -37,7 +37,7 @@ public static partial class ActionExecutor
 
     public static int Execute(Models.Actions.Action action, Models.Actions.Action? next = null)
     {
-        var result = 0;
+        int result = 0;
         switch (action)
         {
             case KeyboardAction keyboard:
@@ -52,7 +52,7 @@ public static partial class ActionExecutor
                 break;
 
             default:
-                MessageBox.Show("Nieznany typ akcji", "BLAD", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show("Nieznany typ akcji", "BLAD", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 break;
         }
 
@@ -61,15 +61,24 @@ public static partial class ActionExecutor
 
     private static int ExecuteMouseAction(MouseAction mouse, Models.Actions.Action? next)
     {
-        var numberOfActions = 0;
-        SetCursorPos(mouse.Point.X, mouse.Point.Y);
+        int numberOfActions = 0;
+        _ = SetCursorPos(mouse.Point.X, mouse.Point.Y);
 
         if (mouse.Button.Equals(MouseActions.Left))
+        {
             mouse_event(LEFT_DOWN | LEFT_UP, 0, 0, 0, 0);
+        }
+
         if (mouse.Button.Equals(MouseActions.Right))
+        {
             mouse_event(RIGHT_DOWN | RIGHT_UP, 0, 0, 0, 0);
+        }
+
         if (mouse.Button.Equals(MouseActions.Middle))
+        {
             mouse_event(MIDDLE_DOWN | MIDDLE_UP, 0, 0, 0, 0);
+        }
+
         if (mouse.Button.Equals(MouseActions.Left_Down))
         {
             mouse_event(LEFT_DOWN, 0, 0, 0, 0);
@@ -113,7 +122,7 @@ public static partial class ActionExecutor
                 }
                 if (nextChar == '\\')
                 {
-                    var backslash = VkKeyScan(c);
+                    short backslash = VkKeyScan(c);
                     keybd_event((byte)(backslash & 0xFF), 0, 0, 0);
                     keybd_event((byte)(backslash & 0xFF), 0, KEYUP, 0);
                 }
@@ -122,17 +131,21 @@ public static partial class ActionExecutor
                 continue;
             }
 
-            var vk = VkKeyScan(c);
+            short vk = VkKeyScan(c);
             bool shift = (vk & 0x0100) != 0;
 
             if (shift)
+            {
                 keybd_event(VK_SHIFT, 0, 0, 0);
+            }
 
             keybd_event((byte)(vk & 0xFF), 0, 0, 0);
             keybd_event((byte)(vk & 0xFF), 0, KEYUP, 0);
 
             if (shift)
+            {
                 keybd_event(VK_SHIFT, 0, KEYUP, 0);
+            }
         }
 
         return 1;

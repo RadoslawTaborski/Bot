@@ -13,10 +13,10 @@ public class ActionConverter : JsonConverter<Action>
         Type typeToConvert,
         JsonSerializerOptions options)
     {
-        using var document = JsonDocument.ParseValue(ref reader);
-        var root = document.RootElement;
+        using JsonDocument document = JsonDocument.ParseValue(ref reader);
+        JsonElement root = document.RootElement;
 
-        var type = root.GetProperty("Type").GetInt32();
+        int type = root.GetProperty("Type").GetInt32();
 
         return type switch
         {

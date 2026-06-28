@@ -6,8 +6,8 @@ public class KeyboardAction : Action
 
     public override string ToString()
     {
-        var tag = string.IsNullOrEmpty(Tag) ? "---" : Tag;
-        var description = string.IsNullOrWhiteSpace(Description) ? $"{Text}" : Description;
+        string tag = string.IsNullOrEmpty(Tag) ? "---" : Tag;
+        string description = string.IsNullOrWhiteSpace(Description) ? $"{Text}" : Description;
         return $"{Id}. {tag} ; Text ; {description} ; {Period}";
     }
 }

@@ -13,7 +13,7 @@ public abstract class Action
 
     public Action Clone()
     {
-        var clone = (Action)MemberwiseClone();
+        Action clone = (Action)MemberwiseClone();
         clone.Guid = Guid.NewGuid();
         return clone;
     }

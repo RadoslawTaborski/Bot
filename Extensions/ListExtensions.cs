@@ -6,7 +6,7 @@ public static class ListExtensions
     {
         list.RemoveAt(index);
 
-        foreach (var item in items)
+        foreach (T? item in items)
         {
             list.Insert(index++, item);
         }

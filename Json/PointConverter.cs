@@ -7,9 +7,9 @@ public class PointConverter : JsonConverter<Point>
 {
     public override Point Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var value = reader.GetString();
+        string? value = reader.GetString();
 
-        var parts = value?.Split(',');
+        string[]? parts = value?.Split(',');
 
         if (parts?.Length == 2)
         {
