@@ -80,23 +80,10 @@ public partial class ClickerForm : Form
     private void RecordButton_Click(object? sender, EventArgs e)
     {
         Activation();
-        recordButton.Enabled = false;
-        stopRecordButton.Enabled = true;
-        startButton.Enabled = false;
-        stopButton.Enabled = false;
-        clearButton.Enabled = false;
-        afterActionPeriodNum.Enabled = false;
-        repeatSequenceCheckbox.Enabled = false;
-        afterSequencePeriodStartNum.Enabled = false;
-        afterSequencePeriodStopNum.Enabled = false;
-        numberOfRepeatNum.Enabled = false;
-        loadButton.Enabled = false;
-        deleteButton.Enabled = false;
-        saveButton.Enabled = false;
-        fileNameText.Enabled = false;
-        sequenceCounterLabel.Text = "";
-        subsequenceCounterLabel.Text = "";
-        actionLabel.Text = "";
+        ResetInfoLabels();
+        SetMainTabControls(stopRecord: true);
+        SetSettingsTabControls(enabled: true);
+        SetProfilesTabControls();
     }
 
     private void StopRecordButton_Click(object? sender, EventArgs e)
@@ -131,35 +118,13 @@ public partial class ClickerForm : Form
             };
         }
 
-        recordButton.Enabled = false;
-        stopRecordButton.Enabled = false;
-        startButton.Enabled = true;
-        stopButton.Enabled = false;
-        clearButton.Enabled = true;
-        afterActionPeriodNum.Enabled = true;
-        repeatSequenceCheckbox.Enabled = true;
-        loadButton.Enabled = true;
-        deleteButton.Enabled = true;
-        saveButton.Enabled = true;
-        fileNameText.Enabled = true;
+        SetMainTabControls(start: true);
+        SetSettingsTabControls(enabled: true);
+        SetProfilesTabControls(enabled: true);
         sequenceListBox.DataSource = _state.Settings.Moves;
-        if (repeatSequenceCheckbox.Checked == true)
-        {
-            afterSequencePeriodStartNum.Enabled = true;
-            if (randomIntervalCheckbox.Checked)
-            {
-                afterSequencePeriodStopNum.Enabled = true;
-            }
-            numberOfRepeatNum.Enabled = true;
-        }
-        else
-        {
-            afterSequencePeriodStartNum.Enabled = false;
-            afterSequencePeriodStopNum.Enabled = false;
-            numberOfRepeatNum.Enabled = false;
-        }
-        ResetEditActionControls();
+
         editButton.Enabled = _state.Settings.Moves.Count != 0;
+        ResetEditActionControls();
     }
 
     private void StartButton_Click(object? sender, EventArgs e)
@@ -173,20 +138,10 @@ public partial class ClickerForm : Form
             _state.CurrentSequence = ProvideSequence();
             _state.OverrideIterationsQueues = GetIterationsDictionary();
             RunTimer(2000);
-            recordButton.Enabled = false;
-            stopRecordButton.Enabled = false;
-            startButton.Enabled = false;
-            stopButton.Enabled = true;
-            clearButton.Enabled = false;
-            afterActionPeriodNum.Enabled = false;
-            afterSequencePeriodStartNum.Enabled = false;
-            afterSequencePeriodStopNum.Enabled = false;
-            numberOfRepeatNum.Enabled = false;
-            repeatSequenceCheckbox.Enabled = false;
-            loadButton.Enabled = false;
-            deleteButton.Enabled = false;
-            saveButton.Enabled = false;
-            fileNameText.Enabled = false;
+
+            SetMainTabControls(stop: true);
+            SetSettingsTabControls(enabled: false);
+            SetProfilesTabControls();
         }
     }
 
@@ -197,103 +152,36 @@ public partial class ClickerForm : Form
         _timer.Elapsed -= new ElapsedEventHandler(DoAction);
         _state.CurrentIndex = 1;
         _state.IterationsCounter = 0;
-        sequenceCounterLabel.Text = "";
-        subsequenceCounterLabel.Text = "";
-        actionLabel.Text = "";
-        recordButton.Enabled = false;
-        stopRecordButton.Enabled = false;
-        startButton.Enabled = true;
-        stopButton.Enabled = false;
-        clearButton.Enabled = true;
-        afterActionPeriodNum.Enabled = true;
-        loadButton.Enabled = true;
-        deleteButton.Enabled = true;
-        saveButton.Enabled = true;
-        fileNameText.Enabled = true;
-        repeatSequenceCheckbox.Enabled = true;
-        if (repeatSequenceCheckbox.Checked == true)
-        {
-            afterSequencePeriodStartNum.Enabled = true;
-            if (randomIntervalCheckbox.Checked)
-            {
-                afterSequencePeriodStopNum.Enabled = true;
-            }
-            numberOfRepeatNum.Enabled = true;
-        }
-        else
-        {
-            afterSequencePeriodStartNum.Enabled = false;
-            afterSequencePeriodStopNum.Enabled = false;
-            numberOfRepeatNum.Enabled = false;
-        }
+
+        ResetInfoLabels();
+        SetMainTabControls(start: true);
+
+        SetSettingsTabControls(true);
+
+        SetProfilesTabControls(true);
     }
 
     private void ClearButton_Click(object sender, EventArgs e)
     {
         _state.Reset();
+
+        ResetInfoLabels();
+        SetMainTabControls(record: true);
+
         iterationsHelperText.Text = "";
-        tagsListBox.Items.Clear();
-        _state.Settings.Tags.Clear();
-        recordButton.Enabled = true;
-        stopRecordButton.Enabled = false;
-        startButton.Enabled = false;
-        stopButton.Enabled = false;
-        clearButton.Enabled = false;
-        afterActionPeriodNum.Enabled = true;
-        repeatSequenceCheckbox.Enabled = true;
-        loadButton.Enabled = true;
-        deleteButton.Enabled = true;
-        saveButton.Enabled = true;
-        fileNameText.Enabled = true;
+        SetSettingsTabControls(true);
+
         editButton.Enabled = false;
-        
         ResetEditActionControls();
 
-        sequenceCounterLabel.Text = "";
-        subsequenceCounterLabel.Text = "";
-        actionLabel.Text = "";
-        newPointXNum.Visible = true;
-        newPointYNum.Visible = true;
-        newPointXLabel.Visible = true;
-        newPointYLabel.Visible = true;
-        newKeyboardText.Visible = false;
-        newMouseButtonsComboBox.Visible = true;
-        _state.CurrentIndex = 1;
-        _state.IterationsCounter = 0;
-        if (repeatSequenceCheckbox.Checked == true)
-        {
-            afterSequencePeriodStartNum.Enabled = true;
-            if (randomIntervalCheckbox.Checked)
-            {
-                afterSequencePeriodStopNum.Enabled = true;
-            }
-            numberOfRepeatNum.Enabled = true;
-        }
-        else
-        {
-            afterSequencePeriodStartNum.Enabled = false;
-            afterSequencePeriodStopNum.Enabled = false;
-            numberOfRepeatNum.Enabled = false;
-        }
+        tagsListBox.Items.Clear();
+
+        SetProfilesTabControls();
     }
 
     private void RepeatSequenceCheckbox_CheckedChanged(object? sender, EventArgs e)
     {
-        if (repeatSequenceCheckbox.Checked)
-        {
-            afterSequencePeriodStartNum.Enabled = true;
-            if (randomIntervalCheckbox.Checked)
-            {
-                afterSequencePeriodStopNum.Enabled = true;
-            }
-            numberOfRepeatNum.Enabled = true;
-        }
-        else
-        {
-            afterSequencePeriodStartNum.Enabled = false;
-            afterSequencePeriodStopNum.Enabled = false;
-            numberOfRepeatNum.Enabled = false;
-        }
+        SetRepeatSettingsControls(true);
     }
 
     private void EditButton_Click(object? sender, EventArgs e)
@@ -339,6 +227,8 @@ public partial class ClickerForm : Form
         var fileName = profilesListBox.SelectedItem.ToString();
         _state.Settings = LoadSettings(fileName!);
         SetValuesFromSettings(_state.Settings);
+        fileNameText.Enabled = true;
+        fileNameText.Text = Path.GetFileNameWithoutExtension(fileName);
     }
 
     private void SaveButton_Click(object? sender, EventArgs e)
@@ -350,7 +240,7 @@ public partial class ClickerForm : Form
         _state.Settings.Repeat = repeatSequenceCheckbox.Checked;
         _state.Settings.RandomTimeInterval = randomIntervalCheckbox.Checked;
         _state.Settings.Iterations = GetIterationsDictionary();
-        UpdateMovesIds(_state.Settings);
+        UpdateActionsIds(_state.Settings);
         SaveTags();
 
         try
@@ -404,94 +294,43 @@ public partial class ClickerForm : Form
             case Actions.Mouse:
                 if (action != null && action is MouseAction mouseMove)
                 {
-                    newPointXNum.Value = mouseMove.Point.X;
-                    newPointYNum.Value = mouseMove.Point.Y;
-                    newMouseButtonsComboBox.SelectedIndex = (int)mouseMove.Button;
+                    SetEditMouseActionControls(selectedIndex: (int)mouseMove.Button, pointX: mouseMove.Point.X, pointY: mouseMove.Point.Y, visible: true);
                 }
                 else
                 {
-                    newPointXNum.Value = 0;
-                    newPointYNum.Value = 0;
-                    newMouseButtonsComboBox.SelectedIndex = 0;
+                    SetEditMouseActionControls(visible: true);
                 }
-                newKeyboardText.Visible = false;
-                newPointXNum.Visible = true;
-                newPointYNum.Visible = true;
-                newPointXLabel.Visible = true;
-                newPointYLabel.Visible = true;
-                newMouseButtonsComboBox.Visible = true;
-                newKeyboardText.Text = "";
-                newSubsequenceFilenameText.Text = "";
-                newSubsequenceFilenameText.Visible = false;
-                newSubsequenceIterationsNum.Value = 1;
-                newSubsequenceIterationsNum.Visible = false;
-                newSubsequenceIterationsLabel.Visible = false;
+                SetEditKeyboardActionControls();
+                SetEditSubSequenceActionControls();
                 break;
             case Actions.Keyboard:
                 if (action != null && action is KeyboardAction keyboardMove)
                 {
-                    newKeyboardText.Text = keyboardMove.Text;
+                    SetEditKeyboardActionControls(keyboardText: keyboardMove.Text, visible: true);
                 }
                 else
                 {
-                    newKeyboardText.Text = "";
+                    SetEditKeyboardActionControls(visible: true);
                 }
-                newKeyboardText.Visible = true;
-                newPointXNum.Visible = false;
-                newPointYNum.Visible = false;
-                newPointXLabel.Visible = false;
-                newPointYLabel.Visible = false;
-                newMouseButtonsComboBox.Visible = false;
-                newPointXNum.Value = 0;
-                newPointYNum.Value = 0;
-                newMouseButtonsComboBox.SelectedIndex = 0;
-                newSubsequenceFilenameText.Text = "";
-                newSubsequenceFilenameText.Visible = false;
-                newSubsequenceIterationsNum.Value = 1;
-                newSubsequenceIterationsNum.Visible = false;
-                newSubsequenceIterationsLabel.Visible = false;
+                SetEditMouseActionControls();
+                SetEditSubSequenceActionControls();
                 break;
             case Actions.SubSequence:
                 if (action != null && action is SubSequenceAction subsequenceMove)
                 {
-                    newSubsequenceFilenameText.Text = subsequenceMove.FileName;
-                    newSubsequenceIterationsNum.Value = subsequenceMove.Iterations;
+                    SetEditSubSequenceActionControls(numOfIterations: subsequenceMove.Iterations, filename: subsequenceMove.FileName, visible: true);
                 }
                 else
                 {
-                    newSubsequenceFilenameText.Text = "";
-                    newSubsequenceIterationsNum.Value = 1;
+                    SetEditSubSequenceActionControls(visible: true);
                 }
-                newKeyboardText.Text = "";
-                newKeyboardText.Visible = false;
-                newPointXNum.Visible = false;
-                newPointYNum.Visible = false;
-                newPointXLabel.Visible = false;
-                newPointYLabel.Visible = false;
-                newMouseButtonsComboBox.Visible = false;
-                newPointXNum.Value = 0;
-                newPointYNum.Value = 0;
-                newMouseButtonsComboBox.SelectedIndex = 0;
-                newSubsequenceFilenameText.Visible = true;
-                newSubsequenceIterationsNum.Visible = true;
-                newSubsequenceIterationsLabel.Visible = true;
+                SetEditMouseActionControls();
+                SetEditKeyboardActionControls();
                 break;
             case Actions.Pause:
-                newKeyboardText.Text = "";
-                newKeyboardText.Visible = false;
-                newPointXNum.Visible = false;
-                newPointYNum.Visible = false;
-                newPointXLabel.Visible = false;
-                newPointYLabel.Visible = false;
-                newMouseButtonsComboBox.Visible = false;
-                newPointXNum.Value = 0;
-                newPointYNum.Value = 0;
-                newMouseButtonsComboBox.SelectedIndex = 0;
-                newSubsequenceFilenameText.Text = "";
-                newSubsequenceFilenameText.Visible = false;
-                newSubsequenceIterationsNum.Value = 1;
-                newSubsequenceIterationsNum.Visible = false;
-                newSubsequenceIterationsLabel.Visible = false;
+                SetEditMouseActionControls();
+                SetEditKeyboardActionControls();
+                SetEditSubSequenceActionControls();
                 break;
             default:
                 break;
@@ -506,71 +345,28 @@ public partial class ClickerForm : Form
             newTagText.Text = _state.Settings.Moves[sequenceListBox.SelectedIndex].Tag;
             newDescriptionText.Text = _state.Settings.Moves[sequenceListBox.SelectedIndex].Description;
             newActionsComboBox.SelectedItem = _state.Settings.Moves[sequenceListBox.SelectedIndex].Type;
+
             switch (_state.Settings.Moves[sequenceListBox.SelectedIndex])
             {
                 case MouseAction mouse:
-                    newKeyboardText.Visible = false;
-                    newPointXNum.Visible = true;
-                    newPointYNum.Visible = true;
-                    newPointXLabel.Visible = true;
-                    newPointYLabel.Visible = true;
-                    newMouseButtonsComboBox.Visible = true;
-                    newKeyboardText.Text = "";
-                    newPointXNum.Value = mouse.Point.X;
-                    newPointYNum.Value = mouse.Point.Y;
-                    newSubsequenceFilenameText.Text = "";
-                    newSubsequenceFilenameText.Visible = false;
-                    newSubsequenceIterationsNum.Value = 1;
-                    newSubsequenceIterationsNum.Visible = false;
-                    newSubsequenceIterationsLabel.Visible = false;
+                    SetEditMouseActionControls(pointX: mouse.Point.X, pointY: mouse.Point.Y, visible: true);
+                    SetEditKeyboardActionControls();
+                    SetEditSubSequenceActionControls();
                     break;
                 case KeyboardAction keyboard:
-                    newKeyboardText.Visible = true;
-                    newPointXNum.Visible = false;
-                    newPointYNum.Visible = false;
-                    newPointXLabel.Visible = false;
-                    newPointYLabel.Visible = false;
-                    newMouseButtonsComboBox.Visible = false;
-                    newKeyboardText.Text = keyboard.Text;
-                    newPointXNum.Value = 0;
-                    newPointYNum.Value = 0;
-                    newSubsequenceFilenameText.Text = "";
-                    newSubsequenceFilenameText.Visible = false;
-                    newSubsequenceIterationsNum.Value = 1;
-                    newSubsequenceIterationsNum.Visible = false;
-                    newSubsequenceIterationsLabel.Visible = false;
+                    SetEditMouseActionControls();
+                    SetEditKeyboardActionControls(keyboardText: keyboard.Text, visible: true);
+                    SetEditSubSequenceActionControls();
                     break;
                 case SubSequenceAction subsequence:
-                    newKeyboardText.Visible = false;
-                    newPointXNum.Visible = false;
-                    newPointYNum.Visible = false;
-                    newPointXLabel.Visible = false;
-                    newPointYLabel.Visible = false;
-                    newMouseButtonsComboBox.Visible = false;
-                    newKeyboardText.Text = "";
-                    newPointXNum.Value = 0;
-                    newPointYNum.Value = 0;
-                    newSubsequenceFilenameText.Text = subsequence.FileName;
-                    newSubsequenceFilenameText.Visible = true;
-                    newSubsequenceIterationsNum.Value = subsequence.Iterations;
-                    newSubsequenceIterationsNum.Visible = true;
-                    newSubsequenceIterationsLabel.Visible = true;
+                    SetEditMouseActionControls();
+                    SetEditKeyboardActionControls();
+                    SetEditSubSequenceActionControls(numOfIterations: subsequence.Iterations, filename: subsequence.FileName, visible: true);
                     break;
                 case PauseAction:
-                    newKeyboardText.Visible = false;
-                    newPointXNum.Visible = false;
-                    newPointYNum.Visible = false;
-                    newPointXLabel.Visible = false;
-                    newPointYLabel.Visible = false;
-                    newMouseButtonsComboBox.Visible = false;
-                    newKeyboardText.Text = "";
-                    newPointXNum.Value = 0;
-                    newPointYNum.Value = 0;
-                    newSubsequenceFilenameText.Text = "";
-                    newSubsequenceFilenameText.Visible = false;
-                    newSubsequenceIterationsNum.Value = 1;
-                    newSubsequenceIterationsNum.Visible = false;
-                    newSubsequenceIterationsLabel.Visible = false;
+                    SetEditMouseActionControls();
+                    SetEditKeyboardActionControls();
+                    SetEditSubSequenceActionControls();
                     break;
             }
         }
@@ -624,7 +420,7 @@ public partial class ClickerForm : Form
     {
         var action = _state.CurrentSequence[_state.CurrentIndex];
 
-        UpdateLabels(action);
+        UpdateInfoLabels(action);
 
         if (action is SubSequenceAction subSequenceAction)
         {
@@ -649,7 +445,7 @@ public partial class ClickerForm : Form
                 var time = _random.Next((int)afterSequencePeriodStartNum.Value, (int)afterSequencePeriodStopNum.Value);
 
                 action.Period = time;
-                UpdateLabels(action);
+                UpdateInfoLabels(action);
 
                 _timer.Interval = time;
                 _state.CurrentIndex = 1;
@@ -757,26 +553,18 @@ public partial class ClickerForm : Form
     {
         if (settings.Moves.Any())
         {
-            recordButton.Enabled = false;
-            stopRecordButton.Enabled = false;
-            startButton.Enabled = true;
-            stopButton.Enabled = false;
-            clearButton.Enabled = true;
-            saveButton.Enabled = true;
-            deleteButton.Enabled = true;
-            editButton.Enabled = true;
-
-            UpdateMovesIds(settings);
+            SetMainTabControls();
+            SetProfilesTabControls(enabled: true);
+            UpdateActionsIds(settings);
         }
         SetTags(settings);
         SetIntervalsHelper(settings);
+        SetSettingsTabControls(enabled: true);
 
-        afterActionPeriodNum.Enabled = true;
         afterActionPeriodNum.Value = settings.Period1;
         afterSequencePeriodStartNum.Value = settings.PeriodA;
         numberOfRepeatNum.Value = settings.NumberOfRepeats;
         randomIntervalCheckbox.Checked = settings.RandomTimeInterval;
-        repeatSequenceCheckbox.Enabled = true;
         repeatSequenceCheckbox.Checked = settings.Repeat;
 
         if (settings.RandomTimeInterval)
@@ -788,50 +576,9 @@ public partial class ClickerForm : Form
             afterSequencePeriodStopNum.Value = settings.PeriodA;
         }
 
-        if (repeatSequenceCheckbox.Checked == true)
-        {
-            afterSequencePeriodStartNum.Enabled = true;
-            if (randomIntervalCheckbox.Checked)
-            {
-                afterSequencePeriodStopNum.Enabled = true;
-            }
-            numberOfRepeatNum.Enabled = true;
-        }
-        else
-        {
-            afterSequencePeriodStartNum.Enabled = false;
-            afterSequencePeriodStopNum.Enabled = false;
-            numberOfRepeatNum.Enabled = false;
-        }
         sequenceListBox.DataSource = settings.Moves;
 
         ResetEditActionControls();
-    }
-
-    private void ResetEditActionControls()
-    {
-        newActionsComboBox.SelectedIndex = 0;
-        newAfterActionPeriodNum.Value = 100;
-        newDescriptionText.Text = "";
-        newTagText.Text = "";
-
-        newMouseButtonsComboBox.Visible = true;
-        newMouseButtonsComboBox.SelectedIndex = 0;
-        newPointXLabel.Visible = true;
-        newPointXNum.Visible = true;
-        newPointXNum.Value = 0;
-        newPointYLabel.Visible = true;
-        newPointYNum.Visible = true;
-        newPointYNum.Value = 0;
-
-        newKeyboardText.Visible = false;
-        newKeyboardText.Text = "";
-
-        newSubsequenceIterationsNum.Visible = false;
-        newSubsequenceIterationsNum.Value = 1;
-        newSubsequenceFilenameText.Visible = false;
-        newSubsequenceFilenameText.Text = "";
-        newSubsequenceIterationsLabel.Visible = false;
     }
 
     private void LoadProfiles()
@@ -844,41 +591,7 @@ public partial class ClickerForm : Form
         }
         profilesListBox.DataSource = _files;
 
-        if (profilesListBox.Items.Count != 0)
-        {
-            loadButton.Enabled = true;
-            deleteButton.Enabled = true;
-        }
-        else
-        {
-            loadButton.Enabled = false;
-            deleteButton.Enabled = false;
-        }
-    }
-
-    private void UpdateLabels(Action action)
-    {
-        sequenceCounterLabel.Invoke((MethodInvoker)(() =>
-        {
-            sequenceCounterLabel.Text = $"Iteracja: {_state.IterationsCounter + 1} z {(repeatSequenceCheckbox.Checked ? numberOfRepeatNum.Value : 1)}";
-        }));
-
-        actionLabel.Invoke((MethodInvoker)(() =>
-        {
-            actionLabel.Text = $"Akcja: {action}";
-        }));
-
-        subsequenceCounterLabel.Invoke((MethodInvoker)(() =>
-        {
-            if (_state.NestedSequencesNotes.TryGetValue(action.Guid, out string? value))
-            {
-                subsequenceCounterLabel.Text = $"Sub-iteracja: {value}";
-            }
-            else
-            {
-                subsequenceCounterLabel.Text = "";
-            }
-        }));
+        SetProfilesTabControls(enabled: true);
     }
 
     private List<Action> ProvideSequence()
@@ -905,7 +618,7 @@ public partial class ClickerForm : Form
         return overrideIteration;
     }
 
-    private static void UpdateMovesIds(Settings settings)
+    private static void UpdateActionsIds(Settings settings)
     {
         var id = 0;
         for (int i = 0; i < settings.Moves.Count - 2; i++)
@@ -1022,9 +735,136 @@ public partial class ClickerForm : Form
         };
     }
 
+    private void ResetInfoLabels()
+    {
+        sequenceCounterLabel.Text = "";
+        subsequenceCounterLabel.Text = "";
+        actionLabel.Text = "";
+    }
+
+    private void UpdateInfoLabels(Action action)
+    {
+        sequenceCounterLabel.Invoke((MethodInvoker)(() =>
+        {
+            sequenceCounterLabel.Text = $"Iteracja: {_state.IterationsCounter + 1} z {(repeatSequenceCheckbox.Checked ? numberOfRepeatNum.Value : 1)}";
+        }));
+
+        actionLabel.Invoke((MethodInvoker)(() =>
+        {
+            actionLabel.Text = $"Akcja: {action}";
+        }));
+
+        subsequenceCounterLabel.Invoke((MethodInvoker)(() =>
+        {
+            if (_state.NestedSequencesNotes.TryGetValue(action.Guid, out string? value))
+            {
+                subsequenceCounterLabel.Text = $"Sub-iteracja: {value}";
+            }
+            else
+            {
+                subsequenceCounterLabel.Text = "";
+            }
+        }));
+    }
+
+    private void SetMainTabControls(bool record = false, bool stopRecord = false, bool start = false, bool stop = false)
+    {
+        recordButton.Enabled = record;
+        stopRecordButton.Enabled = stopRecord;
+        startButton.Enabled = start;
+        stopButton.Enabled = stop;
+        clearButton.Enabled = start;
+    }
+
+    private void SetSettingsTabControls(bool enabled = false)
+    {
+        afterActionPeriodNum.Enabled = enabled;
+        repeatSequenceCheckbox.Enabled = enabled;
+        SetRepeatSettingsControls(enabled);
+    }
+
+    private void SetRepeatSettingsControls(bool enabled = false)
+    {
+        if (enabled && repeatSequenceCheckbox.Checked)
+        {
+            afterSequencePeriodStartNum.Enabled = true;
+            if (randomIntervalCheckbox.Checked)
+            {
+                afterSequencePeriodStopNum.Enabled = true;
+            }
+            numberOfRepeatNum.Enabled = true;
+        }
+        else
+        {
+            afterSequencePeriodStartNum.Enabled = false;
+            afterSequencePeriodStopNum.Enabled = false;
+            numberOfRepeatNum.Enabled = false;
+        }
+    }
+
     private void SetIntervalsHelper(Settings settings)
     {
         var lines = settings.Iterations.Select(x => $"{x.Key}: {string.Join(", ", x.Value)}").ToList();
         iterationsHelperText.Text = string.Join(Environment.NewLine, lines);
+    }
+
+    private void ResetEditActionControls()
+    {
+        SetEditActionMainControls();
+        SetEditMouseActionControls(visible: true);
+        SetEditKeyboardActionControls();
+        SetEditSubSequenceActionControls();
+    }
+
+    private void SetEditActionMainControls(int action = 0, int period = 100, string description = "", string tag = "")
+    {
+        newActionsComboBox.SelectedIndex = action;
+        newAfterActionPeriodNum.Value = period;
+        newDescriptionText.Text = description;
+        newTagText.Text = tag;
+    }
+
+    private void SetEditMouseActionControls(int selectedIndex = 0, int pointX = 0, int pointY = 0, bool visible = false)
+    {
+        newMouseButtonsComboBox.Visible = visible;
+        newMouseButtonsComboBox.SelectedIndex = selectedIndex;
+        newPointXLabel.Visible = visible;
+        newPointXNum.Visible = visible;
+        newPointXNum.Value = pointX;
+        newPointYLabel.Visible = visible;
+        newPointYNum.Visible = visible;
+        newPointYNum.Value = pointY;
+    }
+
+    private void SetEditKeyboardActionControls(string keyboardText = "", bool visible = false)
+    {
+        newKeyboardText.Visible = visible;
+        newKeyboardText.Text = keyboardText;
+    }
+
+    private void SetEditSubSequenceActionControls(int numOfIterations = 1, string filename = "", bool visible = false)
+    {
+        newSubsequenceIterationsNum.Visible = visible;
+        newSubsequenceIterationsNum.Value = numOfIterations;
+        newSubsequenceFilenameText.Visible = visible;
+        newSubsequenceFilenameText.Text = filename;
+        newSubsequenceIterationsLabel.Visible = visible;
+    }
+
+    private void SetProfilesTabControls(bool enabled = false)
+    {
+        if (enabled && profilesListBox.Items.Count > 0)
+        {
+            loadButton.Enabled = enabled;
+            deleteButton.Enabled = enabled;
+        }
+        else
+        {
+            loadButton.Enabled = false;
+            deleteButton.Enabled = false;
+        }
+
+        saveButton.Enabled = enabled;
+        fileNameText.Enabled = enabled;
     }
 }
